@@ -1,88 +1,512 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Survey Results | Language Technology</title>
-  <style>
-    :root {
-      --primary-color: #1a56db;
-      --text-color: #1f2937;
-      --bg-color: #f9fafb;
-      --card-bg: #ffffff;
-      --border-color: #e5e7eb;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root { --radius: 10px; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-section { animation: fadeInUp 0.5s ease-out both; }
+@keyframes quoteFade { from { opacity: 0; } to { opacity: 1; } }
+.quote-fade { animation: quoteFade 0.4s ease-out; }
+.quote-pause { border: 1px solid #D3D1C7; background: transparent; color: #8A3E0A; font-size: 11px; line-height: 1; padding: 4px 10px; border-radius: 999px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; }
+.quote-pause:focus-visible, .quote-dot:focus-visible, #encChart:focus-visible, #encChartFallback button:focus-visible {
+  outline: 2px solid #2DA9D8; outline-offset: 2px;
+}
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+#encChartFallback.sr-only:focus-within { position: static; width: auto; height: auto; margin: 8px 0 0; overflow: visible; clip: auto; white-space: normal; display: flex; flex-wrap: wrap; gap: 6px; }
+@media (prefers-reduced-motion: reduce) {
+  .fade-section, .quote-fade { animation: none !important; }
+}
+.photo-strip-wrap { position: relative; }
+.photo-strip { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+.photo-strip::-webkit-scrollbar { display: none; }
+.photo-strip figure { margin: 0; flex: 0 0 auto; width: min(78vw, 320px); scroll-snap-align: start; }
+.photo-strip img { display: block; width: 100%; height: 260px; object-fit: cover; border-radius: var(--radius); }
+.photo-strip figcaption { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+.photo-strip-fade { position: absolute; top: 0; right: 0; bottom: 34px; width: 56px; background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1)); pointer-events: none; transition: opacity 0.25s ease; }
+.photo-strip-nav { position: absolute; top: 0; height: 260px; display: flex; align-items: center; z-index: 2; }
+.photo-strip-nav.prev { left: 4px; }
+.photo-strip-nav.next { right: 4px; }
+.photo-strip-nav button { width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(11,45,69,0.75); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: opacity 0.2s ease, background 0.2s ease; }
+.photo-strip-nav button:hover { background: rgba(11,45,69,0.9); }
+.photo-strip-nav button:disabled { opacity: 0; pointer-events: none; }
+.photo-strip-nav button:focus-visible { outline: 2px solid #2DA9D8; outline-offset: 2px; }
+.photo-strip:focus-visible { outline: 2px solid #2DA9D8; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) {
+  .photo-strip-fade, .photo-strip-nav button { transition: none; }
+}
+@keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+.scroll-cue span.arrow { display: inline-block; animation: scrollBounce 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue span.arrow { animation: none !important; }
+}
+@media (max-width: 560px) {
+  .hero-caption { display: none; }
+}
+</style>
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: var(--text-color);
-      background-color: var(--bg-color);
-      margin: 0;
-      padding: 0;
-    }
+<p class="sr-only">Infographic summarizing the SIL Language Technology impact survey: 765 total responses, 813 feedback comments, the most-used products, use-case coverage, the top 10 products by encouragement comments, and response growth over time from May to July 2026.</p>
 
-    header {
-      background-color: #ffffff;
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 2rem;
-    }
+<div style="width: 100vw; margin-left: calc(50% - 50vw); position: relative; height: min(560px, 80vh); min-height: 420px; overflow: hidden; font-family: 'Source Sans 3', sans-serif;">
+  <img src="images/Satawal - chicken in checking session.jpg" alt="A Scripture checking session projected onto a cloth screen in an open-sided hut on Satawal atoll, with a chicken walking through the foreground." style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+  <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,45,69,0.55) 0%, rgba(11,45,69,0.72) 55%, rgba(11,45,69,0.92) 100%);"></div>
+  <div class="fade-section" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem; color: #fff;">
+    <div style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #4FC3E8;">SIL language technology</div>
+    <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 32px; color: #ffffff; margin: 8px 0 0;">2026 impact survey</h1>
+    <div style="width: 48px; height: 3px; background: #EE7623; margin: 14px auto 0;"></div>
+    <div class="countup" data-target="765" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(56px, 10vw, 84px); color: #ffffff; font-variant-numeric: tabular-nums; line-height: 1.1; margin-top: 18px;">0</div>
+    <div style="font-size: 15px; color: #C9D6DE; margin-top: 8px;">survey responses collected</div>
+    <div style="font-size: 13px; color: #93A9B8; margin-top: 4px;">May 4 &ndash; Jul 29, 2026 &middot; 85 days live</div>
+  </div>
+  <div class="hero-caption" style="position: absolute; left: 24px; bottom: 20px; font-family: 'Playfair Display', serif; font-style: italic; font-size: 13px; color: rgba(255,255,255,0.75); max-width: 55%; line-height: 1.4;">A checking session on Satawal, Micronesia &mdash; projected text, a laptop, and an uninvited guest.</div>
+  <div class="scroll-cue" style="position: absolute; right: 24px; bottom: 20px; font-size: 12px; color: rgba(255,255,255,0.85); display: flex; flex-direction: column; align-items: center; gap: 4px;">
+    <span>scroll for the data</span>
+    <span class="arrow" style="font-size: 16px;">&#8595;</span>
+  </div>
+</div>
 
-    header a {
-      color: var(--primary-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
+<div style="max-width: 1040px; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; font-family: 'Source Sans 3', sans-serif;">
 
-    main {
-      max-width: 800px;
-      margin: 3rem auto;
-      padding: 0 1.5rem;
-    }
+  <div class="fade-section" style="text-align: center; max-width: 640px; margin: 0 auto 2rem;">
+    <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 8px;">SIL Language Technology Impact &amp; Use Survey</p>
+    <p style="font-size: 15px; color: #4A5A66; line-height: 1.6; margin: 0;">SIL Language Technology builds tools and fonts that help communities engage with Scripture and flourish in the languages they value most. To prioritize our work wisely, we asked the people who use them &mdash; translators, linguists, typesetters, and literacy workers around the world &mdash; which tools and fonts matter most, and how they've made a difference. Here's what they told us.</p>
+  </div>
 
-    .placeholder-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    h1 {
-      margin-top: 0;
-      color: #111827;
-    }
-
-    p {
-      color: #4b5563;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      color: #6b7280;
-      font-size: 0.875rem;
-    }
-  </style>
-</head>
-<body>
-
-  <header>
-    <a href="/">&larr; Back to Language Technology</a>
-  </header>
-
-  <main>
-    <div class="placeholder-card">
-      <h1>Survey Results</h1>
-      <p>This page is currently under construction. Full reports, survey responses, and detailed technology assessment data will be published here soon.</p>
-      
-      <!-- Content maintainers: Add survey summary tables, graphs, and download links here -->
+  <div id="quoteBlock" class="fade-section" style="text-align: center; padding: 0 1.5rem; margin-bottom: 1.5rem; min-height: 90px;">
+    <div id="quoteText" class="quote-fade" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 20px; color: #0B2D45; line-height: 1.5;"></div>
+    <div id="quoteAttr" style="font-size: 13px; color: #EE7623; margin-top: 8px;"></div>
+    <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px;">
+      <div id="quoteDots" style="display: flex; gap: 6px;"></div>
+      <button type="button" id="quotePauseBtn" class="quote-pause" aria-pressed="false">&#10074;&#10074; pause</button>
     </div>
-  </main>
+  </div>
 
-  <footer>
-    <p>&copy; Language Technology. All rights reserved.</p>
-  </footer>
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px; text-align: center;">Did you know?</p>
+  <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 2rem;">
+    <div style="background: #F7F5EF; border-top: 3px solid #EE7623; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div class="countup" data-target="813" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;">0</div>
+      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">feedback comments left by respondents</div>
+    </div>
+    <div style="background: #F7F5EF; border-top: 3px solid #2DA9D8; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;"><span class="countup" data-target="84">0</span>%</div>
+      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">of respondents rely on SIL fonts</div>
+    </div>
+    <div style="background: #F7F5EF; border-top: 3px solid #1D9E75; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div class="countup" data-target="206" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;">0</div>
+      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">of 765 responses (27%) arrived in the survey's first 10 days</div>
+    </div>
+  </div>
 
-</body>
-</html>
+  <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">swipe, scroll, or use the arrows to browse</div>
+  <div class="fade-section photo-strip-wrap" style="margin-bottom: 2rem;">
+  <div class="photo-strip" id="photoStrip" tabindex="0" role="region" aria-label="Photo gallery, scrollable">
+    <figure>
+      <img src="images/paratext on the screen.jpg" alt="A translator reviews a draft on a laptop and projector screen while checking it in Paratext.">
+      <figcaption>Checking a draft against source texts in Paratext.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/Bloom 4.jpg" alt="A man sits under a tree using a laptop to lay out a storybook in Bloom.">
+      <figcaption>Laying out a storybook in Bloom &mdash; tree shade as an office.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/Bloom Reader in Use 2500px.jpg" alt="A classroom of children watches a Bloom Reader storybook projected at the front of the room.">
+      <figcaption>A Bloom Reader story, projected for a full classroom.</figcaption>
+    </figure>
+    <figure>
+      <img src="images/alkalami_font.png" alt="Ajami script set in the Alkalami font, over an illustration of a shepherd with sheep.">
+      <figcaption>The Alkalami font rendering Ajami script &mdash; one of many SIL fonts in daily use.</figcaption>
+    </figure>
+  </div>
+  <div class="photo-strip-fade" id="photoStripFade" aria-hidden="true"></div>
+  <div class="photo-strip-nav prev"><button type="button" id="photoStripPrev" aria-label="Scroll photos left">&#8249;</button></div>
+  <div class="photo-strip-nav next"><button type="button" id="photoStripNext" aria-label="Scroll photos right">&#8250;</button></div>
+  </div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Reach</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">all 28 tools &amp; fonts, share of respondents who marked each as important</h2>
+  <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">based on the 765 respondents who completed the survey</div>
+  <div class="fade-section" style="position: relative; width: 100%; height: 640px; margin-bottom: 2rem;">
+    <canvas id="toolsChart" role="img" aria-label="Horizontal bar chart of all 28 tools and fonts by share of respondents who marked each as important: Fonts (all) 84%, Paratext 64%, FieldWorks 56%, Keyman 55%, Bloom 50%, Scripture App Builder 46%, PTXprint 43%, Dictionary App Builder 39%, Reading App Builder 33%, Scripture Forge 29%, AlphaTiles 29%, Webonary 28%, Paratext Lite 26%, SayMore 24%, HearThis 23%, Keyboard App Builder 21%, Phonology Assistant 21%, Audio Project Manager 20%, FieldWorks Lite 20%, Language Forge 19%, Scriptoria 16%, Story Producer 13%, The Combine 13%, Pathway 13%, FlexTrans 12%, Transcelerator 12%, Glyssen 10%, Cog 9%">Fonts (all) 84%, Paratext 64%, FieldWorks 56%, Keyman 55%, Bloom 50%, Scripture App Builder 46%, PTXprint 43%, Dictionary App Builder 39%, Reading App Builder 33%, Scripture Forge 29%, AlphaTiles 29%, Webonary 28%, Paratext Lite 26%, SayMore 24%, HearThis 23%, Keyboard App Builder 21%, Phonology Assistant 21%, Audio Project Manager 20%, FieldWorks Lite 20%, Language Forge 19%, Scriptoria 16%, Story Producer 13%, The Combine 13%, Pathway 13%, FlexTrans 12%, Transcelerator 12%, Glyssen 10%, Cog 9%.</canvas>
+  </div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Coverage</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">use-case areas, share of respondents</h2>
+  <div class="fade-section" style="position: relative; width: 100%; height: 300px; margin-bottom: 2rem;">
+    <canvas id="coverageChart" role="img" aria-label="Horizontal bar chart of use-case areas by share of respondents: Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%">Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%.</canvas>
+  </div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Gratitude</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">top 10 products by encouragement comments</h2>
+  <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">tap anywhere on a row to read quotes for that product &mdash; works offline too, no chat needed</div>
+  <div class="fade-section" style="position: relative; width: 100%; height: 480px; margin-bottom: 1rem;">
+    <canvas id="encChart" style="cursor: pointer;" role="img" aria-label="Horizontal bar chart of top 10 products by number of encouragement comments: Paratext 93, FieldWorks 62, Bloom 44, Scripture App Builder 40, Keyman 39, Andika font 30, PTXprint 22, Scripture Forge 17, Dictionary App Builder 15, AlphaTiles 13">Paratext 93, FieldWorks 62, Bloom 44, Scripture App Builder 40, Keyman 39, Andika font 30, PTXprint 22, Scripture Forge 17, Dictionary App Builder 15, AlphaTiles 13.</canvas>
+  </div>
+  <div id="encChartFallback" class="sr-only" role="group" aria-label="Open encouragement quotes for a product"></div>
+  <div id="quotePanel" style="display: none; background: #F2F1EC; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;"></div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 2rem 0 4px;">Insights</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">what the data adds up to</h2>
+  <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 2rem;">
+    <div style="background: #F2F1EC; border-left: 3px solid #2DA9D8; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
+      <strong style="color: #0B2D45;">Paratext punches above its weight.</strong> 93 encouragement comments against a 64% usage share &mdash; the highest encouragement-to-usage ratio among the top products.
+    </div>
+    <div style="background: #F2F1EC; border-left: 3px solid #EE7623; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
+      <strong style="color: #0B2D45;">Scripture audio is the quiet gap.</strong> The least-covered use case (33%) has no dedicated product in the top 10 for encouragement, and its tools (Audio Project Manager, HearThis, Glyssen) form the smallest cluster in the Reach chart.
+    </div>
+    <div style="background: #F2F1EC; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
+      <strong style="color: #0B2D45;">App builders add up.</strong> 515 of 765 respondents (67%) rely on at least one of the four app builders &mdash; more combined reach than any single one shows on its own.
+    </div>
+    <div style="background: #F2F1EC; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
+      <strong style="color: #0B2D45;">Fonts are the quiet majority.</strong> 84% of respondents rely on SIL fonts &mdash; more than any single named tool, even though fonts rarely get top billing.
+    </div>
+    <div style="background: #F2F1EC; border-left: 3px solid #2DA9D8; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
+      <strong style="color: #0B2D45;">The Gratitude chart isn't the whole story.</strong> These top 10 products account for 375 of the 385 total encouragement comments (97%) &mdash; the remaining 3% are spread across other tools not shown here.
+    </div>
+  </div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Echoes</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">words respondents use most, in their own feedback</h2>
+  <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">sized by how often each word appears across the feedback comments</div>
+  <div id="wordCloud" class="fade-section" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 18px; padding: 1.75rem 1.25rem; background: #F7F5EF; border-radius: 12px; margin-bottom: 2rem;"></div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Voices</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">feedback, by category</h2>
+  <div class="fade-section" style="text-align: center; margin-bottom: 1rem;">
+    <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; color: #0B2D45;"><span class="countup" data-target="71" style="font-variant-numeric: tabular-nums;">0</span>%</div>
+    <div style="font-size: 13px; color: #4A5A66; margin-top: 4px;">positive &mdash; encouragements + general feedback &mdash; vs. 29% constructive, out of 813 comments</div>
+  </div>
+  <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 2rem;">
+    <div style="background: #FCEEE3; border-radius: 12px; padding: 1rem;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#8A3E0A" aria-hidden="true"><circle cx="8.3" cy="8.7" r="4.3"/><circle cx="15.7" cy="8.7" r="4.3"/><polygon points="4.1,10 19.9,10 12,20.5"/></svg>
+      <div class="countup" data-target="385" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; color: #5C2806; margin-top: 8px;">0</div>
+      <div style="font-size: 13px; color: #8A3E0A;">encouragements &middot; 47%</div>
+    </div>
+    <div style="background: #E3F3FA; border-radius: 12px; padding: 1rem;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#0C4A63" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="4" ry="4"/><polygon points="7,17 7,22 12,17"/></svg>
+      <div class="countup" data-target="191" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; color: #093646; margin-top: 8px;">0</div>
+      <div style="font-size: 13px; color: #0C4A63;">general feedback &middot; 24%</div>
+    </div>
+    <div style="background: #E7ECF1; border-radius: 12px; padding: 1rem;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#0B2D45" aria-hidden="true"><rect x="9" y="2" width="6" height="3" rx="1"/><rect x="5" y="4" width="14" height="18" rx="2"/></svg>
+      <div class="countup" data-target="237" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; color: #081F30; margin-top: 8px;">0</div>
+      <div style="font-size: 13px; color: #0B2D45;">constructive &middot; 29%</div>
+    </div>
+  </div>
+
+  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Momentum</p>
+  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">responses over time</h2>
+  <div class="fade-section" style="display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #EE7623;"></span>daily responses (left)</span>
+    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 2px; background: #0B2D45;"></span>cumulative total (right)</span>
+  </div>
+  <div class="fade-section" style="font-size: 13px; color: #4A5A66; margin-bottom: 8px;">Responses peaked at <strong style="color: #0B2D45;">79</strong> on May 13 and climbed steadily to <strong style="color: #0B2D45;">765</strong> by Jul 29.</div>
+  <div class="fade-section" style="position: relative; width: 100%; height: 300px;">
+    <canvas id="growthChart" role="img" aria-label="Combo chart of survey responses over time from May 4 to July 29, 2026: orange bars show daily responses on the left axis, peaking at 79 on May 13; a navy line shows the cumulative total on the right axis, climbing steadily to 765">Daily responses peaked at 79 on May 13; cumulative total climbed steadily from 2 to 765 by July 29, 2026.</canvas>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+
+const quotes = [
+  { text: "Many of the translators have never touched a computer before Bible translation and started with Paratext before exploring other programs. They even learnt to type through Paratext.", attr: "Paratext" },
+  { text: "The SAB app has allowed us to get the Dzongkha Bible into the hands of hundreds of monthly users in Bhutan!", attr: "Scripture App Builder" },
+  { text: "Bloom has got to be the largest library of minority language materials in human history.", attr: "Bloom" },
+  { text: "The Plains Cree keyboards in Keyman are what allow me to write in syllabics — I'm not aware of a single other way to do that.", attr: "Keyman" },
+  { text: "Here at the Chickasaw Nation, all the Language Preservation employees use FLEx as an easy way to search the Chickasaw Dictionary and find related words.", attr: "FieldWorks" },
+  { text: "Seeing Scripture come to life in a community's heart language — and witnessing their joy when they read it fluently for the first time — reminds us daily why this work matters.", attr: "General feedback" }
+];
+let quoteIdx = 0;
+const quoteTextEl = document.getElementById('quoteText');
+const quoteAttrEl = document.getElementById('quoteAttr');
+const quoteDotsEl = document.getElementById('quoteDots');
+quotes.forEach((q, i) => {
+  const dot = document.createElement('button');
+  dot.type = 'button';
+  dot.className = 'quote-dot';
+  dot.setAttribute('aria-label', 'Show quote ' + (i + 1) + ' of ' + quotes.length + ': ' + q.attr);
+  dot.style.cssText = 'width:6px;height:6px;border-radius:50%;cursor:pointer;border:none;padding:0;background:' + (i === 0 ? '#EE7623' : '#D3D1C7');
+  dot.addEventListener('click', () => showQuote(i));
+  quoteDotsEl.appendChild(dot);
+});
+function showQuote(i) {
+  quoteIdx = i;
+  quoteTextEl.classList.remove('quote-fade');
+  void quoteTextEl.offsetWidth;
+  quoteTextEl.classList.add('quote-fade');
+  quoteTextEl.textContent = '“' + quotes[i].text + '”';
+  quoteAttrEl.textContent = '— ' + quotes[i].attr;
+  Array.from(quoteDotsEl.children).forEach((d, di) => { d.style.background = di === i ? '#EE7623' : '#D3D1C7'; });
+}
+
+// Auto-advance respects reduced-motion preference and is fully pausable (WCAG 2.2.2).
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let quotePaused = reduceMotion;
+let quoteTimer = null;
+function startQuoteTimer() {
+  if (quoteTimer || quotePaused) return;
+  quoteTimer = setInterval(() => showQuote((quoteIdx + 1) % quotes.length), 5000);
+}
+function stopQuoteTimer() {
+  clearInterval(quoteTimer);
+  quoteTimer = null;
+}
+const quoteBlockEl = document.getElementById('quoteBlock');
+quoteBlockEl.addEventListener('pointerenter', stopQuoteTimer);
+quoteBlockEl.addEventListener('pointerleave', () => { if (!quotePaused) startQuoteTimer(); });
+quoteBlockEl.addEventListener('focusin', stopQuoteTimer);
+quoteBlockEl.addEventListener('focusout', () => { if (!quotePaused) startQuoteTimer(); });
+const quotePauseBtn = document.getElementById('quotePauseBtn');
+function syncQuotePauseBtn() {
+  quotePauseBtn.setAttribute('aria-pressed', quotePaused ? 'true' : 'false');
+  quotePauseBtn.innerHTML = quotePaused ? '&#9654; play' : '&#10074;&#10074; pause';
+}
+quotePauseBtn.addEventListener('click', () => {
+  quotePaused = !quotePaused;
+  syncQuotePauseBtn();
+  if (quotePaused) stopQuoteTimer(); else startQuoteTimer();
+});
+syncQuotePauseBtn();
+showQuote(0);
+startQuoteTimer();
+
+function animateCountUp(el) {
+  const target = parseInt(el.dataset.target, 10);
+  const duration = 900;
+  const start = performance.now();
+  function tick(now) {
+    const progress = Math.min((now - start) / duration, 1);
+    el.textContent = Math.round(target * progress).toLocaleString();
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+document.querySelectorAll('.countup').forEach(animateCountUp);
+
+const photoStrip = document.getElementById('photoStrip');
+const photoStripFade = document.getElementById('photoStripFade');
+const photoStripPrev = document.getElementById('photoStripPrev');
+const photoStripNext = document.getElementById('photoStripNext');
+function syncPhotoStripFade() {
+  const atStart = photoStrip.scrollLeft <= 2;
+  const atEnd = photoStrip.scrollLeft + photoStrip.clientWidth >= photoStrip.scrollWidth - 2;
+  const scrollable = photoStrip.scrollWidth > photoStrip.clientWidth;
+  photoStripFade.style.opacity = (scrollable && !atEnd) ? '1' : '0';
+  photoStripPrev.disabled = !scrollable || atStart;
+  photoStripNext.disabled = !scrollable || atEnd;
+}
+function scrollPhotoStrip(direction) {
+  photoStrip.scrollBy({ left: direction * photoStrip.clientWidth * 0.9, behavior: reduceMotion ? 'auto' : 'smooth' });
+}
+photoStripPrev.addEventListener('click', () => scrollPhotoStrip(-1));
+photoStripNext.addEventListener('click', () => scrollPhotoStrip(1));
+photoStrip.addEventListener('wheel', (e) => {
+  if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && photoStrip.scrollWidth > photoStrip.clientWidth) {
+    photoStrip.scrollLeft += e.deltaY;
+    e.preventDefault();
+  }
+}, { passive: false });
+photoStrip.addEventListener('scroll', syncPhotoStripFade);
+window.addEventListener('resize', syncPhotoStripFade);
+syncPhotoStripFade();
+
+// Word frequencies counted across all 579 encouragement and general-feedback comments in the
+// survey export. Multi-word product names (e.g. "Scripture Forge", "Scripture App Builder") are
+// matched as whole phrases first, so a shared word like "Forge" isn't counted generically and
+// misattributed between Scripture Forge and Language Forge. Reordered to interleave high- and
+// low-frequency words for a scattered, organic layout.
+const wordCloudData = [
+  ['language', 190], ['community', 48], ['translation', 135], ['helped', 47],
+  ['paratext', 134], ['easy', 41], ['languages', 91], ['andika', 40],
+  ['people', 87], ['translators', 39], ['bloom', 80], ['useful', 35],
+  ['flex', 75], ['Scripture App Builder', 34], ['books', 73], ['audio', 32],
+  ['bible', 72], ['important', 31], ['fonts', 68], ['local', 31],
+  ['dictionary', 60], ['support', 29], ['team', 59], ['fieldworks', 28],
+  ['keyman', 58], ['Scripture Forge', 28], ['literacy', 52], ['keyboard', 25],
+  ['communities', 50], ['appreciate', 23]
+];
+const cloudColors = ['#0B2D45', '#EE7623', '#2DA9D8', '#1D9E75', '#8A3E0A'];
+const cloudCounts = wordCloudData.map(w => w[1]);
+const cloudMin = Math.min(...cloudCounts), cloudMax = Math.max(...cloudCounts);
+const cloudMinSize = 14, cloudMaxSize = 46;
+const wordCloudEl = document.getElementById('wordCloud');
+wordCloudData.forEach(([word, count], i) => {
+  const t = (Math.sqrt(count) - Math.sqrt(cloudMin)) / (Math.sqrt(cloudMax) - Math.sqrt(cloudMin));
+  const size = cloudMinSize + t * (cloudMaxSize - cloudMinSize);
+  const rotation = [-6, -3, 0, 3, 6][i % 5];
+  const span = document.createElement('span');
+  span.textContent = word;
+  span.style.cssText = 'font-family:\'Playfair Display\', serif; font-weight:' + (size > 28 ? 600 : 500) +
+    '; font-size:' + size.toFixed(0) + 'px; color:' + cloudColors[i % cloudColors.length] +
+    '; display:inline-block; line-height:1; transform:rotate(' + rotation + 'deg);';
+  wordCloudEl.appendChild(span);
+});
+
+new Chart(document.getElementById('toolsChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Fonts (all)', 'Paratext', 'FieldWorks', 'Keyman', 'Bloom', 'Scripture App Builder',
+      'PTXprint', 'Dictionary App Builder', 'Reading App Builder', 'Scripture Forge', 'AlphaTiles',
+      'Webonary', 'Paratext Lite', 'SayMore', 'HearThis', 'Keyboard App Builder', 'Phonology Assistant',
+      'Audio Project Manager', 'FieldWorks Lite', 'Language Forge', 'Scriptoria', 'Story Producer',
+      'The Combine', 'Pathway', 'FlexTrans', 'Transcelerator', 'Glyssen', 'Cog'
+    ],
+    datasets: [{
+      data: [84, 64, 56, 55, 50, 46, 43, 39, 33, 29, 29, 28, 26, 24, 23, 21, 21, 20, 20, 19, 16, 13, 13, 13, 12, 12, 10, 9],
+      backgroundColor: '#EE7623',
+      borderRadius: 4,
+      barThickness: 14
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + '% of respondents' } }
+    },
+    scales: {
+      x: { beginAtZero: true, max: 90, ticks: { callback: (v) => v + '%' }, grid: { color: '#e1e0d9' } },
+      y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('coverageChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Linguistics & language data', 'Scripture drafting', 'Scripture publishing', 'Keyboarding', 'Literacy', 'Scripture audio'],
+    datasets: [{
+      data: [68, 68, 62, 60, 60, 33],
+      backgroundColor: '#1D9E75',
+      borderRadius: 4,
+      barThickness: 20
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + '% of respondents' } }
+    },
+    scales: {
+      x: { beginAtZero: true, max: 80, ticks: { callback: (v) => v + '%' }, grid: { color: '#e1e0d9' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+const quoteData = {"Paratext": {"total": 93, "sample": ["DAB gives me access to my lexicon when I'm on the go, even off line. I can't wait for FWLite's full launch, so I can give two senior linguists another chance to get back in their lexicon (post toolbox to flex conversion). Keyman has enabled me to to create a 'spell check'-free Quechua keyboard with all needed diacritics, for me and the Quechua world. SAB has enabled me to digitalize and distrib...", "I use SIL Software every day to help language teams through the process of translating and publishing their Scripture. They have the very best support documentation and support people anywhere.", "Language technology tools such as PTXprint, Scripture Forge, Paratext and Keyman have had a very positive impact on my organisation and the communities we serve.", "As a typesetter, the tool I use most frequently is Paratext. I am so thankful for the checking tools available in Paratext.", "I personally use Paratext everyday. I can't even imagine trying to do my job without it (so please don't take it away!)", "Thank you for supporting a Linux version of Paratext! Our mother tongue colleagues use this on bootable USB drives to avoid keeping any translation-related files on their laptop hard drives — this has helped them avoid serious consequences when laptops were confiscated by hostile authorities.", "Paratext is the number one tool we are using as a translation team. Without this the process of translating the scriptures would be moving much slower.", "I'm grateful for the real people (Steve, Phil) who respond to Paratext error and help messages. Many thanks to them!", "As part of a Bible translation team, Paratext has become an essential part of our daily workflow. It helps us collaborate efficiently, maintain consistency across the translation, and compare our work directly with source texts.", "We're currently going through a translation principles training course with newer members of our team. An older member was sharing how they used to write pages and pages by hand in the old days, but now it's so much easier with Paratext.", "Paratext is the main tool that I and the teams working with me in Madagascar are using every day. Many of the translators have never touched a computer before Bible translation and started with Paratext before exploring other programs.", "I don't know what I'd do without Paratext!"]}, "FieldWorks": {"total": 62, "sample": ["The language communities I work with are very grateful for the dictionary products produced using Fieldworks, DAB and Webonary.", "I used FLEX for many years, and it was extremely helpful as I analyzed complex verbal morphology, with lots of non-adjacent dependencies.", "FLEx and SayMore are my go to tools right now with where I'm at in CLA. I appreciate how easy it is to export/import and to benefit from the strength of each program.", "As we've just started translation, I can't tell you how many times I've looked up a word in our dictionary in FLEx.", "FieldWorks is the only way I could ever do analysis on the language I'm advising. The local translators love to really see their language's structures explained.", "FLEx is the best software for a bilingual dictionary, to build, maintain, and present one — which helps the speaker community, and other interested users. And for bonus it is free.", "We have a lot of budding local linguists where we work, and they're super excited to learn Fieldworks.", "I use FieldWorks on an almost daily basis and it has helped me work with several communities to prepare dictionaries in their languages.", "Here at the Chickasaw Nation, all the Language Preservation employees use FLEx as an easy way to search the Chickasaw Dictionary and find related words.", "I couldn't do my linguistics work without FLEx or translation without Paratext. They have transformed what I do and how I do it.", "FLEx is indispensable for me as a linguist as I work with the team and the language.", "I can't imagine doing linguistics work without FLEx or translation without Paratext."]}, "Bloom": {"total": 44, "sample": ["Making books is one of the main components in a Literacy program. Bloom enables almost anyone to write and produce books with very little training.", "Another example is the usefulness of Bloom library for accessing illustrated story books to translate or produce using existing translations of scripture.", "Bloom has got to be the largest library of minority language materials in human history.", "Many people say how much they love Bloom and it is helping people who would struggle with other software tools to create books independently.", "Avec Bloom, j'ai écrit plusieurs livres et ma communauté arrive à les lire sur les téléphones portables.", "To pick just one: I really appreciate how Bloom has helped me produce a primer series and easy to read booklets for Roma kids.", "Bloom is very useful for developing story books. Local literacy workers can handle it easily.", "Bloom editor and Bloom Library have made it possible to share materials with thousands around the world.", "Bloom has revolutionised book-making for language communities. Now, basic computer users are producing many simple, local books.", "Paratext Lite gave an unprecedented speed and boost to my project review work. Bloom has enabled me to publish a book and currently working on one. Up SIL!", "Keyman tools make our fonts easy and convenient to use. Bloom helps us create storybooks quickly."]}, "Scripture App Builder": {"total": 40, "sample": ["SAB has enabled me to digitalize and distribute a beloved Quechua hymnal, in a context where physical distribution has always been so difficult.", "From the Vernacular Media Service department, the Scripture app builder has been helpful — we are currently building Bura and Bwaatye Hymn apps and the people are excited to use them.", "Our most favorite tool (besides the essential Paratext) is Scripture App Builder. SAB makes it easy for me to produce the app, and church members have scripture now, easy to access.", "Scripture App Builder — what can I say but that it keeps getting better and better! Are we ever blessed by our technologists!!!", "Scripture app builder is awesome! People in our area recently began to purchase smartphones, and they quickly asked for the Scripture app.", "I really do appreciate the Scripture App builder. This app can and is easily shared with others in the villages.", "The SAB app has allowed us to get the Dzongkha Bible into the hands of hundreds of monthly users in Bhutan!", "I use Scripture App Builder and Scriptoria on a daily basis, training and mentoring folk in creating Scripture apps.", "We have used SAB for several years and have been able to distribute our foundational curriculum and Bibles in several languages, including places where people do not have printed materials.", "I use Paratext daily. Huge benefits. Use app builders often and Scriptoria. That has helped us to produce and manage apps on Play Store."]}, "Keyman": {"total": 39, "sample": ["Keyman has enabled me to create a 'spell check'-free Quechua keyboard with all needed diacritics, for me and the Quechua world.", "Without keyman Software many of the languages I work with in Uganda would not be able to produce publications in their languages.", "Keyman have been a good tool since it helps the translators to write their special characters while doing translation work.", "The Plains Cree keyboards (keyman) for mobile and desktop are what allow me to write in syllabics — I'm legitimately not aware of a single other way to do that.", "Over my more than 25 years in SIL, the ability to create and use keyboards through Keyman and Keyman Developer has been very important.", "We also all use Keyman to support the Chickasaw keyboard that one of our staff developed for us.", "Keyman Developer has enabled me to publish a new (better, IMO) keyboard for the Shavian alphabet.", "We have used Keyman and Andika fonts to develop textbooks in five indigenous languages, used as part of the National primary school curriculum.", "Keyman make it possible for the community to share texts in their language over WhatsApp, which promotes language use and development.", "Keyman is critical for my daily work in different languages."]}, "Andika (font)": {"total": 30, "sample": ["Children are able to recognize the letters in andika basic.", "When it comes to font choice, many users in local communities prefer Andika for its bright, clear print.", "We use Andika and/or Charis SIL Literacy in all our publications (over 80 titles now), as they have the literacy 'a' and reliably produce special characters our alphabet needs.", "The Andika literacy font enables us to design easy to read stories for new readers in a variety of languages.", "An older man from the language community kept complaining that the book was hard to read. After switching the font to Andika, his issue was resolved.", "La police Andika est très appréciée par les communautés — the Andika font is highly appreciated by the communities.", "I primarily use Andika font for publishing, and several people from the language group have commented about how easy the letters are to read.", "Andika literacy font has helped me to harmonize the blackboard and the book, helping learners relate well to both.", "Bloom is simple to use. Andika font is very easy to read by beginners."]}, "PTXprint": {"total": 22, "sample": ["I absolutely love the way PTXprint is rapidly developed, regularly released, and how responsive they are to immediately fixing bugs.", "PTX Print has helped our organisation to produce well-formatted Scripture and literacy materials.", "The Christmas template in PTXprint created a great book very easily — I wish we had more templates for booklets and scripture lists.", "Thanks to the PTXPrint team for constant improvement to a wonderful tool for pretty quick and easy interim publication.", "I am able to do typesetting from Chicago and send PDFs to my team for the local printer, using PTXprint — transformational compared to my previous time-consuming labor with MS Office.", "Two years ago I used PTXprint to print high quality trial copies of some translated Scripture with just a little input from a colleague.", "We could not imagine our work without the help of Paratext and PTXPrint. Both are great tools and we appreciate the developers very much.", "I am using Paratext, PTXprint. I would love to support through providing feedback on them."]}, "Scripture Forge": {"total": 17, "sample": ["Recently Scripture Forge has been a great blessing — many project teams have used it in their workflows and found it very helpful.", "Scripture Forge has enormously helped languages with their first draft and fastened the translation process.", "Thanks to the Scripture Forge people for their AI drafting service! Are we ever blessed by our technologists!!!", "Scripture Forge has been a huge help to our teams in producing back translations, saving many hours of work.", "This initial OT translation from Scripture Forge is helping translators more quickly understand the content and draft their own version of a passage.", "We're getting a lot of mileage out of Scripture Forge for drafting back translations. It's really speeding up the work!", "We're thinking about a full Bible instead of just a New Testament, because of the possibilities offered by Scripture Forge.", "I'm especially excited to see these days how well Scripture Forge works for AI drafting."]}, "Dictionary App Builder": {"total": 15, "sample": ["DAB gives me access to my lexicon when I'm on the go, even offline.", "The language communities I work with are very grateful for the dictionary products produced using FieldWorks, DAB and Webonary.", "Using Dictionary App Builder to produce a small dictionary app has generated a lot of excitement and enthusiasm within the community.", "Through FieldWorks, Language Forge, and Dictionary App Builder, we greatly improved the quality and reach of a dictionary that was only available in hard copy before.", "Fieldworks and Dictionary App Builder made it possible for Mbelime, one of Benin's minority languages, to be the first in the country to have a dictionary app.", "I discovered Dictionary App Builder by coincidence and in the same day I managed to assemble the first app — it was a great moment.", "Scripture App Builder and Dictionary App Builder are amazing tools where even people who don't program can create apps."]}, "AlphaTiles": {"total": 13, "sample": ["Pour l'Alpha Tiles, la communauté arrive à identifier les noms des animaux et autres objets utilisés dans notre communauté Adja.", "Alpha Tiles and Bloom have contributed so much to the SIL Mixtec literacy program.", "Alpha Tiles is one of the recently acquired skills for developing a literacy gaming app that increased literacy among teens and adults.", "Alpha Tiles and Bloom are two great tools that show off the kind of quality work we are capable of.", "L'application AlphaTiles m'a permis de lancer l'apprentissage de ma langue facilement.", "Alpha Tiles in three Comorian subdialects really helped our partners understand how much we care about their priorities.", "I created a keyboard and an educational app with AlphaTiles — this has brought about a qualitative shift in teaching the new generation their language.", "The Alpha Tiles app makes people think that their language is a real language, like any other.", "People were excited to have the Alpha Tiles game app because they can now practice reading and writing while enjoying the game in their free time."]}};
+
+const encLabels = ['Paratext', 'FieldWorks', 'Bloom', 'Scripture App Builder', 'Keyman', 'Andika (font)', 'PTXprint', 'Scripture Forge', 'Dictionary App Builder', 'AlphaTiles'];
+const encChartInstance = new Chart(document.getElementById('encChart'), {
+  type: 'bar',
+  data: {
+    labels: encLabels,
+    datasets: [{
+      data: [93, 62, 44, 40, 39, 30, 22, 17, 15, 13],
+      backgroundColor: '#2DA9D8',
+      borderRadius: 4,
+      barThickness: 20
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + ' encouragement comments' } }
+    },
+    scales: {
+      x: { beginAtZero: true, max: 100, grid: { color: '#e1e0d9' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// The chart above is a <canvas> and can't be reached by keyboard or announced meaningfully
+// by a screen reader, so mirror its click-to-reveal behavior as a real, focusable button per bar.
+const encFallback = document.getElementById('encChartFallback');
+encLabels.forEach((label, i) => {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = label + ' — ' + encChartInstance.data.datasets[0].data[i] + ' encouragement comments';
+  btn.addEventListener('click', () => showQuotePanel(label));
+  encFallback.appendChild(btn);
+});
+
+const quotePanel = document.getElementById('quotePanel');
+function showQuotePanel(product) {
+  const info = quoteData[product];
+  if (!info) return;
+  let html = '<div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">';
+  html += '<div style="font-family:\'Playfair Display\', serif; font-weight:600; font-size:18px; color:#0B2D45;">' + product + '</div>';
+  html += '<span id="quotePanelClose" style="cursor:pointer; font-size:13px; color:#8A3E0A;">close ✕</span></div>';
+  html += '<div style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">showing ' + info.sample.length + ' of ' + info.total + ' encouragement comments</div>';
+  info.sample.forEach((q) => {
+    html += '<div style="border-left:2px solid #2DA9D8; padding-left:10px; margin-bottom:10px; font-size:14px; color:var(--text-primary); font-style:italic;">' + q + '</div>';
+  });
+  quotePanel.innerHTML = html;
+  quotePanel.style.display = 'block';
+  document.getElementById('quotePanelClose').addEventListener('click', () => { quotePanel.style.display = 'none'; });
+  quotePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+document.getElementById('encChart').addEventListener('click', (evt) => {
+  const points = encChartInstance.getElementsAtEventForMode(evt, 'y', { intersect: false }, true);
+  if (points.length) {
+    showQuotePanel(encLabels[points[0].index]);
+  }
+});
+
+const growthLabels = ["May 4","May 5","May 6","May 7","May 8","May 9","May 10","May 11","May 12","May 13","May 14","May 15","May 16","May 17","May 18","May 19","May 20","May 21","May 22","May 23","May 24","May 25","May 26","May 27","May 28","May 29","May 30","May 31","Jun 1","Jun 2","Jun 3","Jun 4","Jun 5","Jun 6","Jun 7","Jun 8","Jun 9","Jun 10","Jun 11","Jun 12","Jun 13","Jun 14","Jun 15","Jun 16","Jun 17","Jun 18","Jun 19","Jun 20","Jun 21","Jun 22","Jun 23","Jun 24","Jun 25","Jun 26","Jun 27","Jun 28","Jun 29","Jun 30","Jul 1","Jul 2","Jul 3","Jul 4","Jul 5","Jul 6","Jul 7","Jul 8","Jul 9","Jul 10","Jul 11","Jul 12","Jul 13","Jul 14","Jul 15","Jul 16","Jul 17","Jul 18","Jul 19","Jul 20","Jul 21","Jul 22","Jul 23","Jul 24","Jul 25","Jul 26","Jul 27","Jul 28","Jul 29"];
+const growthDaily = [2,1,0,0,5,12,1,59,47,79,39,39,10,10,23,47,26,25,14,2,4,8,14,5,15,5,3,2,6,6,4,10,3,3,1,2,3,4,8,4,1,0,2,5,9,5,7,1,1,18,22,8,5,3,1,6,5,3,4,3,3,4,2,4,5,6,5,2,7,0,2,6,3,13,3,2,3,7,8,3,1,0,3,1,8,3,1];
+const growthCumulative = [2,3,3,3,8,20,21,80,127,206,245,284,294,304,327,374,400,425,439,441,445,453,467,472,487,492,495,497,503,509,513,523,526,529,530,532,535,539,547,551,552,552,554,559,568,573,580,581,582,600,622,630,635,638,639,645,650,653,657,660,663,667,669,673,678,684,689,691,698,698,700,706,709,722,725,727,730,737,745,748,749,749,752,753,761,764,765];
+new Chart(document.getElementById('growthChart'), {
+  data: {
+    labels: growthLabels,
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Daily responses',
+        data: growthDaily,
+        backgroundColor: '#EE7623',
+        borderRadius: 2,
+        yAxisID: 'y'
+      },
+      {
+        type: 'line',
+        label: 'Cumulative total',
+        data: growthCumulative,
+        borderColor: '#0B2D45',
+        backgroundColor: '#0B2D45',
+        borderWidth: 2,
+        pointRadius: 0,
+        tension: 0.2,
+        yAxisID: 'y1'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => ctx.dataset.label === 'Daily responses' ? ctx.parsed.y + ' responses that day' : ctx.parsed.y + ' total responses'
+        }
+      }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
+      y: { beginAtZero: true, position: 'left', grid: { color: '#e1e0d9' }, title: { display: true, text: 'daily', color: '#8A3E0A' } },
+      y1: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'cumulative', color: '#0B2D45' } }
+    }
+  }
+});
+</script>

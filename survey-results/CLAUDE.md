@@ -1,7 +1,8 @@
 # SIL Language Technology — 2026 Impact Survey page
 
 This repo is a single self-contained page, `index.html`, presenting results of the
-**"SIL Language Technology Impact & Use Survey"** (765 respondents, May 4–Jul 29, 2026).
+**"SIL Language Technology Impact & Use Survey"** (765 respondents, May 4–Jul 30, 2026 —
+closed Jul 30, though the last response actually came in Jul 29).
 It's built for two audiences: internal show-off of the Language Technology team's impact,
 and donor/sponsor-facing communications (SIL is a faith-based nonprofit reliant on
 donations — keep tone warm and human, avoid anything politically sensitive; e.g. we
@@ -93,6 +94,28 @@ text), tagged by product mention. Verified authentic against the raw file (e.g. 
 Chickasaw Nation quote traces to row 104). Top 10 products account for 375 of 385 total
 encouragement comments (97%); the rest are spread across other tools.
 
+**Note on product-mention tagging**: respondents often used short forms instead of full
+product names (PT → Paratext, FLEx → FieldWorks, APM → Audio Project Manager, RAB →
+Reading App Builder, SAB → Scripture App Builder, DAB → Dictionary App Builder, KAB →
+Keyboard App Builder), plus informal spelling variants (e.g. "PTX Print" for PTXprint,
+"Alpha Tiles" for AlphaTiles, "Boom" as a typo for Bloom). A separate, manually-curated
+cross-check (the `Survey Feedback - [Product].docx` files behind the board presentation,
+as of 2026-08-05) already accounts for these variants; Scripture App Builder and
+Dictionary App Builder's counts on this page matched that cross-check exactly (40 and
+15), confirming those two were tagged correctly here. Paratext/Bloom/Andika/PTXprint were
+each off by 1-2 against that cross-check — small enough, and the doc-based source
+revised/updated enough since the page's July 30 export, that it wasn't treated as a page
+correction.
+
+FieldWorks was a real bug, since fixed: the page's original count of 62 wasn't FieldWorks
+(FLEx) at all — it was FieldWorks (FLEx) 59 + FieldWorks Lite 2 + FlexTrans 1, three
+distinct tracked products conflated into one "FieldWorks" bucket (these three happen to
+share the substring "flex", which is almost certainly how the mix-up happened). The
+Gratitude chart's FieldWorks bar, `quoteData.FieldWorks.total`, and the "372 of 385"
+top-10-coverage stat were all corrected to reflect FieldWorks (FLEx) alone (59), matching
+the doc-based cross-check exactly. **The survey is now closed (no further waves)**, so
+this is a closed record, not an action item for a future re-export.
+
 **Feedback category counts** (813 total, 71% positive / 29% constructive): column 9 = 385,
 column 10 ≈ 191–194, column 11 = 237, straight non-blank counts.
 
@@ -121,5 +144,5 @@ sentiment) → Momentum (response growth over time).
 
 Everything is one file: inline `<style>`, inline `<script>` at the bottom using Chart.js
 (via CDN), no build step. All chart data and quotes are hardcoded in the JS — there is no
-live data connection, so any new survey wave means manually re-deriving numbers from a
-fresh export using the methodology above.
+live data connection. The survey is now closed (no further waves), so this page's data is
+final; the methodology above is documented for posterity/audit, not for a future re-run.

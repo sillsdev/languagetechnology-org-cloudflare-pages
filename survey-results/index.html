@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIL Language Technology — 2026 Impact Survey Results</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
 body { margin: 0; }
-:root { --radius: 10px; }
+:root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .fade-section { animation: fadeInUp 0.5s ease-out both; }
 @keyframes quoteFade { from { opacity: 0; } to { opacity: 1; } }
 .quote-fade { animation: quoteFade 0.4s ease-out; }
-.quote-pause { border: 1px solid #D3D1C7; background: transparent; color: #8A3E0A; font-size: 11px; line-height: 1; padding: 4px 10px; border-radius: 999px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; }
+.quote-pause { border: 1px solid #e4e4e4; background: transparent; color: #ff6b00; font-size: 11px; line-height: 1; padding: 4px 10px; border-radius: 999px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; }
 .quote-pause:focus-visible, .quote-dot:focus-visible, #encChart:focus-visible, #encChartFallback button:focus-visible {
-  outline: 2px solid #2DA9D8; outline-offset: 2px;
+  outline: 2px solid #00a7e1; outline-offset: 2px;
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 #encChartFallback.sr-only:focus-within { position: static; width: auto; height: auto; margin: 8px 0 0; overflow: visible; clip: auto; white-space: normal; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -32,11 +32,11 @@ body { margin: 0; }
 .photo-strip-nav { position: absolute; top: 0; height: 260px; display: flex; align-items: center; z-index: 2; }
 .photo-strip-nav.prev { left: 4px; }
 .photo-strip-nav.next { right: 4px; }
-.photo-strip-nav button { width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(11,45,69,0.75); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: opacity 0.2s ease, background 0.2s ease; }
-.photo-strip-nav button:hover { background: rgba(11,45,69,0.9); }
+.photo-strip-nav button { width: 34px; height: 34px; border-radius: 50%; border: none; background: rgba(0,48,73,0.75); color: #fff; font-size: 16px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: opacity 0.2s ease, background 0.2s ease; }
+.photo-strip-nav button:hover { background: rgba(0,48,73,0.9); }
 .photo-strip-nav button:disabled { opacity: 0; pointer-events: none; }
-.photo-strip-nav button:focus-visible { outline: 2px solid #2DA9D8; outline-offset: 2px; }
-.photo-strip:focus-visible { outline: 2px solid #2DA9D8; outline-offset: 4px; }
+.photo-strip-nav button:focus-visible { outline: 2px solid #00a7e1; outline-offset: 2px; }
+.photo-strip:focus-visible { outline: 2px solid #00a7e1; outline-offset: 4px; }
 @media (prefers-reduced-motion: reduce) {
   .photo-strip-fade, .photo-strip-nav button { transition: none; }
 }
@@ -56,12 +56,11 @@ body { margin: 0; }
 
 <div style="width: 100vw; margin-left: calc(50% - 50vw); position: relative; height: min(560px, 80vh); min-height: 420px; overflow: hidden; font-family: 'Source Sans 3', sans-serif;">
   <img src="images/Satawal - chicken in checking session.jpg" alt="A Scripture checking session projected onto a cloth screen in an open-sided hut on Satawal atoll, with a chicken walking through the foreground." style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
-  <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,45,69,0.55) 0%, rgba(11,45,69,0.72) 55%, rgba(11,45,69,0.92) 100%);"></div>
+  <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,48,73,0.55) 0%, rgba(0,48,73,0.72) 55%, rgba(0,48,73,0.92) 100%);"></div>
   <img src="images/sil-logo-768x414.webp" alt="SIL" style="position: absolute; top: 24px; left: 24px; height: 32px; width: auto;">
   <div class="fade-section" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 1.5rem; color: #fff;">
-    <div style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; color: #4FC3E8;">SIL language technology</div>
-    <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 32px; color: #ffffff; margin: 8px 0 0;">2026 impact survey</h1>
-    <div style="width: 48px; height: 3px; background: #EE7623; margin: 24px auto 0;"></div>
+    <div style="font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #4FC3E8;">SIL language technology</div>
+    <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 32px; color: #ffffff; margin: 8px 0 0; display: inline-block; padding-bottom: 10px; border-bottom: 3px solid #ff6b00;">2026 impact survey</h1>
     <div class="countup" data-target="765" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: clamp(56px, 10vw, 84px); color: #ffffff; font-variant-numeric: tabular-nums; line-height: 1.1; margin-top: 18px;">0</div>
     <div style="font-size: 15px; color: #C9D6DE; margin-top: 8px;">survey responses collected</div>
     <div style="font-size: 13px; color: #93A9B8; margin-top: 4px;">May 4 &ndash; Jul 30, 2026 &middot; 86 days live</div>
@@ -76,32 +75,31 @@ body { margin: 0; }
 <div style="max-width: 1040px; margin: 0 auto; padding: 1.5rem clamp(1rem, 4vw, 2.5rem) 3rem; font-family: 'Source Sans 3', sans-serif;">
 
   <div class="fade-section" style="text-align: center; max-width: 640px; margin: 0 auto 2rem;">
-    <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 8px;">SIL Language Technology Impact &amp; Use Survey</p>
-    <p style="font-size: 15px; color: #4A5A66; line-height: 1.6; margin: 0;">SIL Language Technology builds tools and fonts that help communities engage with Scripture and flourish in the languages they value most. To prioritize our work wisely, we asked the people who use them &mdash; translators, linguists, typesetters, and literacy workers around the world &mdash; which tools and fonts matter most, and how they've made a difference. Here's what they told us.</p>
+    <p style="font-size: 15px; color: #727272; line-height: 1.6; margin: 0;">SIL Language Technology builds tools and fonts that help communities engage with Scripture and flourish in the languages they value most. To prioritize our work wisely, we asked the people who use them &mdash; translators, linguists, typesetters, and literacy workers around the world &mdash; which tools and fonts matter most, and how they've made a difference. Here's what they told us.</p>
   </div>
 
   <div id="quoteBlock" class="fade-section" style="text-align: center; padding: 0 1.5rem; margin-bottom: 1.5rem; min-height: 90px;">
-    <div id="quoteText" class="quote-fade" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 20px; color: #0B2D45; line-height: 1.5;"></div>
-    <div id="quoteAttr" style="font-size: 13px; color: #EE7623; margin-top: 8px;"></div>
+    <div id="quoteText" class="quote-fade" style="font-family: 'Playfair Display', serif; font-style: italic; font-weight: 500; font-size: 20px; color: #003049; line-height: 1.5;"></div>
+    <div id="quoteAttr" style="font-size: 13px; color: #ff6b00; margin-top: 8px;"></div>
     <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px;">
       <div id="quoteDots" style="display: flex; gap: 6px;"></div>
       <button type="button" id="quotePauseBtn" class="quote-pause" aria-pressed="false">&#10074;&#10074; pause</button>
     </div>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px; text-align: center;">Did you know?</p>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px; text-align: center;">Did you know?</h2>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 2rem;">
-    <div style="background: #F7F5EF; border-top: 3px solid #EE7623; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
-      <div class="countup" data-target="813" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;">0</div>
-      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">feedback comments left by respondents</div>
+    <div style="background: #f9fafb; border-top: 3px solid #ff6b00; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div class="countup" data-target="813" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #003049; font-variant-numeric: tabular-nums;">0</div>
+      <div style="font-size: 13px; color: #727272; margin-top: 6px; line-height: 1.4;">feedback comments left by respondents</div>
     </div>
-    <div style="background: #F7F5EF; border-top: 3px solid #2DA9D8; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;"><span class="countup" data-target="84">0</span>%</div>
-      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">of respondents rely on SIL fonts</div>
+    <div style="background: #f9fafb; border-top: 3px solid #00a7e1; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #003049; font-variant-numeric: tabular-nums;"><span class="countup" data-target="84">0</span>%</div>
+      <div style="font-size: 13px; color: #727272; margin-top: 6px; line-height: 1.4;">of respondents rely on SIL fonts</div>
     </div>
-    <div style="background: #F7F5EF; border-top: 3px solid #1D9E75; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
-      <div class="countup" data-target="206" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #0B2D45; font-variant-numeric: tabular-nums;">0</div>
-      <div style="font-size: 13px; color: #4A5A66; margin-top: 6px; line-height: 1.4;">of 765 responses (27%) arrived in the survey's first 10 days</div>
+    <div style="background: #f9fafb; border-top: 3px solid #1D9E75; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
+      <div class="countup" data-target="206" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #003049; font-variant-numeric: tabular-nums;">0</div>
+      <div style="font-size: 13px; color: #727272; margin-top: 6px; line-height: 1.4;">of 765 responses (27%) arrived in the survey's first 10 days</div>
     </div>
   </div>
 
@@ -130,85 +128,85 @@ body { margin: 0; }
   <div class="photo-strip-nav next"><button type="button" id="photoStripNext" aria-label="Scroll photos right">&#8250;</button></div>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Reach</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">all 28 tools &amp; fonts, share of respondents who marked each as important</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Reach</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">all 28 tools &amp; fonts, share of respondents who marked each as important</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">based on the 765 respondents who completed the survey</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 640px; margin-bottom: 2rem;">
     <canvas id="toolsChart" role="img" aria-label="Horizontal bar chart of all 28 tools and fonts by share of respondents who marked each as important: Fonts (all) 84%, Paratext 64%, FieldWorks 56%, Keyman 55%, Bloom 50%, Scripture App Builder 46%, PTXprint 43%, Dictionary App Builder 39%, Reading App Builder 33%, Scripture Forge 29%, AlphaTiles 29%, Webonary 28%, Paratext Lite 26%, SayMore 24%, HearThis 23%, Keyboard App Builder 21%, Phonology Assistant 21%, Audio Project Manager 20%, FieldWorks Lite 20%, Language Forge 19%, Scriptoria 16%, Story Producer 13%, The Combine 13%, Pathway 13%, FlexTrans 12%, Transcelerator 12%, Glyssen 10%, Cog 9%">Fonts (all) 84%, Paratext 64%, FieldWorks 56%, Keyman 55%, Bloom 50%, Scripture App Builder 46%, PTXprint 43%, Dictionary App Builder 39%, Reading App Builder 33%, Scripture Forge 29%, AlphaTiles 29%, Webonary 28%, Paratext Lite 26%, SayMore 24%, HearThis 23%, Keyboard App Builder 21%, Phonology Assistant 21%, Audio Project Manager 20%, FieldWorks Lite 20%, Language Forge 19%, Scriptoria 16%, Story Producer 13%, The Combine 13%, Pathway 13%, FlexTrans 12%, Transcelerator 12%, Glyssen 10%, Cog 9%.</canvas>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Coverage</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">use-case areas, share of respondents</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Coverage</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">use-case areas, share of respondents</p>
   <div class="fade-section" style="position: relative; width: 100%; height: 300px; margin-bottom: 2rem;">
     <canvas id="coverageChart" role="img" aria-label="Horizontal bar chart of use-case areas by share of respondents: Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%">Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%.</canvas>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Gratitude</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">top 10 products by encouragement comments</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Gratitude</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">top 10 products by encouragement comments</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">tap or click any bar to read quotes from that product's users</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 480px; margin-bottom: 1rem;">
     <canvas id="encChart" style="cursor: pointer;" role="img" aria-label="Horizontal bar chart of top 10 products by number of encouragement comments: Paratext 93, Fonts 66, FieldWorks 59, App Builders 56, Bloom 44, Keyman 39, PTXprint 22, Scripture Forge 17, AlphaTiles 13, SayMore 11">Paratext 93, Fonts 66, FieldWorks 59, App Builders 56, Bloom 44, Keyman 39, PTXprint 22, Scripture Forge 17, AlphaTiles 13, SayMore 11.</canvas>
   </div>
   <div id="encChartFallback" class="sr-only" role="group" aria-label="Open encouragement quotes for a product"></div>
-  <div id="quotePanel" style="display: none; background: #F2F1EC; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;"></div>
+  <div id="quotePanel" style="display: none; background: #eef1f3; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;"></div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Also loved</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">quieter tools that got warm feedback too</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Also loved</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">quieter tools that got warm feedback too</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">encouragement comments for tools outside the top 10 above</div>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 2rem;">
-    <div style="background: #F2F1EC; border-left: 3px solid #2DA9D8; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">Webonary</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;They have also made it possible for me to create a dictionary in my language and publish it on Webonary, preserving and sharing our linguistic heritage with others.&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #00a7e1; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">Webonary</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;They have also made it possible for me to create a dictionary in my language and publish it on Webonary, preserving and sharing our linguistic heritage with others.&rdquo;</div>
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">Audio Project Manager</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;Audio Project Manager is user-friendly! It was easy to learn and easy to use!&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">Audio Project Manager</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;Audio Project Manager is user-friendly! It was easy to learn and easy to use!&rdquo;</div>
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">HearThis</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;HearThis has been incredibly helpful for my project. Our readers aren't very strong readers, and their computer skills aren't very advanced either, so the ability to record segments and sentences, along with HearThis's simple and intuitive interface, is a huge help.&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">HearThis</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;HearThis has been incredibly helpful for my project. Our readers aren't very strong readers, and their computer skills aren't very advanced either, so the ability to record segments and sentences, along with HearThis's simple and intuitive interface, is a huge help.&rdquo;</div>
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #2DA9D8; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">Glyssen</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;Glyssen is really helpful in speeding up the scripting process for long books. It saves a lot of time for a busy VMS consultant.&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #00a7e1; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">Glyssen</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;Glyssen is really helpful in speeding up the scripting process for long books. It saves a lot of time for a busy VMS consultant.&rdquo;</div>
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">The Combine</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;Linguists are using The Combine in collaboration with Flex to build dictionaries in iterations as funding allows. These tools have allowed more people to contribute to the dictionary editing.&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">The Combine</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;Linguists are using The Combine in collaboration with Flex to build dictionaries in iterations as funding allows. These tools have allowed more people to contribute to the dictionary editing.&rdquo;</div>
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
-      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #0B2D45; margin-bottom: 6px;">Pathway</div>
-      <div style="font-size: 13px; color: #4A5A66; line-height: 1.5; font-style: italic;">&ldquo;We used Pathway to create Kindle versions of the NT.&rdquo;</div>
+    <div style="background: #eef1f3; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem;">
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 14px; color: #003049; margin-bottom: 6px;">Pathway</div>
+      <div style="font-size: 13px; color: #727272; line-height: 1.5; font-style: italic;">&ldquo;We used Pathway to create Kindle versions of the NT.&rdquo;</div>
     </div>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 2rem 0 4px;">Insights</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">what the data adds up to</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 2rem 0 4px;">Insights</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">what the data adds up to</p>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 2rem;">
-    <div style="background: #F2F1EC; border-left: 3px solid #2DA9D8; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
-      <strong style="color: #0B2D45;">Paratext punches above its weight.</strong> 93 encouragement comments against a 64% usage share &mdash; the highest encouragement-to-usage ratio among the top products.
+    <div style="background: #eef1f3; border-left: 3px solid #00a7e1; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #727272; line-height: 1.5;">
+      <strong style="color: #003049;">Paratext punches above its weight.</strong> 93 encouragement comments against a 64% usage share &mdash; the highest encouragement-to-usage ratio among the top products.
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #EE7623; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
-      <strong style="color: #0B2D45;">Scripture audio is the quiet gap.</strong> The least-covered use case (33%) has no dedicated product in the top 10 for encouragement, and its tools (Audio Project Manager, HearThis, Glyssen) form the smallest cluster in the Reach chart.
+    <div style="background: #eef1f3; border-left: 3px solid #ff6b00; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #727272; line-height: 1.5;">
+      <strong style="color: #003049;">Scripture audio is the quiet gap.</strong> The least-covered use case (33%) has no dedicated product in the top 10 for encouragement, and its tools (Audio Project Manager, HearThis, Glyssen) form the smallest cluster in the Reach chart.
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
-      <strong style="color: #0B2D45;">App builders add up.</strong> 515 of 765 respondents (67%) rely on at least one of the four app builders &mdash; more combined reach than any single one shows on its own.
+    <div style="background: #eef1f3; border-left: 3px solid #1D9E75; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #727272; line-height: 1.5;">
+      <strong style="color: #003049;">App builders add up.</strong> 515 of 765 respondents (67%) rely on at least one of the four app builders &mdash; more combined reach than any single one shows on its own.
     </div>
-    <div style="background: #F2F1EC; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #4A5A66; line-height: 1.5;">
-      <strong style="color: #0B2D45;">Fonts are the quiet majority.</strong> 84% of respondents rely on SIL fonts &mdash; more than any single named tool, even though fonts rarely get top billing.
+    <div style="background: #eef1f3; border-left: 3px solid #8A3E0A; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #727272; line-height: 1.5;">
+      <strong style="color: #003049;">Fonts are the quiet majority.</strong> 84% of respondents rely on SIL fonts &mdash; more than any single named tool, even though fonts rarely get top billing.
     </div>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Echoes</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 2px;">words respondents use most, in their own feedback</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Echoes</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">words respondents use most, in their own feedback</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">sized by how often each word appears across the feedback comments</div>
-  <div id="wordCloud" class="fade-section" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 18px; padding: 1.75rem 1.25rem; background: #F7F5EF; border-radius: 12px; margin-bottom: 2rem;"></div>
+  <div id="wordCloud" class="fade-section" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 18px; padding: 1.75rem 1.25rem; background: #f9fafb; border-radius: 12px; margin-bottom: 2rem;"></div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Voices</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">feedback, by category</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Voices</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">feedback, by category</p>
   <div class="fade-section" style="text-align: center; margin-bottom: 1rem;">
-    <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; color: #0B2D45;"><span class="countup" data-target="71" style="font-variant-numeric: tabular-nums;">0</span>%</div>
-    <div style="font-size: 13px; color: #4A5A66; margin-top: 4px;">positive &mdash; encouragements + general feedback &mdash; vs. 29% constructive, out of 813 comments</div>
+    <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; color: #003049;"><span class="countup" data-target="71" style="font-variant-numeric: tabular-nums;">0</span>%</div>
+    <div style="font-size: 13px; color: #727272; margin-top: 4px;">positive &mdash; encouragements + general feedback &mdash; vs. 29% constructive, out of 813 comments</div>
   </div>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 2rem;">
     <div style="background: #FCEEE3; border-radius: 12px; padding: 1rem;">
@@ -222,19 +220,19 @@ body { margin: 0; }
       <div style="font-size: 13px; color: #0C4A63;">general feedback &middot; 24%</div>
     </div>
     <div style="background: #E7ECF1; border-radius: 12px; padding: 1rem;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="#0B2D45" aria-hidden="true"><rect x="9" y="2" width="6" height="3" rx="1"/><rect x="5" y="4" width="14" height="18" rx="2"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="#003049" aria-hidden="true"><rect x="9" y="2" width="6" height="3" rx="1"/><rect x="5" y="4" width="14" height="18" rx="2"/></svg>
       <div class="countup" data-target="237" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; color: #081F30; margin-top: 8px;">0</div>
-      <div style="font-size: 13px; color: #0B2D45;">constructive &middot; 29%</div>
+      <div style="font-size: 13px; color: #003049;">constructive &middot; 29%</div>
     </div>
   </div>
 
-  <p class="fade-section" style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: #2DA9D8; margin: 0 0 4px;">Momentum</p>
-  <h2 class="fade-section" style="font-size: 15px; color: var(--text-primary); font-weight: 500; margin: 0 0 8px;">responses over time</h2>
+  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Momentum</h2>
+  <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">responses over time</p>
   <div class="fade-section" style="display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
-    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #EE7623;"></span>daily responses (left)</span>
-    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 2px; background: #0B2D45;"></span>cumulative total (right)</span>
+    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #ff6b00;"></span>daily responses (left)</span>
+    <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 2px; background: #003049;"></span>cumulative total (right)</span>
   </div>
-  <div class="fade-section" style="font-size: 13px; color: #4A5A66; margin-bottom: 8px;">Responses peaked at <strong style="color: #0B2D45;">79</strong> on May 13 and climbed steadily to <strong style="color: #0B2D45;">765</strong> by Jul 29.</div>
+  <div class="fade-section" style="font-size: 13px; color: #727272; margin-bottom: 8px;">Responses peaked at <strong style="color: #003049;">79</strong> on May 13 and climbed steadily to <strong style="color: #003049;">765</strong> by Jul 29.</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 300px;">
     <canvas id="growthChart" role="img" aria-label="Combo chart of survey responses over time from May 4 to July 29, 2026: orange bars show daily responses on the left axis, peaking at 79 on May 13; a navy line shows the cumulative total on the right axis, climbing steadily to 765">Daily responses peaked at 79 on May 13; cumulative total climbed steadily from 2 to 765 by July 29, 2026.</canvas>
   </div>
@@ -262,7 +260,7 @@ quotes.forEach((q, i) => {
   dot.type = 'button';
   dot.className = 'quote-dot';
   dot.setAttribute('aria-label', 'Show quote ' + (i + 1) + ' of ' + quotes.length + ': ' + q.attr);
-  dot.style.cssText = 'width:6px;height:6px;border-radius:50%;cursor:pointer;border:none;padding:0;background:' + (i === 0 ? '#EE7623' : '#D3D1C7');
+  dot.style.cssText = 'width:6px;height:6px;border-radius:50%;cursor:pointer;border:none;padding:0;background:' + (i === 0 ? '#ff6b00' : '#e4e4e4');
   dot.addEventListener('click', () => showQuote(i));
   quoteDotsEl.appendChild(dot);
 });
@@ -273,7 +271,7 @@ function showQuote(i) {
   quoteTextEl.classList.add('quote-fade');
   quoteTextEl.textContent = '“' + quotes[i].text + '”';
   quoteAttrEl.textContent = '— ' + quotes[i].attr;
-  Array.from(quoteDotsEl.children).forEach((d, di) => { d.style.background = di === i ? '#EE7623' : '#D3D1C7'; });
+  Array.from(quoteDotsEl.children).forEach((d, di) => { d.style.background = di === i ? '#ff6b00' : '#e4e4e4'; });
 }
 
 // Auto-advance respects reduced-motion preference and is fully pausable (WCAG 2.2.2).
@@ -362,7 +360,7 @@ const wordCloudData = [
   ['keyman', 58], ['Scripture Forge', 28], ['literacy', 52], ['keyboard', 25],
   ['communities', 50], ['appreciate', 23]
 ];
-const cloudColors = ['#0B2D45', '#EE7623', '#2DA9D8', '#1D9E75', '#8A3E0A'];
+const cloudColors = ['#003049', '#ff6b00', '#00a7e1', '#1D9E75', '#8A3E0A'];
 const cloudCounts = wordCloudData.map(w => w[1]);
 const cloudMin = Math.min(...cloudCounts), cloudMax = Math.max(...cloudCounts);
 const cloudMinSize = 14, cloudMaxSize = 46;
@@ -391,7 +389,7 @@ new Chart(document.getElementById('toolsChart'), {
     ],
     datasets: [{
       data: [84, 64, 56, 55, 50, 46, 43, 39, 33, 29, 29, 28, 26, 24, 23, 21, 21, 20, 20, 19, 16, 13, 13, 13, 12, 12, 10, 9],
-      backgroundColor: '#EE7623',
+      backgroundColor: '#ff6b00',
       borderRadius: 4,
       barThickness: 14
     }]
@@ -405,7 +403,7 @@ new Chart(document.getElementById('toolsChart'), {
       tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + '% of respondents' } }
     },
     scales: {
-      x: { beginAtZero: true, max: 90, ticks: { callback: (v) => v + '%' }, grid: { color: '#e1e0d9' } },
+      x: { beginAtZero: true, max: 90, ticks: { callback: (v) => v + '%' }, grid: { color: '#e4e4e4' } },
       y: { grid: { display: false }, ticks: { font: { size: 11 } } }
     }
   }
@@ -431,7 +429,7 @@ new Chart(document.getElementById('coverageChart'), {
       tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + '% of respondents' } }
     },
     scales: {
-      x: { beginAtZero: true, max: 80, ticks: { callback: (v) => v + '%' }, grid: { color: '#e1e0d9' } },
+      x: { beginAtZero: true, max: 80, ticks: { callback: (v) => v + '%' }, grid: { color: '#e4e4e4' } },
       y: { grid: { display: false } }
     }
   }
@@ -446,7 +444,7 @@ const encChartInstance = new Chart(document.getElementById('encChart'), {
     labels: encLabels,
     datasets: [{
       data: [93, 66, 59, 56, 44, 39, 22, 17, 13, 11],
-      backgroundColor: '#2DA9D8',
+      backgroundColor: '#00a7e1',
       borderRadius: 4,
       barThickness: 20
     }]
@@ -460,7 +458,7 @@ const encChartInstance = new Chart(document.getElementById('encChart'), {
       tooltip: { callbacks: { label: (ctx) => ctx.parsed.x + ' encouragement comments' } }
     },
     scales: {
-      x: { beginAtZero: true, max: 100, grid: { color: '#e1e0d9' } },
+      x: { beginAtZero: true, max: 100, grid: { color: '#e4e4e4' } },
       y: { grid: { display: false } }
     }
   }
@@ -487,11 +485,11 @@ function showQuotePanel(product) {
   header.style.cssText = 'display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;';
 
   const title = document.createElement('div');
-  title.style.cssText = "font-family:'Playfair Display', serif; font-weight:600; font-size:18px; color:#0B2D45;";
+  title.style.cssText = "font-family:'Playfair Display', serif; font-weight:600; font-size:18px; color:#003049;";
   title.textContent = product;
 
   const closeBtn = document.createElement('span');
-  closeBtn.style.cssText = 'cursor:pointer; font-size:13px; color:#8A3E0A;';
+  closeBtn.style.cssText = 'cursor:pointer; font-size:13px; color:#727272;';
   closeBtn.textContent = 'close ✕';
   closeBtn.addEventListener('click', () => { quotePanel.style.display = 'none'; });
 
@@ -507,12 +505,12 @@ function showQuotePanel(product) {
   info.sample.forEach((q) => {
     const isTranslated = typeof q === 'object';
     const quoteEl = document.createElement('div');
-    quoteEl.style.cssText = 'border-left:2px solid #2DA9D8; padding-left:10px; margin-bottom:' + (isTranslated ? '2px' : '10px') + '; font-size:14px; color:var(--text-primary); font-style:italic;';
+    quoteEl.style.cssText = 'border-left:2px solid #00a7e1; padding-left:10px; margin-bottom:' + (isTranslated ? '2px' : '10px') + '; font-size:14px; color:var(--text-primary); font-style:italic;';
     quoteEl.textContent = isTranslated ? q.text : q;
     quotePanel.appendChild(quoteEl);
     if (isTranslated) {
       const noteEl = document.createElement('div');
-      noteEl.style.cssText = 'border-left:2px solid #2DA9D8; padding-left:10px; margin-bottom:10px; font-size:11px; color:var(--text-muted); font-style:normal;';
+      noteEl.style.cssText = 'border-left:2px solid #00a7e1; padding-left:10px; margin-bottom:10px; font-size:11px; color:var(--text-muted); font-style:normal;';
       noteEl.textContent = 'AI-translated from ' + q.translatedFrom;
       quotePanel.appendChild(noteEl);
     }
@@ -539,7 +537,7 @@ new Chart(document.getElementById('growthChart'), {
         type: 'bar',
         label: 'Daily responses',
         data: growthDaily,
-        backgroundColor: '#EE7623',
+        backgroundColor: '#ff6b00',
         borderRadius: 2,
         yAxisID: 'y'
       },
@@ -547,8 +545,8 @@ new Chart(document.getElementById('growthChart'), {
         type: 'line',
         label: 'Cumulative total',
         data: growthCumulative,
-        borderColor: '#0B2D45',
-        backgroundColor: '#0B2D45',
+        borderColor: '#003049',
+        backgroundColor: '#003049',
         borderWidth: 2,
         pointRadius: 0,
         tension: 0.2,
@@ -569,8 +567,8 @@ new Chart(document.getElementById('growthChart'), {
     },
     scales: {
       x: { grid: { display: false }, ticks: { maxTicksLimit: 8 } },
-      y: { beginAtZero: true, position: 'left', grid: { color: '#e1e0d9' }, title: { display: true, text: 'daily', color: '#8A3E0A' } },
-      y1: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'cumulative', color: '#0B2D45' } }
+      y: { beginAtZero: true, position: 'left', grid: { color: '#e4e4e4' }, title: { display: true, text: 'daily', color: '#ff6b00' } },
+      y1: { beginAtZero: true, position: 'right', grid: { display: false }, title: { display: true, text: 'cumulative', color: '#003049' } }
     }
   }
 });

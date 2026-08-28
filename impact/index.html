@@ -1,275 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Product Impact Dashboard | SIL Language Technology</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
-<style>
-body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; }
-:root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
-a { color: #00a7e1; }
-.eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
-.section-title { font-family: 'Caveat', cursive; font-weight: 500; font-size: 26px; line-height: 1.2; color: #00a7e1; margin: 0 0 8px; }
-.pill {
-  display: inline-flex; align-items: center; gap: 4px; border: 1px solid #e4e4e4; background: #fff;
-  color: #003049; font-family: 'Source Sans 3', sans-serif; font-size: 13px; padding: 5px 12px;
-  border-radius: 999px; cursor: pointer; user-select: none; transition: background 0.15s ease, border-color 0.15s ease;
-}
-.pill:hover { border-color: #00a7e1; }
-.pill.active { background: #003049; border-color: #003049; color: #fff; }
-select, input[type="search"] {
-  font-family: 'Source Sans 3', sans-serif; font-size: 14px; color: #003049; border: 1px solid #e4e4e4;
-  border-radius: 8px; padding: 7px 10px; background: #fff;
-}
-table { border-collapse: collapse; width: 100%; font-size: 14px; }
-th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
-th:first-child, td:first-child { text-align: left; white-space: normal; }
-thead th { position: sticky; top: 0; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
-thead th:hover { color: #00a7e1; }
-thead th.sorted { color: #003049; }
-tbody tr { border-bottom: 1px solid #eef1f3; }
-tbody tr:hover { background: #f9fafb; }
-.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #eef1f3; color: #727272; }
-.muted { color: #8a8a8a; }
-.stat-tile { background: #f9fafb; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; }
-.stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 30px; color: #003049; font-variant-numeric: tabular-nums; }
-.stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
-.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
-#state-message { text-align: center; padding: 3rem 1rem; color: #727272; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Impact | Language Technology</title>
+  <style>
+    :root {
+      --primary-color: #059669; /* Distinct accent color for Impact */
+      --text-color: #1f2937;
+      --bg-color: #f9fafb;
+      --card-bg: #ffffff;
+      --border-color: #e5e7eb;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+    }
+
+    header a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .placeholder-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #111827;
+    }
+
+    p {
+      color: #4b5563;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
 <body>
 
-<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
-  <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between;">
-    <a href="/" style="color: rgba(255,255,255,0.8); font-size: 13px; text-decoration: none;">&larr; Language Technology</a>
-    <div class="eyebrow" style="color: #4FC3E8;">SIL language technology</div>
-  </div>
-</div>
+  <header>
+    <a href="/">&larr; Back to Language Technology</a>
+  </header>
 
-<div style="max-width: 1120px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 2.5rem) 3rem;">
+  <main>
+    <div class="placeholder-card">
+      <h1>Impact & Case Studies</h1>
+      <p>This page is currently under construction. Case studies, metrics, and community impact stories demonstrating language technology outcomes will be available here shortly.</p>
 
-  <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 0 0 6px;">Product Impact Dashboard</h1>
-  <p style="color: #727272; font-size: 15px; line-height: 1.6; max-width: 720px; margin: 0 0 2rem;">
-    Usage statistics for every SIL Language Technology product, pulled from the LangTech
-    Analytics Dashboard. Data refreshes automatically each quarter &mdash; no page changes needed
-    when the source spreadsheet updates.
-  </p>
-
-  <div id="app">
-    <div id="state-message">Loading product data&hellip;</div>
-  </div>
-
-  <div id="footer-note" style="margin-top: 1.5rem; font-size: 12px; color: #8a8a8a;"></div>
-</div>
-
-<script>
-const state = {
-  data: null,
-  quarter: null,
-  categories: new Set(),
-  platforms: new Set(),
-  devStatuses: new Set(),
-  search: "",
-  sort: { key: "name", dir: "asc" },
-};
-
-const CORE_METRICS = [
-  { key: "active_users", label: "Active Users" },
-  { key: "downloads", label: "Downloads" },
-  { key: "installs", label: "Installs" },
-  { key: "active_projects", label: "Active Projects" },
-  { key: "countries", label: "Countries" },
-  { key: "languages_impacted", label: "Languages" },
-];
-
-async function init() {
-  const app = document.getElementById("app");
-  try {
-    const res = await fetch("/impact/api/products");
-    if (!res.ok) throw new Error(`API returned ${res.status}`);
-    state.data = await res.json();
-  } catch (err) {
-    app.innerHTML = `<div id="state-message">Couldn't load live data right now. Please try again shortly.</div>`;
-    return;
-  }
-
-  state.quarter = state.data.quarters[state.data.quarters.length - 1];
-  renderShell();
-  render();
-
-  const footer = document.getElementById("footer-note");
-  if (state.data.generatedAt) {
-    const d = new Date(state.data.generatedAt);
-    footer.textContent = state.data.static
-      ? `Static snapshot from ${d.toLocaleDateString(undefined, { dateStyle: "medium" })} — live sync not yet configured.`
-      : `Data last refreshed ${d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`;
-  }
-}
-
-function renderShell() {
-  const app = document.getElementById("app");
-  const d = state.data;
-  app.innerHTML = `
-    <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
-
-    <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Quarter</div>
-        <select id="quarter-select">
-          ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
-        </select>
-      </div>
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Category</div>
-        <div id="category-pills">${d.categories.map(pillHtml("category")).join("")}</div>
-      </div>
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Platform</div>
-        <div id="platform-pills">${d.platforms.map(pillHtml("platform")).join("")}</div>
-      </div>
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Status</div>
-        <div id="devstatus-pills">${d.devStatuses.map(pillHtml("devstatus")).join("")}</div>
-      </div>
-      <div style="margin-left: auto;">
-        <div class="eyebrow" style="margin-bottom: 6px;">Search</div>
-        <input type="search" id="search-input" placeholder="Product name&hellip;">
-      </div>
+      <!-- Content maintainers: Insert case studies, metrics widgets, and testimonials here -->
     </div>
+  </main>
 
-    <div class="table-wrap">
-      <table>
-        <thead><tr id="table-head"></tr></thead>
-        <tbody id="table-body"></tbody>
-      </table>
-    </div>
-    <div id="empty-message" class="muted" style="text-align: center; padding: 2rem; display: none;">No products match these filters.</div>
-  `;
-
-  document.getElementById("quarter-select").addEventListener("change", e => { state.quarter = e.target.value; render(); });
-  document.getElementById("search-input").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); render(); });
-  attachPillHandlers("category-pills", state.categories);
-  attachPillHandlers("platform-pills", state.platforms);
-  attachPillHandlers("devstatus-pills", state.devStatuses);
-
-  const headRow = document.getElementById("table-head");
-  headRow.innerHTML = [{ key: "name", label: "Product" }, ...CORE_METRICS]
-    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
-    .join("");
-  headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
-    const key = th.dataset.key;
-    state.sort = { key, dir: state.sort.key === key && state.sort.dir === "desc" ? "asc" : "desc" };
-    render();
-  }));
-}
-
-function pillHtml(group) {
-  return value => `<button type="button" class="pill" data-group="${group}" data-value="${escapeAttr(value)}">${value}</button>`;
-}
-
-function attachPillHandlers(containerId, selectedSet) {
-  document.getElementById(containerId).querySelectorAll(".pill").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const value = btn.dataset.value;
-      if (selectedSet.has(value)) selectedSet.delete(value); else selectedSet.add(value);
-      btn.classList.toggle("active");
-      render();
-    });
-  });
-}
-
-function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
-
-function filteredProducts() {
-  return state.data.products.filter(p => {
-    if (state.categories.size && !state.categories.has(p.category)) return false;
-    if (state.platforms.size && !p.platforms.some(pl => state.platforms.has(pl))) return false;
-    if (state.devStatuses.size && !state.devStatuses.has(p.devStatus)) return false;
-    if (state.search && !p.name.toLowerCase().includes(state.search)) return false;
-    return true;
-  });
-}
-
-function metricValue(product, key) {
-  const m = product.quarters[state.quarter];
-  return m ? m[key] ?? null : null;
-}
-
-function render() {
-  const products = filteredProducts();
-  const sorted = [...products].sort((a, b) => {
-    const av = state.sort.key === "name" ? a.name : metricValue(a, state.sort.key);
-    const bv = state.sort.key === "name" ? b.name : metricValue(b, state.sort.key);
-    let cmp;
-    if (av == null && bv == null) cmp = 0;
-    else if (av == null) cmp = 1;
-    else if (bv == null) cmp = -1;
-    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
-    return state.sort.dir === "asc" ? cmp : -cmp;
-  });
-
-  renderStatStrip(products);
-  renderTable(sorted);
-
-  document.querySelectorAll("#table-head th").forEach(th => {
-    th.classList.toggle("sorted", th.dataset.key === state.sort.key);
-  });
-}
-
-function renderStatStrip(products) {
-  const strip = document.getElementById("stat-strip");
-  const sum = key => products.reduce((total, p) => {
-    const v = metricValue(p, key);
-    return typeof v === "number" ? total + v : total;
-  }, 0);
-  const reporting = products.filter(p => p.quarters[state.quarter]).length;
-
-  const tiles = [
-    { label: "Active Users", value: sum("active_users") },
-    { label: "Downloads", value: sum("downloads") },
-    { label: "Products Reporting", value: reporting },
-    { label: "Countries Reached", value: Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
-  ];
-  strip.innerHTML = tiles.map(t => `
-    <div class="stat-tile">
-      <div class="stat-value">${t.value.toLocaleString()}</div>
-      <div class="stat-label">${t.label}</div>
-    </div>
-  `).join("");
-}
-
-function renderTable(products) {
-  const body = document.getElementById("table-body");
-  const emptyMsg = document.getElementById("empty-message");
-
-  if (products.length === 0) {
-    body.innerHTML = "";
-    emptyMsg.style.display = "block";
-    return;
-  }
-  emptyMsg.style.display = "none";
-
-  body.innerHTML = products.map(p => {
-    const optedOut = p.metricsMode === "Opt Out";
-    const nameCell = `
-      ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
-      <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
-        ${p.category ?? ""} ${optedOut ? '<span class="badge">opted out of analytics</span>' : ""}
-      </div>
-    `;
-    const metricCells = CORE_METRICS.map(m => {
-      const v = metricValue(p, m.key);
-      return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
-    }).join("");
-    return `<tr><td>${nameCell}</td>${metricCells}</tr>`;
-  }).join("");
-}
-
-init();
-</script>
+  <footer>
+    <p>&copy; Language Technology. All rights reserved.</p>
+  </footer>
 
 </body>
 </html>

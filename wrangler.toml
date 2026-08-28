@@ -1,0 +1,11 @@
+name = "languagetechnology-org"
+pages_build_output_dir = "."
+compatibility_date = "2026-08-25"
+
+# Same database as impact-sync/wrangler.toml (that worker writes, this Pages project
+# only reads). Fill in the real database_id after running:
+#   wrangler d1 create langtech-impact
+[[d1_databases]]
+binding = "DB"
+database_name = "langtech-impact"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"

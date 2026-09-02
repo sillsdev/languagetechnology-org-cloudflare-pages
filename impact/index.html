@@ -38,6 +38,26 @@ tbody tr:hover { background: #f9fafb; }
 .stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
 #state-message { text-align: center; padding: 3rem 1rem; color: #727272; }
+.chart-card { background: #fff; border: 1px solid #eef1f3; border-radius: var(--radius); padding: 1.25rem 1.5rem 0.5rem; margin-bottom: 1.75rem; }
+.bar-chart { display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 200px) 1fr auto; align-items: center; gap: 12px; padding: 6px 8px; border-radius: 6px; }
+.bar-row:hover { background: #f9fafb; }
+.bar-label { font-size: 13px; font-weight: 600; color: #003049; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { height: 22px; }
+.bar-fill { height: 16px; margin-top: 3px; border-radius: 0 4px 4px 0; min-width: 2px; }
+.bar-value { font-size: 13px; color: #727272; font-variant-numeric: tabular-nums; text-align: right; min-width: 56px; }
+.bar-substat { font-size: 11px; color: #8a8a8a; margin-top: 1px; margin-bottom: 4px; }
+.category-group { padding: 6px 8px; border-radius: 6px; margin-bottom: 8px; }
+.category-group:hover { background: #f9fafb; }
+.bar-row-mini { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+.bar-row-mini:first-child { margin-bottom: 2px; }
+.bar-track-mini { height: 11px; }
+.bar-fill-mini { height: 10px; border-radius: 0 3px 3px 0; min-width: 2px; }
+.bar-fill-mini.avg { opacity: 0.45; }
+[id^="chart-empty-"] { color: #8a8a8a; font-size: 14px; padding: 1rem 0 1.25rem; }
+[id^="chart-legend-"] { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 4px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #727272; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
 </style>
 </head>
 <body>
@@ -52,10 +72,8 @@ tbody tr:hover { background: #f9fafb; }
 <div style="max-width: 1120px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 2.5rem) 3rem;">
 
   <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 0 0 6px;">Product Impact Dashboard</h1>
-  <p style="color: #727272; font-size: 15px; line-height: 1.6; max-width: 720px; margin: 0 0 2rem;">
-    Usage statistics for every SIL Language Technology product, pulled from the LangTech
-    Analytics Dashboard. Data refreshes automatically each quarter &mdash; no page changes needed
-    when the source spreadsheet updates.
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 2rem;">
+    Usage statistics for every SIL Language Technology product, updated quarterly.
   </p>
 
   <div id="app">
@@ -63,6 +81,16 @@ tbody tr:hover { background: #f9fafb; }
   </div>
 
   <div id="footer-note" style="margin-top: 1.5rem; font-size: 12px; color: #8a8a8a;"></div>
+
+  <h2 class="section-title" style="font-size: 28px; margin-top: 3rem;">Font Usage</h2>
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 1.5rem;">
+    Views for every SIL font, from the analytics export dated
+    <strong id="font-export-date" style="color: #003049;">&hellip;</strong>.
+  </p>
+
+  <div id="fonts-app">
+    <div id="fonts-state-message">Loading font data&hellip;</div>
+  </div>
 </div>
 
 <script>
@@ -76,6 +104,14 @@ const state = {
   sort: { key: "name", dir: "asc" },
 };
 
+// Official SIL brand primary colors (SIL Blue/Orange/Violet/Green/Light Blue/Red/Gray/
+// Yellow), sourced from "SIL Color Codes.pdf" and documented in the repo root
+// CLAUDE.md. Fixed order, never cycled: stable regardless of filters (color follows
+// the entity, not its on-screen rank). A 9th+ category folds into a shared "Other"
+// gray rather than generating a new hue.
+const CATEGORY_PALETTE = ["#005CB9", "#FF6B00", "#93358D", "#509E2F", "#00A7E1", "#D52227", "#666666", "#FFB71B"];
+const OTHER_CATEGORY_COLOR = "#c2c2c2";
+
 const CORE_METRICS = [
   { key: "active_users", label: "Active Users" },
   { key: "downloads", label: "Downloads" },
@@ -83,6 +119,15 @@ const CORE_METRICS = [
   { key: "active_projects", label: "Active Projects" },
   { key: "countries", label: "Countries" },
   { key: "languages_impacted", label: "Languages" },
+];
+
+// mode "top10": one bar per product, top 10 by value, colored by the product's category.
+// mode "category-totals": one bar per category (summed across its reporting products),
+// with each bar's max and average per-product value shown alongside as context.
+const TOP_CHARTS = [
+  { key: "active_users", title: "Top 10 by active users", mode: "top10", emptyText: "No active user data for this selection." },
+  { key: "active_projects", title: "Active projects by category", mode: "category-totals", emptyText: "No active project data for this selection." },
+  { key: "languages_impacted", title: "Languages reached by category", mode: "category-totals", emptyText: "No languages-reached data for this selection." },
 ];
 
 async function init() {
@@ -97,6 +142,10 @@ async function init() {
   }
 
   state.quarter = state.data.quarters[state.data.quarters.length - 1];
+  state.categoryColors = {};
+  state.data.categories.forEach((cat, i) => {
+    state.categoryColors[cat] = CATEGORY_PALETTE[i] ?? OTHER_CATEGORY_COLOR;
+  });
   renderShell();
   render();
 
@@ -112,16 +161,34 @@ async function init() {
 function renderShell() {
   const app = document.getElementById("app");
   const d = state.data;
+  const chartCardHtml = c => `
+    <div class="chart-card">
+      <div class="section-title" style="margin-bottom: 0;">${c.title}</div>
+      <div id="chart-legend-${c.key}"></div>
+      <div id="chart-empty-${c.key}" style="display: none;">${c.emptyText}</div>
+      <div id="chart-bars-${c.key}" class="bar-chart"></div>
+    </div>
+  `;
+  const top10Charts = TOP_CHARTS.filter(c => c.mode === "top10");
+  const totalsCharts = TOP_CHARTS.filter(c => c.mode === "category-totals");
+
   app.innerHTML = `
+    <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
+      <div class="eyebrow" style="margin-bottom: 0;">Quarter</div>
+      <select id="quarter-select">
+        ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
+      </select>
+    </div>
+
     <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
 
+    ${top10Charts.map(chartCardHtml).join("")}
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+      ${totalsCharts.map(chartCardHtml).join("")}
+    </div>
+
     <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Quarter</div>
-        <select id="quarter-select">
-          ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
-        </select>
-      </div>
       <div>
         <div class="eyebrow" style="margin-bottom: 6px;">Category</div>
         <div id="category-pills">${d.categories.map(pillHtml("category")).join("")}</div>
@@ -199,8 +266,12 @@ function metricValue(product, key) {
 }
 
 function render() {
-  const products = filteredProducts();
-  const sorted = [...products].sort((a, b) => {
+  // Category/platform/status/search only narrow the table below — the overview section
+  // (stat strip + charts) always reflects every product for the selected quarter, since
+  // those filters don't make sense applied to a top-10 or category-totals view.
+  const overviewProducts = state.data.products;
+  const tableProducts = filteredProducts();
+  const sorted = [...tableProducts].sort((a, b) => {
     const av = state.sort.key === "name" ? a.name : metricValue(a, state.sort.key);
     const bv = state.sort.key === "name" ? b.name : metricValue(b, state.sort.key);
     let cmp;
@@ -211,7 +282,8 @@ function render() {
     return state.sort.dir === "asc" ? cmp : -cmp;
   });
 
-  renderStatStrip(products);
+  renderStatStrip(overviewProducts);
+  TOP_CHARTS.forEach(c => (c.mode === "category-totals" ? renderCategoryTotalsChart : renderTopChart)(overviewProducts, c));
   renderTable(sorted);
 
   document.querySelectorAll("#table-head th").forEach(th => {
@@ -241,6 +313,101 @@ function renderStatStrip(products) {
   `).join("");
 }
 
+function renderTopChart(products, config) {
+  const chart = document.getElementById(`chart-bars-${config.key}`);
+  const emptyMsg = document.getElementById(`chart-empty-${config.key}`);
+  const legend = document.getElementById(`chart-legend-${config.key}`);
+
+  const ranked = products
+    .map(p => ({ name: p.name, category: p.category, value: metricValue(p, config.key) }))
+    .filter(p => typeof p.value === "number" && p.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
+
+  if (ranked.length === 0) {
+    chart.innerHTML = "";
+    legend.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  const categoryColor = cat => state.categoryColors[cat] ?? OTHER_CATEGORY_COLOR;
+
+  const max = ranked[0].value;
+  chart.innerHTML = ranked.map(p => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escapeAttr(p.name)}">${p.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width: ${Math.max(1, (p.value / max) * 100)}%; background: ${categoryColor(p.category)};"></div></div>
+      <div class="bar-value">${p.value.toLocaleString()}</div>
+    </div>
+  `).join("");
+
+  const shownCategories = [...new Set(ranked.map(p => p.category).filter(Boolean))]
+    .sort((a, b) => state.data.categories.indexOf(a) - state.data.categories.indexOf(b));
+  legend.innerHTML = shownCategories.map(cat => `
+    <span class="legend-item"><span class="legend-swatch" style="background: ${categoryColor(cat)};"></span>${cat}</span>
+  `).join("");
+}
+
+// One group per category (not one bar per product): max and average per-product value
+// for this metric, each its own bar, scaled against the largest max across categories.
+function renderCategoryTotalsChart(products, config) {
+  const chart = document.getElementById(`chart-bars-${config.key}`);
+  const emptyMsg = document.getElementById(`chart-empty-${config.key}`);
+  const legend = document.getElementById(`chart-legend-${config.key}`);
+
+  const byCategory = new Map();
+  products.forEach(p => {
+    const v = metricValue(p, config.key);
+    if (typeof v !== "number" || v <= 0 || !p.category) return;
+    if (!byCategory.has(p.category)) byCategory.set(p.category, []);
+    byCategory.get(p.category).push(v);
+  });
+
+  const rows = [...byCategory.entries()].map(([category, values]) => ({
+    category,
+    max: Math.max(...values),
+    avg: values.reduce((a, b) => a + b, 0) / values.length,
+    count: values.length,
+  })).sort((a, b) => b.max - a.max);
+
+  if (rows.length === 0) {
+    chart.innerHTML = "";
+    legend.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  legend.innerHTML = `
+    <span class="legend-item"><span class="legend-swatch" style="background: #727272;"></span>Max</span>
+    <span class="legend-item"><span class="legend-swatch" style="background: #727272; opacity: 0.45;"></span>Avg</span>
+  `;
+
+  const categoryColor = cat => state.categoryColors[cat] ?? OTHER_CATEGORY_COLOR;
+  const scaleMax = Math.max(...rows.map(r => r.max));
+  const pct = v => Math.max(1, (v / scaleMax) * 100);
+
+  chart.innerHTML = rows.map(r => {
+    const color = categoryColor(r.category);
+    return `
+    <div class="category-group">
+      <div class="bar-label">${r.category}</div>
+      <div class="bar-substat">${r.count} product${r.count === 1 ? "" : "s"}</div>
+      <div class="bar-row-mini">
+        <div class="bar-track bar-track-mini"><div class="bar-fill-mini" style="width: ${pct(r.max)}%; background: ${color};"></div></div>
+        <div class="bar-value">${r.max.toLocaleString()}</div>
+      </div>
+      <div class="bar-row-mini">
+        <div class="bar-track bar-track-mini"><div class="bar-fill-mini avg" style="width: ${pct(r.avg)}%; background: ${color};"></div></div>
+        <div class="bar-value">${Math.round(r.avg).toLocaleString()}</div>
+      </div>
+    </div>
+  `;
+  }).join("");
+}
+
 function renderTable(products) {
   const body = document.getElementById("table-body");
   const emptyMsg = document.getElementById("empty-message");
@@ -268,7 +435,176 @@ function renderTable(products) {
   }).join("");
 }
 
+// ---- Font Usage section ----
+// Independent data source/fetch from the products section above (see
+// functions/impact/api/fonts.js) - a fetch failure here only degrades this
+// section, never the products section, and vice versa.
+
+const FONT_METRICS = [
+  { key: "weeklyViews", label: "Weekly Views" },
+  { key: "lifetimeViews", label: "Lifetime Views" },
+];
+
+const fontState = {
+  data: null,
+  date: null,
+  sort: { key: "weeklyViews", dir: "desc" },
+};
+
+async function initFonts() {
+  const app = document.getElementById("fonts-app");
+  try {
+    const res = await fetch("/impact/api/fonts");
+    if (!res.ok) throw new Error(`API returned ${res.status}`);
+    fontState.data = await res.json();
+  } catch (err) {
+    app.innerHTML = `<div id="fonts-state-message">Couldn't load font data right now. Please try again shortly.</div>`;
+    return;
+  }
+
+  fontState.date = fontState.data.dates[fontState.data.dates.length - 1];
+  renderFontsShell();
+  renderFonts();
+}
+
+function fontMetricValue(font, key) {
+  const s = font.snapshots[fontState.date];
+  return s ? s[key] ?? null : null;
+}
+
+function renderFontsShell() {
+  const app = document.getElementById("fonts-app");
+  const d = fontState.data;
+
+  app.innerHTML = `
+    <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
+      <div class="eyebrow" style="margin-bottom: 0;">Date</div>
+      <select id="font-date-select">
+        ${d.dates.map(date => `<option value="${date}" ${date === fontState.date ? "selected" : ""}>${new Date(date).toLocaleDateString(undefined, { dateStyle: "medium" })}</option>`).join("")}
+      </select>
+    </div>
+
+    <div id="fonts-stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
+
+    <div class="chart-card">
+      <div class="section-title" style="margin-bottom: 0;">Top 10 by weekly views</div>
+      <div id="font-chart-empty" style="display: none;">No font view data for this date.</div>
+      <div id="font-chart-bars" class="bar-chart"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="font-table-head"></tr></thead>
+        <tbody id="font-table-body"></tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById("font-date-select").addEventListener("change", e => { fontState.date = e.target.value; renderFonts(); });
+
+  const headRow = document.getElementById("font-table-head");
+  headRow.innerHTML = [{ key: "name", label: "Font" }, ...FONT_METRICS]
+    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
+    .join("");
+  headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    fontState.sort = { key, dir: fontState.sort.key === key && fontState.sort.dir === "desc" ? "asc" : "desc" };
+    renderFonts();
+  }));
+}
+
+function renderFonts() {
+  const fonts = fontState.data.fonts;
+  const sorted = [...fonts].sort((a, b) => {
+    const av = fontState.sort.key === "name" ? a.name : fontMetricValue(a, fontState.sort.key);
+    const bv = fontState.sort.key === "name" ? b.name : fontMetricValue(b, fontState.sort.key);
+    let cmp;
+    if (av == null && bv == null) cmp = 0;
+    else if (av == null) cmp = 1;
+    else if (bv == null) cmp = -1;
+    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
+    return fontState.sort.dir === "asc" ? cmp : -cmp;
+  });
+
+  document.getElementById("font-export-date").textContent =
+    new Date(fontState.date).toLocaleDateString(undefined, { dateStyle: "long" });
+
+  renderFontsStatStrip(fonts);
+  renderFontsChart(fonts);
+  renderFontsTable(sorted);
+
+  document.querySelectorAll("#font-table-head th").forEach(th => {
+    th.classList.toggle("sorted", th.dataset.key === fontState.sort.key);
+  });
+}
+
+function renderFontsStatStrip(fonts) {
+  const strip = document.getElementById("fonts-stat-strip");
+  const sum = key => fonts.reduce((total, f) => {
+    const v = fontMetricValue(f, key);
+    return typeof v === "number" ? total + v : total;
+  }, 0);
+  const reporting = fonts.filter(f => f.snapshots[fontState.date]).length;
+  const top = [...fonts].sort((a, b) => (fontMetricValue(b, "weeklyViews") ?? 0) - (fontMetricValue(a, "weeklyViews") ?? 0))[0];
+
+  const tiles = [
+    { label: "Fonts Reporting", value: reporting },
+    { label: "Weekly Views", value: sum("weeklyViews") },
+    { label: "Lifetime Views", value: sum("lifetimeViews") },
+  ];
+  strip.innerHTML = tiles.map(t => `
+    <div class="stat-tile">
+      <div class="stat-value">${t.value.toLocaleString()}</div>
+      <div class="stat-label">${t.label}</div>
+    </div>
+  `).join("") + (top ? `
+    <div class="stat-tile">
+      <div class="stat-value" style="font-size: 20px;">${escapeAttr(top.name)}</div>
+      <div class="stat-label">Top Font</div>
+    </div>
+  ` : "");
+}
+
+function renderFontsChart(fonts) {
+  const chart = document.getElementById("font-chart-bars");
+  const emptyMsg = document.getElementById("font-chart-empty");
+
+  const ranked = fonts
+    .map(f => ({ name: f.name, value: fontMetricValue(f, "weeklyViews") }))
+    .filter(f => typeof f.value === "number" && f.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
+
+  if (ranked.length === 0) {
+    chart.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  const max = ranked[0].value;
+  chart.innerHTML = ranked.map(f => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escapeAttr(f.name)}">${f.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width: ${Math.max(1, (f.value / max) * 100)}%; background: #00a7e1;"></div></div>
+      <div class="bar-value">${f.value.toLocaleString()}</div>
+    </div>
+  `).join("");
+}
+
+function renderFontsTable(fonts) {
+  const body = document.getElementById("font-table-body");
+  body.innerHTML = fonts.map(f => {
+    const metricCells = FONT_METRICS.map(m => {
+      const v = fontMetricValue(f, m.key);
+      return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
+    }).join("");
+    return `<tr><td style="font-weight: 600;">${f.name}</td>${metricCells}</tr>`;
+  }).join("");
+}
+
 init();
+initFonts();
 </script>
 
 </body>

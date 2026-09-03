@@ -133,6 +133,41 @@ the font count (columns 39–75); the true combined distinct-item count is 64 (2
 number added little value to the donor audience — see the "Insights" section instead for
 what actually resonates.
 
+## Visual style
+
+Colors and fonts are aligned with the SIL global brand (global.sil.org) — match these
+rather than introducing new ones when adding sections or charts.
+
+**Fonts** (Google Fonts, loaded via `<link>` in `<head>`):
+- `Playfair Display` (serif, weights 500/600, italic 500) — headings, big stat numbers,
+  pull-quotes.
+- `Source Sans 3` (sans-serif, weights 400/500) — body text, UI controls (buttons, captions).
+- `Caveat` (cursive, weight 500) — the handwritten-style section "eyebrow" labels (e.g.
+  "Reach", "Coverage", "Gratitude"), always in the brand blue `#00a7e1`.
+
+**Colors:**
+| Role | Hex | Notes |
+|---|---|---|
+| Primary text / dark navy | `#003049` | headings, stat numbers, primary text |
+| Secondary text | `#727272` | body copy, captions |
+| Muted text | `#8a8a8a` | least prominent labels |
+| Borders / dividers | `#e4e4e4` | hairlines, card borders |
+| Brand orange (accent) | `#ff6b00` | dividers, CTAs, highlight accents |
+| Brand blue | `#00a7e1` | section eyebrow headings, links, accents |
+| Light blue | `#4FC3E8` | hero eyebrow text on dark background |
+| Green accent | `#1D9E75` | tertiary chart/category color |
+| Dark orange-brown | `#8A3E0A` | quaternary chart/category color, "constructive feedback" tint |
+| Deep brown | `#5C2806` | darkest orange-family text (on `#FCEEE3` tint) |
+| Neutral tints | `#eef1f3`, `#f9fafb`, `#E7ECF1` | card/section backgrounds |
+| Color-tinted backgrounds | `#FCEEE3` (orange), `#E3F3FA` (blue), `#E7ECF1` (neutral) | paired with matching dark text (`#8A3E0A`/`#5C2806`, `#0C4A63`/`#093646`, `#003049`/`#081F30`) for the three feedback-category cards |
+| Categorical chart/word-cloud palette (in order) | `#003049`, `#ff6b00`, `#00a7e1`, `#1D9E75`, `#8A3E0A` | used for Chart.js series and word-cloud word coloring |
+
+Card corner radius is `10px` (CSS var `--radius`). CSS custom properties for the core text
+colors are declared on `:root` (`--text-primary`, `--text-secondary`, `--text-muted`) — reuse
+those rather than re-hardcoding `#003049`/`#727272`/`#8a8a8a` inline where practical (most of
+the existing page uses inline hex directly, so it's fine to match that pattern too — just stay
+consistent with these values).
+
 ## Page structure (`index.html`)
 
 Full-bleed photo hero (765 stat) → short intro paragraph → rotating quote carousel →

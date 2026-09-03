@@ -143,7 +143,7 @@ body { margin: 0; }
 
   <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Gratitude</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">top 10 products by encouragement comments</p>
-  <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">tap or click any bar to read quotes from that product's users</div>
+  <div class="fade-section" style="font-size: 13px; color: #00a7e1; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;"><span aria-hidden="true">&#128071;</span> tap or click any bar below to read quotes from that product's users</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 480px; margin-bottom: 1rem;">
     <canvas id="encChart" style="cursor: pointer;" role="img" aria-label="Horizontal bar chart of top 10 products by number of encouragement comments: Paratext 93, Fonts 66, FieldWorks 59, App Builders 56, Bloom 44, Keyman 39, PTXprint 22, Scripture Forge 17, AlphaTiles 13, SayMore 11">Paratext 93, Fonts 66, FieldWorks 59, App Builders 56, Bloom 44, Keyman 39, PTXprint 22, Scripture Forge 17, AlphaTiles 13, SayMore 11.</canvas>
   </div>
@@ -448,6 +448,7 @@ const encChartInstance = new Chart(document.getElementById('encChart'), {
     datasets: [{
       data: [93, 66, 59, 56, 44, 39, 22, 17, 13, 11],
       backgroundColor: '#00a7e1',
+      hoverBackgroundColor: '#007ea8',
       borderRadius: 4,
       barThickness: 20
     }]
@@ -479,7 +480,7 @@ encLabels.forEach((label, i) => {
 });
 
 const quotePanel = document.getElementById('quotePanel');
-function showQuotePanel(product) {
+function showQuotePanel(product, { scroll = true } = {}) {
   const info = quoteData[product];
   if (!info) return;
   quotePanel.replaceChildren();
@@ -520,7 +521,7 @@ function showQuotePanel(product) {
   });
 
   quotePanel.style.display = 'block';
-  quotePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (scroll) quotePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 document.getElementById('encChart').addEventListener('click', (evt) => {
   const points = encChartInstance.getElementsAtEventForMode(evt, 'y', { intersect: false }, true);
@@ -528,6 +529,9 @@ document.getElementById('encChart').addEventListener('click', (evt) => {
     showQuotePanel(encLabels[points[0].index]);
   }
 });
+// Demonstrate the click-to-reveal interaction by opening the top bar's quotes by default,
+// instead of relying solely on the hint text above the chart (users weren't discovering it).
+showQuotePanel(encLabels[0], { scroll: false });
 
 const growthLabels = ["May 4","May 5","May 6","May 7","May 8","May 9","May 10","May 11","May 12","May 13","May 14","May 15","May 16","May 17","May 18","May 19","May 20","May 21","May 22","May 23","May 24","May 25","May 26","May 27","May 28","May 29","May 30","May 31","Jun 1","Jun 2","Jun 3","Jun 4","Jun 5","Jun 6","Jun 7","Jun 8","Jun 9","Jun 10","Jun 11","Jun 12","Jun 13","Jun 14","Jun 15","Jun 16","Jun 17","Jun 18","Jun 19","Jun 20","Jun 21","Jun 22","Jun 23","Jun 24","Jun 25","Jun 26","Jun 27","Jun 28","Jun 29","Jun 30","Jul 1","Jul 2","Jul 3","Jul 4","Jul 5","Jul 6","Jul 7","Jul 8","Jul 9","Jul 10","Jul 11","Jul 12","Jul 13","Jul 14","Jul 15","Jul 16","Jul 17","Jul 18","Jul 19","Jul 20","Jul 21","Jul 22","Jul 23","Jul 24","Jul 25","Jul 26","Jul 27","Jul 28","Jul 29"];
 const growthDaily = [2,1,0,0,5,12,1,59,47,79,39,39,10,10,23,47,26,25,14,2,4,8,14,5,15,5,3,2,6,6,4,10,3,3,1,2,3,4,8,4,1,0,2,5,9,5,7,1,1,18,22,8,5,3,1,6,5,3,4,3,3,4,2,4,5,6,5,2,7,0,2,6,3,13,3,2,3,7,8,3,1,0,3,1,8,3,1];

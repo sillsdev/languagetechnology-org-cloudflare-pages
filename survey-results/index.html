@@ -447,7 +447,7 @@ const encChartInstance = new Chart(document.getElementById('encChart'), {
     labels: encLabels,
     datasets: [{
       data: [93, 66, 59, 56, 44, 39, 22, 17, 13, 11],
-      backgroundColor: '#00a7e1',
+      backgroundColor: encLabels.map(() => '#00a7e1'),
       hoverBackgroundColor: '#007ea8',
       borderRadius: 4,
       barThickness: 20
@@ -480,9 +480,15 @@ encLabels.forEach((label, i) => {
 });
 
 const quotePanel = document.getElementById('quotePanel');
+function setActiveEncBar(idx) {
+  encChartInstance.data.datasets[0].backgroundColor = encLabels.map((_, i) => i === idx ? '#003049' : '#00a7e1');
+  encChartInstance.update();
+}
 function showQuotePanel(product, { scroll = true } = {}) {
   const info = quoteData[product];
   if (!info) return;
+  const idx = encLabels.indexOf(product);
+  setActiveEncBar(idx);
   quotePanel.replaceChildren();
 
   const header = document.createElement('div');
@@ -519,6 +525,29 @@ function showQuotePanel(product, { scroll = true } = {}) {
       quotePanel.appendChild(noteEl);
     }
   });
+
+  const prevIdx = (idx - 1 + encLabels.length) % encLabels.length;
+  const nextIdx = (idx + 1) % encLabels.length;
+  const nav = document.createElement('div');
+  nav.style.cssText = 'display:flex; justify-content:space-between; margin-top:12px; padding-top:10px; border-top:1px solid #e4e4e4;';
+
+  const prevBtn = document.createElement('button');
+  prevBtn.type = 'button';
+  prevBtn.style.cssText = 'background:none; border:none; cursor:pointer; font-size:13px; font-weight:600; color:#00a7e1; padding:4px 0;';
+  prevBtn.innerHTML = '&#8249; ' + encLabels[prevIdx];
+  prevBtn.setAttribute('aria-label', 'Previous product: ' + encLabels[prevIdx]);
+  prevBtn.addEventListener('click', () => showQuotePanel(encLabels[prevIdx], { scroll: false }));
+
+  const nextBtn = document.createElement('button');
+  nextBtn.type = 'button';
+  nextBtn.style.cssText = 'background:none; border:none; cursor:pointer; font-size:13px; font-weight:600; color:#00a7e1; padding:4px 0;';
+  nextBtn.innerHTML = encLabels[nextIdx] + ' &#8250;';
+  nextBtn.setAttribute('aria-label', 'Next product: ' + encLabels[nextIdx]);
+  nextBtn.addEventListener('click', () => showQuotePanel(encLabels[nextIdx], { scroll: false }));
+
+  nav.appendChild(prevBtn);
+  nav.appendChild(nextBtn);
+  quotePanel.appendChild(nav);
 
   quotePanel.style.display = 'block';
   if (scroll) quotePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

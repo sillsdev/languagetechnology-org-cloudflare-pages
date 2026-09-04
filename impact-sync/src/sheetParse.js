@@ -84,19 +84,3 @@ export const QUARTER_METRIC_SCHEMA = {
   new_community_topics: "New Community Topics",
 };
 
-export const METRIC_LABELS = {
-  active_users: "Active Users",
-  downloads: "Downloads",
-  installs: "Installs",
-  active_projects: "Active Projects",
-  new_projects_started: "New Projects Started",
-  avg_mau: "Avg. Monthly Active Users",
-  countries: "Countries Reached",
-  languages_impacted: "Languages Impacted",
-  release_version: "Latest Release Version",
-  release_date: "Latest Release Date",
-  supported_fte: "Supported FTE",
-  paid_fte: "Paid FTE",
-  new_support_tickets: "New Support Tickets",
-  new_community_topics: "New Community Topics",
-};

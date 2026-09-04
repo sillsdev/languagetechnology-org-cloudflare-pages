@@ -1,8 +1,9 @@
 // Static snapshot for /impact's Font Usage section, built from quarterly CSV
 // exports of a fonts analytics dashboard (see impact/input/fonts/ for the raw
-// exports this was generated from, gitignored). There is no live API for this
-// data source, so unlike staticData.js this file has no D1 counterpart to be
-// superseded by -- functions/impact/api/fonts.js reads it directly.
+// exports this was generated from, gitignored). functions/impact/api/fonts.js
+// reads this as a fallback whenever KV has no "fonts:catalog" record yet -- nothing
+// currently writes that record (import-font-stats.mjs only rewrites this file), so
+// in practice this file is still the only data source until that changes.
 //
 // To refresh each quarter: node scripts/import-font-stats.mjs "<new CSV path>"
 

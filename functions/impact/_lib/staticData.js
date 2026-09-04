@@ -1,15 +1,15 @@
 // Static snapshot of the "LangTech Analytics Dashboard" Google Sheet, generated
 // 2026-08-28 from a manual export (see impact/input/).
 // Covers all non-font products for the last two fiscal quarters. This is a stopgap
-// data source while the D1 + sync worker pipeline (see impact-sync/) is still pending
+// data source while the KV + sync worker pipeline (see impact-sync/) is still pending
 // its manual Google Cloud / Cloudflare setup - functions/impact/api/products.js falls
-// back to this whenever the D1 table is empty or missing, exactly like it would have
-// fallen back to a hand-written mock fixture. Once the sync worker populates D1 for
+// back to this whenever the KV key is empty or missing, exactly like it would have
+// fallen back to a hand-written mock fixture. Once the sync worker populates KV for
 // real, the read path picks that up automatically with no code change here.
 //
 // To refresh: re-parse a newer export of the sheet (Product List tab for metadata,
 // the quarterly tabs for metrics, joined by product name) and replace this file's
-// staticProducts value. This file is superseded entirely once the D1 pipeline
+// staticProducts value. This file is superseded entirely once the KV pipeline
 // goes live.
 
 export const staticProducts = {

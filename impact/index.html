@@ -97,6 +97,8 @@ tbody tr:hover { background: #f9fafb; }
 const state = {
   data: null,
   quarter: null,
+  quarterCache: new Map(), // quarter -> already-fetched API response, so switching back doesn't refetch
+  quarterRequestToken: 0, // bumped on every quarter switch; a response only applies if it's still current
   categories: new Set(),
   platforms: new Set(),
   devStatuses: new Set(),
@@ -130,18 +132,25 @@ const TOP_CHARTS = [
   { key: "languages_impacted", title: "Languages reached by category", mode: "category-totals", emptyText: "No languages-reached data for this selection." },
 ];
 
+async function fetchQuarter(quarter) {
+  const url = quarter ? `/impact/api/products?quarter=${encodeURIComponent(quarter)}` : "/impact/api/products";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const data = await res.json();
+  state.quarterCache.set(data.quarter, data);
+  return data;
+}
+
 async function init() {
   const app = document.getElementById("app");
   try {
-    const res = await fetch("/impact/api/products");
-    if (!res.ok) throw new Error(`API returned ${res.status}`);
-    state.data = await res.json();
+    state.data = await fetchQuarter();
   } catch (err) {
     app.innerHTML = `<div id="state-message">Couldn't load live data right now. Please try again shortly.</div>`;
     return;
   }
 
-  state.quarter = state.data.quarters[state.data.quarters.length - 1];
+  state.quarter = state.data.quarter;
   state.categoryColors = {};
   state.data.categories.forEach((cat, i) => {
     state.categoryColors[cat] = CATEGORY_PALETTE[i] ?? OTHER_CATEGORY_COLOR;
@@ -178,6 +187,7 @@ function renderShell() {
       <select id="quarter-select">
         ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
       </select>
+      <span id="quarter-status" class="muted" style="font-size: 13px;"></span>
     </div>
 
     <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
@@ -216,7 +226,7 @@ function renderShell() {
     <div id="empty-message" class="muted" style="text-align: center; padding: 2rem; display: none;">No products match these filters.</div>
   `;
 
-  document.getElementById("quarter-select").addEventListener("change", e => { state.quarter = e.target.value; render(); });
+  document.getElementById("quarter-select").addEventListener("change", onQuarterChange);
   document.getElementById("search-input").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); render(); });
   attachPillHandlers("category-pills", state.categories);
   attachPillHandlers("platform-pills", state.platforms);
@@ -231,6 +241,43 @@ function renderShell() {
     state.sort = { key, dir: state.sort.key === key && state.sort.dir === "desc" ? "asc" : "desc" };
     render();
   }));
+}
+
+// Switching quarters is a real network fetch now (only the newest quarter's data is
+// preloaded), unlike every other filter on this page which is instant/client-side.
+// A cache of already-fetched quarters avoids refetching on a repeat visit, and the
+// request token guards against a slow response for an earlier selection landing
+// after a faster response for a later one.
+async function onQuarterChange(e) {
+  const select = e.target;
+  const requested = select.value;
+  const status = document.getElementById("quarter-status");
+  const token = ++state.quarterRequestToken;
+
+  if (state.quarterCache.has(requested)) {
+    state.data = state.quarterCache.get(requested);
+    state.quarter = state.data.quarter;
+    render();
+    return;
+  }
+
+  select.disabled = true;
+  status.textContent = "Loading…";
+  try {
+    const data = await fetchQuarter(requested);
+    if (token !== state.quarterRequestToken) return; // a newer selection has since won
+    state.data = data;
+    state.quarter = data.quarter;
+    select.value = state.quarter; // in case the API fell back to a different quarter
+    status.textContent = "";
+    render();
+  } catch (err) {
+    if (token !== state.quarterRequestToken) return;
+    select.value = state.quarter; // revert to the last quarter that loaded successfully
+    status.textContent = "Couldn't load that quarter. Please try again.";
+  } finally {
+    if (token === state.quarterRequestToken) select.disabled = false;
+  }
 }
 
 function pillHtml(group) {
@@ -261,8 +308,7 @@ function filteredProducts() {
 }
 
 function metricValue(product, key) {
-  const m = product.quarters[state.quarter];
-  return m ? m[key] ?? null : null;
+  return product.metrics ? product.metrics[key] ?? null : null;
 }
 
 function render() {
@@ -297,7 +343,7 @@ function renderStatStrip(products) {
     const v = metricValue(p, key);
     return typeof v === "number" ? total + v : total;
   }, 0);
-  const reporting = products.filter(p => p.quarters[state.quarter]).length;
+  const reporting = products.filter(p => p.metrics && Object.keys(p.metrics).length > 0).length;
 
   const tiles = [
     { label: "Active Users", value: sum("active_users") },
@@ -448,28 +494,70 @@ const FONT_METRICS = [
 const fontState = {
   data: null,
   date: null,
+  dateCache: new Map(), // date -> already-fetched API response, so switching back doesn't refetch
+  dateRequestToken: 0, // bumped on every date switch; a response only applies if it's still current
   sort: { key: "weeklyViews", dir: "desc" },
 };
+
+async function fetchFontDate(date) {
+  const url = date ? `/impact/api/fonts?date=${encodeURIComponent(date)}` : "/impact/api/fonts";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const data = await res.json();
+  fontState.dateCache.set(data.date, data);
+  return data;
+}
 
 async function initFonts() {
   const app = document.getElementById("fonts-app");
   try {
-    const res = await fetch("/impact/api/fonts");
-    if (!res.ok) throw new Error(`API returned ${res.status}`);
-    fontState.data = await res.json();
+    fontState.data = await fetchFontDate();
   } catch (err) {
     app.innerHTML = `<div id="fonts-state-message">Couldn't load font data right now. Please try again shortly.</div>`;
     return;
   }
 
-  fontState.date = fontState.data.dates[fontState.data.dates.length - 1];
+  fontState.date = fontState.data.date;
   renderFontsShell();
   renderFonts();
 }
 
+// Switching dates is a real network fetch now (only the latest date is preloaded),
+// mirroring onQuarterChange above for the same reasons.
+async function onFontDateChange(e) {
+  const select = e.target;
+  const requested = select.value;
+  const status = document.getElementById("font-date-status");
+  const token = ++fontState.dateRequestToken;
+
+  if (fontState.dateCache.has(requested)) {
+    fontState.data = fontState.dateCache.get(requested);
+    fontState.date = fontState.data.date;
+    renderFonts();
+    return;
+  }
+
+  select.disabled = true;
+  status.textContent = "Loading…";
+  try {
+    const data = await fetchFontDate(requested);
+    if (token !== fontState.dateRequestToken) return; // a newer selection has since won
+    fontState.data = data;
+    fontState.date = data.date;
+    select.value = fontState.date; // in case the API fell back to a different date
+    status.textContent = "";
+    renderFonts();
+  } catch (err) {
+    if (token !== fontState.dateRequestToken) return;
+    select.value = fontState.date; // revert to the last date that loaded successfully
+    status.textContent = "Couldn't load that date. Please try again.";
+  } finally {
+    if (token === fontState.dateRequestToken) select.disabled = false;
+  }
+}
+
 function fontMetricValue(font, key) {
-  const s = font.snapshots[fontState.date];
-  return s ? s[key] ?? null : null;
+  return font.metrics ? font.metrics[key] ?? null : null;
 }
 
 function renderFontsShell() {
@@ -482,6 +570,7 @@ function renderFontsShell() {
       <select id="font-date-select">
         ${d.dates.map(date => `<option value="${date}" ${date === fontState.date ? "selected" : ""}>${new Date(date).toLocaleDateString(undefined, { dateStyle: "medium" })}</option>`).join("")}
       </select>
+      <span id="font-date-status" class="muted" style="font-size: 13px;"></span>
     </div>
 
     <div id="fonts-stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
@@ -500,7 +589,7 @@ function renderFontsShell() {
     </div>
   `;
 
-  document.getElementById("font-date-select").addEventListener("change", e => { fontState.date = e.target.value; renderFonts(); });
+  document.getElementById("font-date-select").addEventListener("change", onFontDateChange);
 
   const headRow = document.getElementById("font-table-head");
   headRow.innerHTML = [{ key: "name", label: "Font" }, ...FONT_METRICS]
@@ -544,7 +633,7 @@ function renderFontsStatStrip(fonts) {
     const v = fontMetricValue(f, key);
     return typeof v === "number" ? total + v : total;
   }, 0);
-  const reporting = fonts.filter(f => f.snapshots[fontState.date]).length;
+  const reporting = fonts.filter(f => f.metrics && Object.keys(f.metrics).length > 0).length;
   const top = [...fonts].sort((a, b) => (fontMetricValue(b, "weeklyViews") ?? 0) - (fontMetricValue(a, "weeklyViews") ?? 0))[0];
 
   const tiles = [

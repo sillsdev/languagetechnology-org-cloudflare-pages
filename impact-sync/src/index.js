@@ -6,17 +6,19 @@ import {
   PRODUCT_LIST_SCHEMA,
   QUARTER_METRIC_SCHEMA,
 } from "./sheetParse.js";
-import { upsertAll, recordSyncError } from "./db.js";
+import { writeSync, recordSyncError } from "./kv.js";
 
-// Quarterly sheets to pull, most recent first. Adding a future quarter is a one-line
-// addition here — no other code changes, since parsing is header-driven.
-const QUARTER_SHEETS = ["FY26Q3", "FY26Q2", "FY26Q1", "FY25Q4"];
-const SHEET_RANGES = ["Product List", ...QUARTER_SHEETS];
+// The quarter synced by default (cron, and a manual "POST /sync" with no body).
+// Bump this one-line constant when a new quarterly tab is added to the sheet --
+// parsing itself is header-driven and needs no other change. A manual trigger with
+// a JSON body like {"quarter": "FY26Q1"} can target any other quarter on demand
+// (e.g. a correction to an already-closed quarter) without touching this constant.
+const CURRENT_QUARTER = "FY26Q3";
 
-async function fetchSheetValues(env) {
+async function fetchSheetValues(env, ranges) {
   const token = await getAccessToken(env);
   const params = new URLSearchParams({ valueRenderOption: "UNFORMATTED_VALUE" });
-  for (const range of SHEET_RANGES) params.append("ranges", range);
+  for (const range of ranges) params.append("ranges", range);
 
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${env.SHEET_ID}/values:batchGet?${params}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
@@ -24,41 +26,40 @@ async function fetchSheetValues(env) {
     throw new Error(`Sheets API batchGet failed (${res.status}): ${await res.text()}`);
   }
   const { valueRanges } = await res.json();
-  return SHEET_RANGES.reduce((acc, range, i) => {
+  return ranges.reduce((acc, range, i) => {
     acc[range] = valueRanges[i]?.values ?? [];
     return acc;
   }, {});
 }
 
-function normalize(sheetValues) {
+function normalize(sheetValues, quarter) {
   const products = extractRows(sheetValues["Product List"], {
     headerMatch: "Product Name",
     schema: PRODUCT_LIST_SCHEMA,
     isValidRow: isProductListRow,
   });
 
-  const metricsByProduct = new Map();
-  for (const period of QUARTER_SHEETS) {
-    const rows = extractRows(sheetValues[period], {
-      headerMatch: "Product Name",
-      schema: QUARTER_METRIC_SCHEMA,
-      isValidRow: isQuarterlyMetricRow,
-    });
-    for (const row of rows) {
-      const { name, ...metrics } = row;
-      if (!metricsByProduct.has(name)) metricsByProduct.set(name, new Map());
-      metricsByProduct.get(name).set(period, metrics);
-    }
+  const rows = extractRows(sheetValues[quarter], {
+    headerMatch: "Product Name",
+    schema: QUARTER_METRIC_SCHEMA,
+    isValidRow: isQuarterlyMetricRow,
+  });
+
+  const metrics = new Map();
+  for (const row of rows) {
+    const { name, ...values } = row;
+    metrics.set(name, values);
   }
 
-  return { products, metricsByProduct };
+  return { products, metrics };
 }
 
-export async function runSync(env) {
-  const sheetValues = await fetchSheetValues(env);
-  const normalized = normalize(sheetValues);
-  await upsertAll(env.DB, normalized);
-  return { productsSynced: normalized.products.length, quarters: QUARTER_SHEETS };
+export async function runSync(env, { quarter } = {}) {
+  const targetQuarter = quarter || CURRENT_QUARTER;
+  const sheetValues = await fetchSheetValues(env, ["Product List", targetQuarter]);
+  const { products, metrics } = normalize(sheetValues, targetQuarter);
+  await writeSync(env.IMPACT_KV, { quarter: targetQuarter, products, metrics });
+  return { productsSynced: products.length, quarter: targetQuarter };
 }
 
 function unauthorized() {
@@ -68,7 +69,7 @@ function unauthorized() {
 export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(
-      runSync(env).catch((err) => recordSyncError(env.DB, String(err?.message ?? err)))
+      runSync(env).catch((err) => recordSyncError(env.IMPACT_KV, String(err?.message ?? err)))
     );
   },
 
@@ -81,12 +82,21 @@ export default {
     const auth = request.headers.get("Authorization") ?? "";
     if (auth !== `Bearer ${env.SYNC_TOKEN}`) return unauthorized();
 
+    // Optional {"quarter": "FY26Q1"} body to target a specific quarter (e.g. a
+    // backfill/correction); an empty or absent body just means "the current one".
+    let quarter;
     try {
-      const result = await runSync(env);
+      quarter = (await request.json())?.quarter;
+    } catch {
+      quarter = undefined;
+    }
+
+    try {
+      const result = await runSync(env, { quarter });
       return Response.json({ ok: true, ...result });
     } catch (err) {
       const message = String(err?.message ?? err);
-      await recordSyncError(env.DB, message);
+      await recordSyncError(env.IMPACT_KV, message);
       return Response.json({ ok: false, error: message }, { status: 502 });
     }
   },

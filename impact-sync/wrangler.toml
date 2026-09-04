@@ -7,7 +7,6 @@ compatibility_date = "2026-08-25"
 [triggers]
 crons = ["0 6 * * *"]
 
-[[d1_databases]]
-binding = "DB"
-database_name = "langtech-impact"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+[[kv_namespaces]]
+binding = "IMPACT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

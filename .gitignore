@@ -1,0 +1,5 @@
+.dev.vars
+node_modules/
+.wrangler/
+impact/input/*.xlsx
+impact/input/fonts/*.csv

@@ -1,0 +1,12 @@
+name = "impact-sync"
+main = "src/index.js"
+compatibility_date = "2026-08-25"
+
+# Safety-margin refresh; the primary refresh path is the manual "POST /sync" trigger
+# a maintainer calls right after updating the spreadsheet each quarter.
+[triggers]
+crons = ["0 6 * * *"]
+
+[[kv_namespaces]]
+binding = "IMPACT_KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

@@ -1,88 +1,700 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Our Impact | Language Technology</title>
-  <style>
-    :root {
-      --primary-color: #059669; /* Distinct accent color for Impact */
-      --text-color: #1f2937;
-      --bg-color: #f9fafb;
-      --card-bg: #ffffff;
-      --border-color: #e5e7eb;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      color: var(--text-color);
-      background-color: var(--bg-color);
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #ffffff;
-      border-bottom: 1px solid var(--border-color);
-      padding: 1rem 2rem;
-    }
-
-    header a {
-      color: var(--primary-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    main {
-      max-width: 800px;
-      margin: 3rem auto;
-      padding: 0 1.5rem;
-    }
-
-    .placeholder-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    h1 {
-      margin-top: 0;
-      color: #111827;
-    }
-
-    p {
-      color: #4b5563;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      color: #6b7280;
-      font-size: 0.875rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Impact Dashboard | SIL Language Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; }
+:root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
+a { color: #00a7e1; }
+.eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
+.section-title { font-family: 'Caveat', cursive; font-weight: 500; font-size: 26px; line-height: 1.2; color: #00a7e1; margin: 0 0 8px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 4px; border: 1px solid #e4e4e4; background: #fff;
+  color: #003049; font-family: 'Source Sans 3', sans-serif; font-size: 13px; padding: 5px 12px;
+  border-radius: 999px; cursor: pointer; user-select: none; transition: background 0.15s ease, border-color 0.15s ease;
+}
+.pill:hover { border-color: #00a7e1; }
+.pill.active { background: #003049; border-color: #003049; color: #fff; }
+select, input[type="search"] {
+  font-family: 'Source Sans 3', sans-serif; font-size: 14px; color: #003049; border: 1px solid #e4e4e4;
+  border-radius: 8px; padding: 7px 10px; background: #fff;
+}
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; white-space: normal; }
+thead th { position: sticky; top: 0; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
+thead th:hover { color: #00a7e1; }
+thead th.sorted { color: #003049; }
+tbody tr { border-bottom: 1px solid #eef1f3; }
+tbody tr:hover { background: #f9fafb; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #eef1f3; color: #727272; }
+.muted { color: #8a8a8a; }
+.stat-tile { background: #f9fafb; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; }
+.stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 30px; color: #003049; font-variant-numeric: tabular-nums; }
+.stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
+.table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
+#state-message { text-align: center; padding: 3rem 1rem; color: #727272; }
+.chart-card { background: #fff; border: 1px solid #eef1f3; border-radius: var(--radius); padding: 1.25rem 1.5rem 0.5rem; margin-bottom: 1.75rem; }
+.bar-chart { display: flex; flex-direction: column; gap: 4px; margin-top: 0.5rem; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 200px) 1fr auto; align-items: center; gap: 12px; padding: 6px 8px; border-radius: 6px; }
+.bar-row:hover { background: #f9fafb; }
+.bar-label { font-size: 13px; font-weight: 600; color: #003049; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { height: 22px; }
+.bar-fill { height: 16px; margin-top: 3px; border-radius: 0 4px 4px 0; min-width: 2px; }
+.bar-value { font-size: 13px; color: #727272; font-variant-numeric: tabular-nums; text-align: right; min-width: 56px; }
+.bar-substat { font-size: 11px; color: #8a8a8a; margin-top: 1px; margin-bottom: 4px; }
+.category-group { padding: 6px 8px; border-radius: 6px; margin-bottom: 8px; }
+.category-group:hover { background: #f9fafb; }
+.bar-row-mini { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; }
+.bar-row-mini:first-child { margin-bottom: 2px; }
+.bar-track-mini { height: 11px; }
+.bar-fill-mini { height: 10px; border-radius: 0 3px 3px 0; min-width: 2px; }
+.bar-fill-mini.avg { opacity: 0.45; }
+[id^="chart-empty-"] { color: #8a8a8a; font-size: 14px; padding: 1rem 0 1.25rem; }
+[id^="chart-legend-"] { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 4px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #727272; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+</style>
 </head>
 <body>
 
-  <header>
-    <a href="/">&larr; Back to Language Technology</a>
-  </header>
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
+  <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between;">
+    <a href="/" style="color: rgba(255,255,255,0.8); font-size: 13px; text-decoration: none;">&larr; Language Technology</a>
+    <div class="eyebrow" style="color: #4FC3E8;">SIL language technology</div>
+  </div>
+</div>
 
-  <main>
-    <div class="placeholder-card">
-      <h1>Impact & Case Studies</h1>
-      <p>This page is currently under construction. Case studies, metrics, and community impact stories demonstrating language technology outcomes will be available here shortly.</p>
+<div style="max-width: 1120px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 2.5rem) 3rem;">
 
-      <!-- Content maintainers: Insert case studies, metrics widgets, and testimonials here -->
+  <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 0 0 6px;">Product Impact Dashboard</h1>
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 2rem;">
+    Usage statistics for every SIL Language Technology product, updated quarterly.
+  </p>
+
+  <div id="app">
+    <div id="state-message">Loading product data&hellip;</div>
+  </div>
+
+  <div id="footer-note" style="margin-top: 1.5rem; font-size: 12px; color: #8a8a8a;"></div>
+
+  <h2 class="section-title" style="font-size: 28px; margin-top: 3rem;">Font Usage</h2>
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 1.5rem;">
+    Views for every SIL font, from the analytics export dated
+    <strong id="font-export-date" style="color: #003049;">&hellip;</strong>.
+  </p>
+
+  <div id="fonts-app">
+    <div id="fonts-state-message">Loading font data&hellip;</div>
+  </div>
+</div>
+
+<script>
+const state = {
+  data: null,
+  quarter: null,
+  quarterCache: new Map(), // quarter -> already-fetched API response, so switching back doesn't refetch
+  quarterRequestToken: 0, // bumped on every quarter switch; a response only applies if it's still current
+  categories: new Set(),
+  platforms: new Set(),
+  devStatuses: new Set(),
+  search: "",
+  sort: { key: "name", dir: "asc" },
+};
+
+// Official SIL brand primary colors (SIL Blue/Orange/Violet/Green/Light Blue/Red/Gray/
+// Yellow), sourced from "SIL Color Codes.pdf" and documented in the repo root
+// CLAUDE.md. Fixed order, never cycled: stable regardless of filters (color follows
+// the entity, not its on-screen rank). A 9th+ category folds into a shared "Other"
+// gray rather than generating a new hue.
+const CATEGORY_PALETTE = ["#005CB9", "#FF6B00", "#93358D", "#509E2F", "#00A7E1", "#D52227", "#666666", "#FFB71B"];
+const OTHER_CATEGORY_COLOR = "#c2c2c2";
+
+const CORE_METRICS = [
+  { key: "active_users", label: "Active Users" },
+  { key: "downloads", label: "Downloads" },
+  { key: "installs", label: "Installs" },
+  { key: "active_projects", label: "Active Projects" },
+  { key: "countries", label: "Countries" },
+  { key: "languages_impacted", label: "Languages" },
+];
+
+// mode "top10": one bar per product, top 10 by value, colored by the product's category.
+// mode "category-totals": one bar per category (summed across its reporting products),
+// with each bar's max and average per-product value shown alongside as context.
+const TOP_CHARTS = [
+  { key: "active_users", title: "Top 10 by active users", mode: "top10", emptyText: "No active user data for this selection." },
+  { key: "active_projects", title: "Active projects by category", mode: "category-totals", emptyText: "No active project data for this selection." },
+  { key: "languages_impacted", title: "Languages reached by category", mode: "category-totals", emptyText: "No languages-reached data for this selection." },
+];
+
+async function fetchQuarter(quarter) {
+  const url = quarter ? `/impact/api/products?quarter=${encodeURIComponent(quarter)}` : "/impact/api/products";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const data = await res.json();
+  state.quarterCache.set(data.quarter, data);
+  return data;
+}
+
+async function init() {
+  const app = document.getElementById("app");
+  try {
+    state.data = await fetchQuarter();
+  } catch (err) {
+    app.innerHTML = `<div id="state-message">Couldn't load live data right now. Please try again shortly.</div>`;
+    return;
+  }
+
+  state.quarter = state.data.quarter;
+  state.categoryColors = {};
+  state.data.categories.forEach((cat, i) => {
+    state.categoryColors[cat] = CATEGORY_PALETTE[i] ?? OTHER_CATEGORY_COLOR;
+  });
+  renderShell();
+  render();
+
+  const footer = document.getElementById("footer-note");
+  if (state.data.generatedAt) {
+    const d = new Date(state.data.generatedAt);
+    footer.textContent = state.data.static
+      ? `Static snapshot from ${d.toLocaleDateString(undefined, { dateStyle: "medium" })} — live sync not yet configured.`
+      : `Data last refreshed ${d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`;
+  }
+}
+
+function renderShell() {
+  const app = document.getElementById("app");
+  const d = state.data;
+  const chartCardHtml = c => `
+    <div class="chart-card">
+      <div class="section-title" style="margin-bottom: 0;">${c.title}</div>
+      <div id="chart-legend-${c.key}"></div>
+      <div id="chart-empty-${c.key}" style="display: none;">${c.emptyText}</div>
+      <div id="chart-bars-${c.key}" class="bar-chart"></div>
     </div>
-  </main>
+  `;
+  const top10Charts = TOP_CHARTS.filter(c => c.mode === "top10");
+  const totalsCharts = TOP_CHARTS.filter(c => c.mode === "category-totals");
 
-  <footer>
-    <p>&copy; Language Technology. All rights reserved.</p>
-  </footer>
+  app.innerHTML = `
+    <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
+      <div class="eyebrow" style="margin-bottom: 0;">Quarter</div>
+      <select id="quarter-select">
+        ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
+      </select>
+      <span id="quarter-status" class="muted" style="font-size: 13px;"></span>
+    </div>
+
+    <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
+
+    ${top10Charts.map(chartCardHtml).join("")}
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+      ${totalsCharts.map(chartCardHtml).join("")}
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
+      <div>
+        <div class="eyebrow" style="margin-bottom: 6px;">Category</div>
+        <div id="category-pills">${d.categories.map(pillHtml("category")).join("")}</div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom: 6px;">Platform</div>
+        <div id="platform-pills">${d.platforms.map(pillHtml("platform")).join("")}</div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom: 6px;">Status</div>
+        <div id="devstatus-pills">${d.devStatuses.map(pillHtml("devstatus")).join("")}</div>
+      </div>
+      <div style="margin-left: auto;">
+        <div class="eyebrow" style="margin-bottom: 6px;">Search</div>
+        <input type="search" id="search-input" placeholder="Product name&hellip;">
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="table-head"></tr></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+    <div id="empty-message" class="muted" style="text-align: center; padding: 2rem; display: none;">No products match these filters.</div>
+  `;
+
+  document.getElementById("quarter-select").addEventListener("change", onQuarterChange);
+  document.getElementById("search-input").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); render(); });
+  attachPillHandlers("category-pills", state.categories);
+  attachPillHandlers("platform-pills", state.platforms);
+  attachPillHandlers("devstatus-pills", state.devStatuses);
+
+  const headRow = document.getElementById("table-head");
+  headRow.innerHTML = [{ key: "name", label: "Product" }, ...CORE_METRICS]
+    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
+    .join("");
+  headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    state.sort = { key, dir: state.sort.key === key && state.sort.dir === "desc" ? "asc" : "desc" };
+    render();
+  }));
+}
+
+// Switching quarters is a real network fetch now (only the newest quarter's data is
+// preloaded), unlike every other filter on this page which is instant/client-side.
+// A cache of already-fetched quarters avoids refetching on a repeat visit, and the
+// request token guards against a slow response for an earlier selection landing
+// after a faster response for a later one.
+async function onQuarterChange(e) {
+  const select = e.target;
+  const requested = select.value;
+  const status = document.getElementById("quarter-status");
+  const token = ++state.quarterRequestToken;
+
+  if (state.quarterCache.has(requested)) {
+    state.data = state.quarterCache.get(requested);
+    state.quarter = state.data.quarter;
+    render();
+    return;
+  }
+
+  select.disabled = true;
+  status.textContent = "Loading…";
+  try {
+    const data = await fetchQuarter(requested);
+    if (token !== state.quarterRequestToken) return; // a newer selection has since won
+    state.data = data;
+    state.quarter = data.quarter;
+    select.value = state.quarter; // in case the API fell back to a different quarter
+    status.textContent = "";
+    render();
+  } catch (err) {
+    if (token !== state.quarterRequestToken) return;
+    select.value = state.quarter; // revert to the last quarter that loaded successfully
+    status.textContent = "Couldn't load that quarter. Please try again.";
+  } finally {
+    if (token === state.quarterRequestToken) select.disabled = false;
+  }
+}
+
+function pillHtml(group) {
+  return value => `<button type="button" class="pill" data-group="${group}" data-value="${escapeAttr(value)}">${value}</button>`;
+}
+
+function attachPillHandlers(containerId, selectedSet) {
+  document.getElementById(containerId).querySelectorAll(".pill").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const value = btn.dataset.value;
+      if (selectedSet.has(value)) selectedSet.delete(value); else selectedSet.add(value);
+      btn.classList.toggle("active");
+      render();
+    });
+  });
+}
+
+function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
+
+function filteredProducts() {
+  return state.data.products.filter(p => {
+    if (state.categories.size && !state.categories.has(p.category)) return false;
+    if (state.platforms.size && !p.platforms.some(pl => state.platforms.has(pl))) return false;
+    if (state.devStatuses.size && !state.devStatuses.has(p.devStatus)) return false;
+    if (state.search && !p.name.toLowerCase().includes(state.search)) return false;
+    return true;
+  });
+}
+
+function metricValue(product, key) {
+  return product.metrics ? product.metrics[key] ?? null : null;
+}
+
+function render() {
+  // Category/platform/status/search only narrow the table below — the overview section
+  // (stat strip + charts) always reflects every product for the selected quarter, since
+  // those filters don't make sense applied to a top-10 or category-totals view.
+  const overviewProducts = state.data.products;
+  const tableProducts = filteredProducts();
+  const sorted = [...tableProducts].sort((a, b) => {
+    const av = state.sort.key === "name" ? a.name : metricValue(a, state.sort.key);
+    const bv = state.sort.key === "name" ? b.name : metricValue(b, state.sort.key);
+    let cmp;
+    if (av == null && bv == null) cmp = 0;
+    else if (av == null) cmp = 1;
+    else if (bv == null) cmp = -1;
+    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
+    return state.sort.dir === "asc" ? cmp : -cmp;
+  });
+
+  renderStatStrip(overviewProducts);
+  TOP_CHARTS.forEach(c => (c.mode === "category-totals" ? renderCategoryTotalsChart : renderTopChart)(overviewProducts, c));
+  renderTable(sorted);
+
+  document.querySelectorAll("#table-head th").forEach(th => {
+    th.classList.toggle("sorted", th.dataset.key === state.sort.key);
+  });
+}
+
+function renderStatStrip(products) {
+  const strip = document.getElementById("stat-strip");
+  const sum = key => products.reduce((total, p) => {
+    const v = metricValue(p, key);
+    return typeof v === "number" ? total + v : total;
+  }, 0);
+  const reporting = products.filter(p => p.metrics && Object.keys(p.metrics).length > 0).length;
+
+  const tiles = [
+    { label: "Active Users", value: sum("active_users") },
+    { label: "Downloads", value: sum("downloads") },
+    { label: "Products Reporting", value: reporting },
+    { label: "Countries Reached", value: Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
+  ];
+  strip.innerHTML = tiles.map(t => `
+    <div class="stat-tile">
+      <div class="stat-value">${t.value.toLocaleString()}</div>
+      <div class="stat-label">${t.label}</div>
+    </div>
+  `).join("");
+}
+
+function renderTopChart(products, config) {
+  const chart = document.getElementById(`chart-bars-${config.key}`);
+  const emptyMsg = document.getElementById(`chart-empty-${config.key}`);
+  const legend = document.getElementById(`chart-legend-${config.key}`);
+
+  const ranked = products
+    .map(p => ({ name: p.name, category: p.category, value: metricValue(p, config.key) }))
+    .filter(p => typeof p.value === "number" && p.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
+
+  if (ranked.length === 0) {
+    chart.innerHTML = "";
+    legend.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  const categoryColor = cat => state.categoryColors[cat] ?? OTHER_CATEGORY_COLOR;
+
+  const max = ranked[0].value;
+  chart.innerHTML = ranked.map(p => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escapeAttr(p.name)}">${p.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width: ${Math.max(1, (p.value / max) * 100)}%; background: ${categoryColor(p.category)};"></div></div>
+      <div class="bar-value">${p.value.toLocaleString()}</div>
+    </div>
+  `).join("");
+
+  const shownCategories = [...new Set(ranked.map(p => p.category).filter(Boolean))]
+    .sort((a, b) => state.data.categories.indexOf(a) - state.data.categories.indexOf(b));
+  legend.innerHTML = shownCategories.map(cat => `
+    <span class="legend-item"><span class="legend-swatch" style="background: ${categoryColor(cat)};"></span>${cat}</span>
+  `).join("");
+}
+
+// One group per category (not one bar per product): max and average per-product value
+// for this metric, each its own bar, scaled against the largest max across categories.
+function renderCategoryTotalsChart(products, config) {
+  const chart = document.getElementById(`chart-bars-${config.key}`);
+  const emptyMsg = document.getElementById(`chart-empty-${config.key}`);
+  const legend = document.getElementById(`chart-legend-${config.key}`);
+
+  const byCategory = new Map();
+  products.forEach(p => {
+    const v = metricValue(p, config.key);
+    if (typeof v !== "number" || v <= 0 || !p.category) return;
+    if (!byCategory.has(p.category)) byCategory.set(p.category, []);
+    byCategory.get(p.category).push(v);
+  });
+
+  const rows = [...byCategory.entries()].map(([category, values]) => ({
+    category,
+    max: Math.max(...values),
+    avg: values.reduce((a, b) => a + b, 0) / values.length,
+    count: values.length,
+  })).sort((a, b) => b.max - a.max);
+
+  if (rows.length === 0) {
+    chart.innerHTML = "";
+    legend.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  legend.innerHTML = `
+    <span class="legend-item"><span class="legend-swatch" style="background: #727272;"></span>Max</span>
+    <span class="legend-item"><span class="legend-swatch" style="background: #727272; opacity: 0.45;"></span>Avg</span>
+  `;
+
+  const categoryColor = cat => state.categoryColors[cat] ?? OTHER_CATEGORY_COLOR;
+  const scaleMax = Math.max(...rows.map(r => r.max));
+  const pct = v => Math.max(1, (v / scaleMax) * 100);
+
+  chart.innerHTML = rows.map(r => {
+    const color = categoryColor(r.category);
+    return `
+    <div class="category-group">
+      <div class="bar-label">${r.category}</div>
+      <div class="bar-substat">${r.count} product${r.count === 1 ? "" : "s"}</div>
+      <div class="bar-row-mini">
+        <div class="bar-track bar-track-mini"><div class="bar-fill-mini" style="width: ${pct(r.max)}%; background: ${color};"></div></div>
+        <div class="bar-value">${r.max.toLocaleString()}</div>
+      </div>
+      <div class="bar-row-mini">
+        <div class="bar-track bar-track-mini"><div class="bar-fill-mini avg" style="width: ${pct(r.avg)}%; background: ${color};"></div></div>
+        <div class="bar-value">${Math.round(r.avg).toLocaleString()}</div>
+      </div>
+    </div>
+  `;
+  }).join("");
+}
+
+function renderTable(products) {
+  const body = document.getElementById("table-body");
+  const emptyMsg = document.getElementById("empty-message");
+
+  if (products.length === 0) {
+    body.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  body.innerHTML = products.map(p => {
+    const optedOut = p.metricsMode === "Opt Out";
+    const nameCell = `
+      ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
+      <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
+        ${p.category ?? ""} ${optedOut ? '<span class="badge">opted out of analytics</span>' : ""}
+      </div>
+    `;
+    const metricCells = CORE_METRICS.map(m => {
+      const v = metricValue(p, m.key);
+      return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
+    }).join("");
+    return `<tr><td>${nameCell}</td>${metricCells}</tr>`;
+  }).join("");
+}
+
+// ---- Font Usage section ----
+// Independent data source/fetch from the products section above (see
+// functions/impact/api/fonts.js) - a fetch failure here only degrades this
+// section, never the products section, and vice versa.
+
+const FONT_METRICS = [
+  { key: "weeklyViews", label: "Weekly Views" },
+  { key: "lifetimeViews", label: "Lifetime Views" },
+];
+
+const fontState = {
+  data: null,
+  date: null,
+  dateCache: new Map(), // date -> already-fetched API response, so switching back doesn't refetch
+  dateRequestToken: 0, // bumped on every date switch; a response only applies if it's still current
+  sort: { key: "weeklyViews", dir: "desc" },
+};
+
+async function fetchFontDate(date) {
+  const url = date ? `/impact/api/fonts?date=${encodeURIComponent(date)}` : "/impact/api/fonts";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const data = await res.json();
+  fontState.dateCache.set(data.date, data);
+  return data;
+}
+
+async function initFonts() {
+  const app = document.getElementById("fonts-app");
+  try {
+    fontState.data = await fetchFontDate();
+  } catch (err) {
+    app.innerHTML = `<div id="fonts-state-message">Couldn't load font data right now. Please try again shortly.</div>`;
+    return;
+  }
+
+  fontState.date = fontState.data.date;
+  renderFontsShell();
+  renderFonts();
+}
+
+// Switching dates is a real network fetch now (only the latest date is preloaded),
+// mirroring onQuarterChange above for the same reasons.
+async function onFontDateChange(e) {
+  const select = e.target;
+  const requested = select.value;
+  const status = document.getElementById("font-date-status");
+  const token = ++fontState.dateRequestToken;
+
+  if (fontState.dateCache.has(requested)) {
+    fontState.data = fontState.dateCache.get(requested);
+    fontState.date = fontState.data.date;
+    renderFonts();
+    return;
+  }
+
+  select.disabled = true;
+  status.textContent = "Loading…";
+  try {
+    const data = await fetchFontDate(requested);
+    if (token !== fontState.dateRequestToken) return; // a newer selection has since won
+    fontState.data = data;
+    fontState.date = data.date;
+    select.value = fontState.date; // in case the API fell back to a different date
+    status.textContent = "";
+    renderFonts();
+  } catch (err) {
+    if (token !== fontState.dateRequestToken) return;
+    select.value = fontState.date; // revert to the last date that loaded successfully
+    status.textContent = "Couldn't load that date. Please try again.";
+  } finally {
+    if (token === fontState.dateRequestToken) select.disabled = false;
+  }
+}
+
+function fontMetricValue(font, key) {
+  return font.metrics ? font.metrics[key] ?? null : null;
+}
+
+function renderFontsShell() {
+  const app = document.getElementById("fonts-app");
+  const d = fontState.data;
+
+  app.innerHTML = `
+    <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
+      <div class="eyebrow" style="margin-bottom: 0;">Date</div>
+      <select id="font-date-select">
+        ${d.dates.map(date => `<option value="${date}" ${date === fontState.date ? "selected" : ""}>${new Date(date).toLocaleDateString(undefined, { dateStyle: "medium" })}</option>`).join("")}
+      </select>
+      <span id="font-date-status" class="muted" style="font-size: 13px;"></span>
+    </div>
+
+    <div id="fonts-stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
+
+    <div class="chart-card">
+      <div class="section-title" style="margin-bottom: 0;">Top 10 by weekly views</div>
+      <div id="font-chart-empty" style="display: none;">No font view data for this date.</div>
+      <div id="font-chart-bars" class="bar-chart"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr id="font-table-head"></tr></thead>
+        <tbody id="font-table-body"></tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById("font-date-select").addEventListener("change", onFontDateChange);
+
+  const headRow = document.getElementById("font-table-head");
+  headRow.innerHTML = [{ key: "name", label: "Font" }, ...FONT_METRICS]
+    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
+    .join("");
+  headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
+    const key = th.dataset.key;
+    fontState.sort = { key, dir: fontState.sort.key === key && fontState.sort.dir === "desc" ? "asc" : "desc" };
+    renderFonts();
+  }));
+}
+
+function renderFonts() {
+  const fonts = fontState.data.fonts;
+  const sorted = [...fonts].sort((a, b) => {
+    const av = fontState.sort.key === "name" ? a.name : fontMetricValue(a, fontState.sort.key);
+    const bv = fontState.sort.key === "name" ? b.name : fontMetricValue(b, fontState.sort.key);
+    let cmp;
+    if (av == null && bv == null) cmp = 0;
+    else if (av == null) cmp = 1;
+    else if (bv == null) cmp = -1;
+    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
+    return fontState.sort.dir === "asc" ? cmp : -cmp;
+  });
+
+  document.getElementById("font-export-date").textContent =
+    new Date(fontState.date).toLocaleDateString(undefined, { dateStyle: "long" });
+
+  renderFontsStatStrip(fonts);
+  renderFontsChart(fonts);
+  renderFontsTable(sorted);
+
+  document.querySelectorAll("#font-table-head th").forEach(th => {
+    th.classList.toggle("sorted", th.dataset.key === fontState.sort.key);
+  });
+}
+
+function renderFontsStatStrip(fonts) {
+  const strip = document.getElementById("fonts-stat-strip");
+  const sum = key => fonts.reduce((total, f) => {
+    const v = fontMetricValue(f, key);
+    return typeof v === "number" ? total + v : total;
+  }, 0);
+  const reporting = fonts.filter(f => f.metrics && Object.keys(f.metrics).length > 0).length;
+  const top = [...fonts].sort((a, b) => (fontMetricValue(b, "weeklyViews") ?? 0) - (fontMetricValue(a, "weeklyViews") ?? 0))[0];
+
+  const tiles = [
+    { label: "Fonts Reporting", value: reporting },
+    { label: "Weekly Views", value: sum("weeklyViews") },
+    { label: "Lifetime Views", value: sum("lifetimeViews") },
+  ];
+  strip.innerHTML = tiles.map(t => `
+    <div class="stat-tile">
+      <div class="stat-value">${t.value.toLocaleString()}</div>
+      <div class="stat-label">${t.label}</div>
+    </div>
+  `).join("") + (top ? `
+    <div class="stat-tile">
+      <div class="stat-value" style="font-size: 20px;">${escapeAttr(top.name)}</div>
+      <div class="stat-label">Top Font</div>
+    </div>
+  ` : "");
+}
+
+function renderFontsChart(fonts) {
+  const chart = document.getElementById("font-chart-bars");
+  const emptyMsg = document.getElementById("font-chart-empty");
+
+  const ranked = fonts
+    .map(f => ({ name: f.name, value: fontMetricValue(f, "weeklyViews") }))
+    .filter(f => typeof f.value === "number" && f.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 10);
+
+  if (ranked.length === 0) {
+    chart.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+  emptyMsg.style.display = "none";
+
+  const max = ranked[0].value;
+  chart.innerHTML = ranked.map(f => `
+    <div class="bar-row">
+      <div class="bar-label" title="${escapeAttr(f.name)}">${f.name}</div>
+      <div class="bar-track"><div class="bar-fill" style="width: ${Math.max(1, (f.value / max) * 100)}%; background: #00a7e1;"></div></div>
+      <div class="bar-value">${f.value.toLocaleString()}</div>
+    </div>
+  `).join("");
+}
+
+function renderFontsTable(fonts) {
+  const body = document.getElementById("font-table-body");
+  body.innerHTML = fonts.map(f => {
+    const metricCells = FONT_METRICS.map(m => {
+      const v = fontMetricValue(f, m.key);
+      return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
+    }).join("");
+    return `<tr><td style="font-weight: 600;">${f.name}</td>${metricCells}</tr>`;
+  }).join("");
+}
+
+init();
+initFonts();
+</script>
 
 </body>
 </html>

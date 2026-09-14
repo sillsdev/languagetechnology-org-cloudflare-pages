@@ -115,8 +115,9 @@ top-10-coverage stat were all corrected to reflect FieldWorks (FLEx) alone (59),
 the doc-based cross-check exactly. **The survey is now closed (no further waves)**, so
 this is a closed record, not an action item for a future re-export.
 
-**Feedback category counts** (813 total, 71% positive / 29% constructive): column 9 = 385,
-column 10 ≈ 191–194, column 11 = 237, straight non-blank counts.
+**Feedback category counts**: 385 + 191 + 237 = 813 total comments (straight non-blank
+counts per the column map above); 71% positive (encouragement + general feedback) vs.
+29% constructive.
 
 **Word cloud ("Echoes" section)**: built from the *full* text of columns 9+10 (579
 comments — not just the samples shown in `quoteData`'s click-panels). Known multi-word
@@ -126,6 +127,49 @@ etc.) are matched as whole phrases *before* generic word-splitting, so a shared 
 and words under 4 characters are filtered. The word list in `index.html` is manually
 curated from the frequency output (mix of product names + emotionally resonant words),
 not a raw top-N dump — re-curate by hand if regenerating, don't just paste the sorted list.
+
+**"Beyond the list" chart + click-to-expand quotes**: sourced from a separate
+categorized-feedback project (`<local machine, not shared>\final survey feedback\`,
+not in this repo) — 36 "Survey Feedback - [Product] - Final.docx" files, one per
+product, built by routing every column 9/10/11 free-text comment that names that
+product into its own doc, with the text relevant to that product bolded when a
+comment names more than one. That project also produced docs for five products with
+**no survey checkbox at all** — respondents named them unprompted in the open-text
+questions: PrimerPrep, Toolbox, XLingPaper, LingTree, WeSay. The chart shows each
+one's "positive" count (encouragement + general feedback rows, matching the page's
+own definition used in the Voices 71%/29% split), pulled by extracting each doc's
+`word/document.xml` (docx is a zip) and counting table rows per H2 section:
+PrimerPrep 0+9=9, XLingPaper 0+7=7, LingTree 0+3=3, WeSay 2+0=2 — taken as-is, since
+in those docs every row (both sections) was substantively positive about that product.
+Sample quotes for the click-to-reveal panel (`beyondQuoteData` in the script) were
+pulled from the same rows, trimmed for readability where a row was embedded in a
+longer multi-topic list (using the doc's own bolded portion to isolate the relevant
+sentence). Capped at **7 samples per product, matching Gratitude's `quoteData` cap**
+— shown in full where a product has 7 or fewer genuine positive rows (XLingPaper,
+LingTree, WeSay), and picked as the 7 strongest/most quotable out of the genuine total
+where there were more to choose from (Toolbox: 7 of 11; PrimerPrep: 7 of 9, dropping
+the two weakest/most repetitive one-liners and a second-hand "heard good things about
+PrimerPro, haven't tried it" mention that isn't really a usage testimonial).
+
+**Toolbox is the one exception, hand-reviewed row by row in both sections**:
+- **General Feedback** (18 rows) isn't filtered for sentiment the way it is for
+  smaller products — many rows are bare inventory mentions ("Field Linguist's Toolbox
+  1.6.4"), entries leaning *away* from Toolbox ("probably need to move it over to FLEX
+  soon"), or tangential technical asides. Reading each row's bolded Toolbox-relevant
+  portion, only **7 of 18** read as genuine positive sentiment.
+- **Encouragements** (6 rows) turned out to need the same treatment once actual quote
+  text was pulled for the click-to-reveal panel: 2 of the 6 are false positives from
+  keyword-matching on the word "toolbox" rather than the product — "...PT is our
+  lifeline and our **complete toolbox**..." (generic English phrase) and "...(post
+  **toolbox** to flex conversion)" (a factual aside, not praise) — the same class of
+  bug as the FieldWorks/"flex" substring mix-up above. Only **4 of 6** are genuine.
+
+**Toolbox total: 4 + 7 = 11**, not the raw 6 + 18 = 24 — don't recompute from the raw
+row count without redoing this filtering pass. If any other product gets this same
+treatment later, check for generic-word collisions in Encouragements too, not just
+General Feedback — this was missed on the first pass because the review request was
+scoped to General Feedback only, and the Encouragement bug only surfaced later while
+transcribing actual quote text.
 
 **Known non-issue**: an earlier "37 tools & fonts referenced" stat was wrong — 37 is only
 the font count (columns 39–75); the true combined distinct-item count is 64 (27 tools +
@@ -145,26 +189,76 @@ rather than introducing new ones when adding sections or charts.
 - `Caveat` (cursive, weight 500) — the handwritten-style section "eyebrow" labels (e.g.
   "Reach", "Coverage", "Gratitude"), always in the brand blue `#00a7e1`.
 
-**Colors:**
-| Role | Hex | Notes |
+**Colors — all values below are verified against the official
+`SIL Color Codes.pdf`** (SIL's global brand primary/shade/tint reference, not
+tracked in this repo), **except the primary navy**, which is a deliberate
+exception (see note below the table). Before this pass, most of the page's
+palette was custom (only `#00a7e1`/SIL Light Blue and `#ff6b00`/SIL Orange were
+already exact official matches) — every other color has since been swapped to
+the nearest exact official value (primary, documented "darker" shade, or a
+documented tint percentage):
+
+| Role | Hex | Official SIL name |
 |---|---|---|
-| Primary text / dark navy | `#003049` | headings, stat numbers, primary text |
-| Secondary text | `#727272` | body copy, captions |
-| Muted text | `#8a8a8a` | least prominent labels |
-| Borders / dividers | `#e4e4e4` | hairlines, card borders |
-| Brand orange (accent) | `#ff6b00` | dividers, CTAs, highlight accents |
-| Brand blue | `#00a7e1` | section eyebrow headings, links, accents |
-| Light blue | `#4FC3E8` | hero eyebrow text on dark background |
-| Green accent | `#1D9E75` | tertiary chart/category color |
-| Dark orange-brown | `#8A3E0A` | quaternary chart/category color, "constructive feedback" tint |
-| Deep brown | `#5C2806` | darkest orange-family text (on `#FCEEE3` tint) |
-| Neutral tints | `#eef1f3`, `#f9fafb`, `#E7ECF1` | card/section backgrounds |
-| Color-tinted backgrounds | `#FCEEE3` (orange), `#E3F3FA` (blue), `#E7ECF1` (neutral) | paired with matching dark text (`#8A3E0A`/`#5C2806`, `#0C4A63`/`#093646`, `#003049`/`#081F30`) for the three feedback-category cards |
-| Categorical chart/word-cloud palette (in order) | `#003049`, `#ff6b00`, `#00a7e1`, `#1D9E75`, `#8A3E0A` | used for Chart.js series and word-cloud word coloring |
+| Primary text / dark navy | `#003049` | **Not in the PDF** — kept deliberately, see note below |
+| Secondary text | `#757575` | SIL Gray, 90% tint |
+| Muted text | `#858585` | SIL Gray, 80% tint |
+| Borders / dividers | `#E0E0E0` | SIL Gray, 20% tint |
+| Brand orange (accent) | `#ff6b00` | SIL Orange (primary) |
+| Brand blue | `#00a7e1` | SIL Light Blue (primary) |
+| Hero eyebrow text (light, on dark photo) | `#33B9E7` | SIL Light Blue, 80% tint |
+| Hero stat sub-label (light, on dark photo) | `#CCDEF1` | SIL Blue, 20% tint |
+| Hero caption sub-text (light, on dark photo) | `#99BEE3` | SIL Blue, 40% tint (approximate — the original custom `#93A9B8` was more desaturated/gray than any exact tint step, this is the closest available) |
+| Green accent | `#509E2F` | SIL Green (primary) |
+| Red accent | `#D52227` | SIL Red (primary) |
+| Red accent, dark/hover | `#A6121F` | SIL Darker Red (shade) |
+| Darker orange (encouragement-card icon/text) | `#C24F00` | SIL Darker Orange (shade) |
+| EncChart hover | `#008AAF` | SIL Lighter Blue (shade) |
+| Neutral tints | `#EFEFEF` (Gray 10%), `#F7F7F7` (Gray 5%) | card/section backgrounds |
+| Color-tinted backgrounds | `#FFF0E5` (Orange 10% tint), `#E5F6FC` (Light Blue 10% tint), `#E5EEF8` (Blue 10% tint) | paired with matching dark text (`#C24F00`, `#003049`, `#003049`) for the three feedback-category cards |
+| Categorical chart/word-cloud palette (in order) | `#003049`, `#ff6b00`, `#00a7e1`, `#509E2F`, `#D52227` | Navy, Orange, Light Blue, Green, Red — used for Chart.js series and word-cloud word coloring |
+
+**Note on the primary navy `#003049`**: this hex isn't in `SIL Color Codes.pdf` at
+all (not a primary, shade, or tint of SIL Blue `005CB9`) — it's noticeably darker/
+more desaturated than even "SIL Darker Blue" (`034D8A`). It was tried as
+`034D8A` during this color-audit pass and reverted per explicit user preference:
+`#003049` is also used on sil.org itself, so it's treated as a legitimate SIL
+brand color the PDF simply doesn't happen to document, not an error to fix.
+**Don't "correct" it to an official-PDF blue in a future pass** — this was a
+deliberate, informed choice, not an oversight.
+
+Swapping to `034D8A` also had a real visual side-effect worth remembering: the
+hero photo's dark overlay (`rgba(0,48,73,...)` gradient, and the photo-strip nav
+buttons) is built from this same color as an alpha-blended rgba fill, not the
+`#003049` hex directly — `034D8A` being lighter made that overlay read as a
+washed-out, lighter veil over the hero photo instead of the deep dark fade it's
+meant to be. If this navy ever changes again, remember to update the matching
+`rgba(R,G,B,...)` triplet in those two spots too, not just the `#hex` occurrences.
+
+**History**: this page's palette was originally fully custom (navy `#003049`,
+teal `#1D9E75`, orange-brown `#8A3E0A`/`#5C2806`, and assorted bespoke tint
+backgrounds), predating a check against the official brand PDF. Recoloring was
+done role-by-role, not a blind find-and-replace — some colors served two
+different semantic roles under the same hex and needed different targets: e.g.
+old `#8A3E0A` was both a generic categorical chart/word-cloud accent (→ first
+Violet `#93358D`, then swapped to Red `#D52227` per explicit request — Red was
+chosen over Yellow because it also serves as text color in a couple of spots
+(the "Beyond the list" quote panel's prev/next nav links) and Yellow's contrast
+against white fails WCAG AA even at its "Darker Yellow" shade, ~2.6:1 vs the
+4.5:1 minimum, while Red reaches ~5.1:1 and Darker Red ~7.7:1) *and* the
+"encouragements" Voices-card's icon/text color, specifically paired with its
+orange-tinted background (→ now Darker Orange `#C24F00`, staying in the orange
+family rather than following the categorical accent's color). Navy `#003049`
+was the one color kept as-is — see the note above.
+
+This color audit only covers this page. `impact/index.html`'s real dashboard
+(built on the separate, unmerged `impact-dashboard` branch) already uses the
+official 8-color SIL primary swatch set from the start, so it needs no
+equivalent fix.
 
 Card corner radius is `10px` (CSS var `--radius`). CSS custom properties for the core text
 colors are declared on `:root` (`--text-primary`, `--text-secondary`, `--text-muted`) — reuse
-those rather than re-hardcoding `#003049`/`#727272`/`#8a8a8a` inline where practical (most of
+those rather than re-hardcoding `#003049`/`#757575`/`#858585` inline where practical (most of
 the existing page uses inline hex directly, so it's fine to match that pattern too — just stay
 consistent with these values).
 
@@ -172,9 +266,19 @@ consistent with these values).
 
 Full-bleed photo hero (765 stat) → short intro paragraph → rotating quote carousel →
 "Did you know?" stat strip → horizontal-scroll photo filmstrip → Reach chart (28 items) →
-Coverage chart (6 use-cases) → Insights (synthesis cards) → Gratitude chart (top 10 by
-encouragement, click-to-expand quotes) → Echoes (word cloud) → Voices (feedback category
-sentiment) → Momentum (response growth over time).
+Coverage chart (6 use-cases) → Gratitude chart (top 10 by encouragement, click-to-expand
+quotes) → Beyond the list (chart of unsurveyed products respondents named unprompted,
+click-to-expand quotes) → Also loved (encouragement quotes for surveyed tools outside
+the top 10) → Insights (synthesis cards) → Echoes (word cloud) → Voices (feedback
+category sentiment) → Momentum (response growth over time).
+
+**"Beyond the list" placement history, for context if this comes up again**: it
+started right after "Also loved" (simple static chart, no quotes), got promoted to
+right after "Coverage" for visibility, then — once click-to-reveal quotes were added,
+matching Gratitude's interaction — got pulled back to sit *between* Gratitude and Also
+loved: high enough to stay visible, but directly after Gratitude rather than above it,
+so its interactivity doesn't visually outrank the top-10 surveyed products' quotes
+despite covering 5 products with single-digit mention counts vs. hundreds each.
 
 Everything is one file: inline `<style>`, inline `<script>` at the bottom using Chart.js
 (via CDN), no build step. All chart data and quotes are hardcoded in the JS — there is no

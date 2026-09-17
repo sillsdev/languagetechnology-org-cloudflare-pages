@@ -132,8 +132,16 @@ const TOP_CHARTS = [
   { key: "languages_impacted", title: "Languages reached by category", mode: "category-totals", emptyText: "No languages-reached data for this selection." },
 ];
 
+// In local dev (`wrangler pages dev .`, served from localhost) this points at the
+// API worker's own local dev server (`wrangler dev` in the langtech-metrics repo's
+// api/ directory, default port 8787) instead of production -- see this page's
+// README "Running it locally" section.
+const API_ORIGIN = ["localhost", "127.0.0.1"].includes(location.hostname)
+  ? "http://localhost:8787"
+  : "https://metrics.languagetechnology.org";
+
 async function fetchQuarter(quarter) {
-  const url = quarter ? `/impact/api/products?quarter=${encodeURIComponent(quarter)}` : "/impact/api/products";
+  const url = quarter ? `${API_ORIGIN}/api/products?quarter=${encodeURIComponent(quarter)}` : `${API_ORIGIN}/api/products`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`API returned ${res.status}`);
   const data = await res.json();
@@ -482,9 +490,9 @@ function renderTable(products) {
 }
 
 // ---- Font Usage section ----
-// Independent data source/fetch from the products section above (see
-// functions/impact/api/fonts.js) - a fetch failure here only degrades this
-// section, never the products section, and vice versa.
+// Independent data source/fetch from the products section above (see the
+// langtech-metrics repo's api/src/routes/fonts.js) - a fetch failure here only
+// degrades this section, never the products section, and vice versa.
 
 const FONT_METRICS = [
   { key: "weeklyViews", label: "Weekly Views" },
@@ -500,7 +508,7 @@ const fontState = {
 };
 
 async function fetchFontDate(date) {
-  const url = date ? `/impact/api/fonts?date=${encodeURIComponent(date)}` : "/impact/api/fonts";
+  const url = date ? `${API_ORIGIN}/api/fonts?date=${encodeURIComponent(date)}` : `${API_ORIGIN}/api/fonts`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`API returned ${res.status}`);
   const data = await res.json();

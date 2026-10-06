@@ -37,11 +37,11 @@ updating.
 This page's data comes from a separate repo's Worker, so testing `/impact` fully
 locally means running both dev servers side by side:
 
-1. In `langtech-metrics/api`, run `npx wrangler dev` (default **http://localhost:8787**).
+1. In the `langtech-metrics` repo, run its local dev server (**http://localhost:3000**).
 2. In this repo's root, run `npx wrangler pages dev .` (**http://localhost:8788**).
 
 `impact/index.html` detects it's running on `localhost`/`127.0.0.1` and points
-`API_ORIGIN` at `http://localhost:8787` instead of production, and the API worker's
+`API_ORIGIN` at `http://localhost:3000` instead of production, and the API worker's
 CORS allow-list already includes `http://localhost:8788`, so the two talk to each
 other with no extra config. Local KV in the API worker starts empty, so you'll see
 the static snapshot until you seed it — that's expected.

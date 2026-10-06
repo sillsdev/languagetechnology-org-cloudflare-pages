@@ -8,6 +8,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
 <style>
 body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 :root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
 a { color: #00a7e1; }
 .eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
@@ -29,13 +31,25 @@ th:first-child, td:first-child { text-align: left; white-space: normal; }
 thead th { position: sticky; top: 0; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
 thead th:hover { color: #00a7e1; }
 thead th.sorted { color: #003049; }
+.sort-arrow { font-size: 9px; }
+.link-button { background: none; border: none; padding: 0; font: inherit; color: #00a7e1; text-decoration: underline; cursor: pointer; }
 tbody tr { border-bottom: 1px solid #eef1f3; }
 tbody tr:hover { background: #f9fafb; }
-.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #eef1f3; color: #727272; }
 .muted { color: #8a8a8a; }
+.info-badge { display: inline-block; margin-left: 6px; font-size: 13px; cursor: help; }
+.info-tooltip {
+  position: fixed; transform: translate(-50%, -100%); margin-top: -8px;
+  background: #003049; color: #fff; font-size: 12px; font-weight: 400; line-height: 1.4;
+  padding: 6px 10px; border-radius: 6px; max-width: 240px; text-align: left;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25); z-index: 1000; pointer-events: none;
+}
 .stat-tile { background: #f9fafb; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; }
 .stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 30px; color: #003049; font-variant-numeric: tabular-nums; }
 .stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
+.stat-delta { display: inline-block; font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-left: 8px; vertical-align: middle; font-variant-numeric: tabular-nums; }
+.stat-delta.up { color: #509E2F; }
+.stat-delta.down { color: #D52227; }
+.stat-delta.flat { color: #8a8a8a; }
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
 #state-message { text-align: center; padding: 3rem 1rem; color: #727272; }
 .chart-card { background: #fff; border: 1px solid #eef1f3; border-radius: var(--radius); padding: 1.25rem 1.5rem 0.5rem; margin-bottom: 1.75rem; }
@@ -63,9 +77,14 @@ tbody tr:hover { background: #f9fafb; }
 <body>
 
 <div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
-  <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between;">
-    <a href="/" style="color: rgba(255,255,255,0.8); font-size: 13px; text-decoration: none;">&larr; Language Technology</a>
-    <div class="eyebrow" style="color: #4FC3E8;">SIL language technology</div>
+  <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
+      <img src="../images/logo.webp" alt="SIL" style="height: 28px; width: auto;">
+    </a>
+    <nav style="display: flex; align-items: center; gap: 20px;">
+      <a href="#font-usage" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Fonts &darr;</a>
+      <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Survey Results &#8599;</a>
+    </nav>
   </div>
 </div>
 
@@ -73,7 +92,7 @@ tbody tr:hover { background: #f9fafb; }
 
   <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 0 0 6px;">Product Impact Dashboard</h1>
   <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 2rem;">
-    Usage statistics for every SIL Language Technology product, updated quarterly.
+    Usage statistics for SIL Language Technology products, updated quarterly.
   </p>
 
   <div id="app">
@@ -82,10 +101,13 @@ tbody tr:hover { background: #f9fafb; }
 
   <div id="footer-note" style="margin-top: 1.5rem; font-size: 12px; color: #8a8a8a;"></div>
 
-  <h2 class="section-title" style="font-size: 28px; margin-top: 3rem;">Font Usage</h2>
+  <h2 id="font-usage" class="section-title" style="font-size: 28px; margin-top: 3rem; scroll-margin-top: 1rem;">Font Usage</h2>
   <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 1.5rem;">
-    Views for every SIL font, from the analytics export dated
-    <strong id="font-export-date" style="color: #003049;">&hellip;</strong>.
+    Views for Google Fonts developed by SIL (Writing Systems Technology), sourced from
+    <a href="https://fonts.google.com/analytics" target="_blank" rel="noopener">fonts.google.com/analytics</a>.
+    These figures only count views served through Google Fonts — not all SIL fonts are
+    distributed there; see the full list at
+    <a href="https://software.sil.org/fonts/" target="_blank" rel="noopener">software.sil.org/fonts</a>.
   </p>
 
   <div id="fonts-app">
@@ -97,6 +119,8 @@ tbody tr:hover { background: #f9fafb; }
 const state = {
   data: null,
   quarter: null,
+  previousQuarter: null, // quarter immediately before `quarter` in data.quarters, for stat-tile deltas; null if none
+  previousData: null,
   quarterCache: new Map(), // quarter -> already-fetched API response, so switching back doesn't refetch
   quarterRequestToken: 0, // bumped on every quarter switch; a response only applies if it's still current
   categories: new Set(),
@@ -123,21 +147,27 @@ const CORE_METRICS = [
   { key: "languages_impacted", label: "Languages" },
 ];
 
+// Products this team doesn't develop itself, but builds extensions/integrations for --
+// surfaced as a small hover-explained indicator so the table doesn't imply SIL Language
+// Technology owns the core application.
+const THIRD_PARTY_PRODUCTS = {
+  "Paratext 9": "Not developed by SIL Language Technology — we build extensions for Paratext, not the core application.",
+};
+
 // mode "top10": one bar per product, top 10 by value, colored by the product's category.
 // mode "category-totals": one bar per category (summed across its reporting products),
 // with each bar's max and average per-product value shown alongside as context.
 const TOP_CHARTS = [
-  { key: "active_users", title: "Top 10 by active users", mode: "top10", emptyText: "No active user data for this selection." },
   { key: "active_projects", title: "Active projects by category", mode: "category-totals", emptyText: "No active project data for this selection." },
   { key: "languages_impacted", title: "Languages reached by category", mode: "category-totals", emptyText: "No languages-reached data for this selection." },
 ];
 
 // In local dev (`wrangler pages dev .`, served from localhost) this points at the
-// API worker's own local dev server (`wrangler dev` in the langtech-metrics repo's
-// api/ directory, default port 8787) instead of production -- see this page's
-// README "Running it locally" section.
+// API worker's own local dev server (run from the langtech-metrics repo,
+// port 3000) instead of production -- see this page's README "Running it
+// locally" section.
 const API_ORIGIN = ["localhost", "127.0.0.1"].includes(location.hostname)
-  ? "http://localhost:8787"
+  ? "http://localhost:3000"
   : "https://metrics.languagetechnology.org";
 
 async function fetchQuarter(quarter) {
@@ -147,6 +177,35 @@ async function fetchQuarter(quarter) {
   const data = await res.json();
   state.quarterCache.set(data.quarter, data);
   return data;
+}
+
+// Fetches the quarter immediately before state.quarter (per data.quarters' order) for
+// the stat-tile deltas, reusing quarterCache so it's never fetched twice. Leaves
+// state.previousData as null (deltas just don't render) if there's no earlier quarter
+// or that fetch fails -- a comparison is a bonus, not worth failing the page over.
+async function loadComparisonData() {
+  const quarters = state.data.quarters;
+  const idx = quarters.indexOf(state.quarter);
+  const prevQuarter = idx > 0 ? quarters[idx - 1] : null;
+  state.previousQuarter = prevQuarter;
+  if (!prevQuarter) {
+    state.previousData = null;
+    return;
+  }
+  try {
+    state.previousData = state.quarterCache.has(prevQuarter) ? state.quarterCache.get(prevQuarter) : await fetchQuarter(prevQuarter);
+  } catch (err) {
+    state.previousData = null;
+  }
+}
+
+// Runs after the current quarter is already rendered, so the page never waits on the
+// comparison quarter -- the stat-tile deltas just pop in a moment later. Guarded by
+// quarterRequestToken so a slow comparison fetch can't clobber a newer quarter switch.
+async function refreshComparisonData(token) {
+  await loadComparisonData();
+  if (token !== state.quarterRequestToken) return;
+  renderStatStrip(state.data.products, state.previousData ? state.previousData.products : null);
 }
 
 async function init() {
@@ -165,6 +224,7 @@ async function init() {
   });
   renderShell();
   render();
+  refreshComparisonData(state.quarterRequestToken);
 
   const footer = document.getElementById("footer-note");
   if (state.data.generatedAt) {
@@ -198,7 +258,8 @@ function renderShell() {
       <span id="quarter-status" class="muted" style="font-size: 13px;"></span>
     </div>
 
-    <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 1.75rem;"></div>
+    <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;"></div>
+    <div id="stat-strip-note" class="muted" style="font-size: 12px; margin: 6px 0 1.75rem;"></div>
 
     ${top10Charts.map(chartCardHtml).join("")}
 
@@ -217,13 +278,15 @@ function renderShell() {
       </div>
       <div>
         <div class="eyebrow" style="margin-bottom: 6px;">Status</div>
-        <div id="devstatus-pills">${d.devStatuses.map(pillHtml("devstatus")).join("")}</div>
+        <div id="devstatus-pills">${d.devStatuses.filter(s => s != null).map(pillHtml("devstatus")).join("")}</div>
       </div>
       <div style="margin-left: auto;">
         <div class="eyebrow" style="margin-bottom: 6px;">Search</div>
         <input type="search" id="search-input" placeholder="Product name&hellip;">
       </div>
     </div>
+
+    <div id="filter-summary" class="muted" style="font-size: 13px; margin-bottom: 0.75rem;"></div>
 
     <div class="table-wrap">
       <table>
@@ -242,13 +305,23 @@ function renderShell() {
 
   const headRow = document.getElementById("table-head");
   headRow.innerHTML = [{ key: "name", label: "Product" }, ...CORE_METRICS]
-    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
+    .map(col => `<th data-key="${col.key}">${col.label}<span class="sort-arrow"></span></th>`)
     .join("");
   headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
     const key = th.dataset.key;
     state.sort = { key, dir: state.sort.key === key && state.sort.dir === "desc" ? "asc" : "desc" };
     render();
   }));
+}
+
+function clearProductFilters() {
+  state.categories.clear();
+  state.platforms.clear();
+  state.devStatuses.clear();
+  state.search = "";
+  document.getElementById("search-input").value = "";
+  document.querySelectorAll("#category-pills .pill, #platform-pills .pill, #devstatus-pills .pill").forEach(p => p.classList.remove("active"));
+  render();
 }
 
 // Switching quarters is a real network fetch now (only the newest quarter's data is
@@ -262,23 +335,18 @@ async function onQuarterChange(e) {
   const status = document.getElementById("quarter-status");
   const token = ++state.quarterRequestToken;
 
-  if (state.quarterCache.has(requested)) {
-    state.data = state.quarterCache.get(requested);
-    state.quarter = state.data.quarter;
-    render();
-    return;
-  }
-
   select.disabled = true;
   status.textContent = "Loading…";
   try {
-    const data = await fetchQuarter(requested);
+    const data = state.quarterCache.has(requested) ? state.quarterCache.get(requested) : await fetchQuarter(requested);
     if (token !== state.quarterRequestToken) return; // a newer selection has since won
     state.data = data;
     state.quarter = data.quarter;
     select.value = state.quarter; // in case the API fell back to a different quarter
+    state.previousData = null; // clear the prior quarter's stale comparison until the new one loads
     status.textContent = "";
     render();
+    refreshComparisonData(token);
   } catch (err) {
     if (token !== state.quarterRequestToken) return;
     select.value = state.quarter; // revert to the last quarter that loaded successfully
@@ -316,7 +384,8 @@ function filteredProducts() {
 }
 
 function metricValue(product, key) {
-  return product.metrics ? product.metrics[key] ?? null : null;
+  const v = product.metrics ? product.metrics[key] : null;
+  return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
 function render() {
@@ -336,35 +405,78 @@ function render() {
     return state.sort.dir === "asc" ? cmp : -cmp;
   });
 
-  renderStatStrip(overviewProducts);
+  renderStatStrip(overviewProducts, state.previousData ? state.previousData.products : null);
   TOP_CHARTS.forEach(c => (c.mode === "category-totals" ? renderCategoryTotalsChart : renderTopChart)(overviewProducts, c));
   renderTable(sorted);
+  renderFilterSummary(tableProducts.length, overviewProducts.length);
 
   document.querySelectorAll("#table-head th").forEach(th => {
-    th.classList.toggle("sorted", th.dataset.key === state.sort.key);
+    const active = th.dataset.key === state.sort.key;
+    th.classList.toggle("sorted", active);
+    th.querySelector(".sort-arrow").textContent = active ? (state.sort.dir === "asc" ? " ▲" : " ▼") : "";
   });
 }
 
-function renderStatStrip(products) {
-  const strip = document.getElementById("stat-strip");
-  const sum = key => products.reduce((total, p) => {
+function renderFilterSummary(shown, total) {
+  const summary = document.getElementById("filter-summary");
+  const hasActiveFilters = state.categories.size > 0 || state.platforms.size > 0 || state.devStatuses.size > 0 || state.search !== "";
+  summary.innerHTML = hasActiveFilters
+    ? `${shown.toLocaleString()} of ${total.toLocaleString()} products shown — <button type="button" id="clear-filters-btn" class="link-button">Clear filters</button>`
+    : `${total.toLocaleString()} products`;
+  const clearBtn = document.getElementById("clear-filters-btn");
+  if (clearBtn) clearBtn.addEventListener("click", clearProductFilters);
+}
+
+function sumMetric(products, key) {
+  return products.reduce((total, p) => {
     const v = metricValue(p, key);
     return typeof v === "number" ? total + v : total;
   }, 0);
-  const reporting = products.filter(p => p.metrics && Object.keys(p.metrics).length > 0).length;
+}
 
-  const tiles = [
-    { label: "Active Users", value: sum("active_users") },
-    { label: "Downloads", value: sum("downloads") },
-    { label: "Products Reporting", value: reporting },
-    { label: "Countries Reached", value: Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
-  ];
-  strip.innerHTML = tiles.map(t => `
-    <div class="stat-tile">
-      <div class="stat-value">${t.value.toLocaleString()}</div>
-      <div class="stat-label">${t.label}</div>
-    </div>
-  `).join("");
+const STAT_TILES = [
+  { label: "Active Users", compute: products => sumMetric(products, "active_users") },
+  { label: "Downloads", compute: products => sumMetric(products, "downloads") },
+  // No delta: "reporting" reflects which products happened to submit data this quarter,
+  // not a quantity trending up or down in a way a percentage change would mean anything for.
+  { label: "Products Reporting", compute: products => products.filter(p => p.metrics && Object.keys(p.metrics).length > 0).length, showDelta: false },
+  { label: "Countries Reached", compute: products => Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
+];
+
+// previousProducts is null when there's no earlier quarter (or its fetch failed) --
+// the delta badges and the note below the strip just don't render in that case.
+function renderStatStrip(products, previousProducts) {
+  const strip = document.getElementById("stat-strip");
+  const note = document.getElementById("stat-strip-note");
+
+  strip.innerHTML = STAT_TILES.map(tile => {
+    const value = tile.compute(products);
+    const deltaHtml = (tile.showDelta !== false && previousProducts) ? statDeltaHtml(value, tile.compute(previousProducts)) : "";
+    return `
+      <div class="stat-tile">
+        <div class="stat-value">${value.toLocaleString()}${deltaHtml}</div>
+        <div class="stat-label">${tile.label}</div>
+      </div>
+    `;
+  }).join("");
+
+  note.textContent = previousProducts
+    ? `Change indicators compare against the previous quarter (${state.previousQuarter}).`
+    : "";
+}
+
+function statDeltaHtml(value, previousValue) {
+  if (value === previousValue) return `<span class="stat-delta flat">No change</span>`;
+  if (previousValue === 0) return `<span class="stat-delta up">New</span>`;
+  // A nonzero change can still round to 0% (e.g. 0.4%) -- shown as a neutral "0%", not
+  // "No change" (that would misrepresent that a real, if tiny, change happened) and not
+  // colored/signed as up or down (that would overstate a rounded-away difference).
+  const pct = Math.round(Math.abs((value - previousValue) / previousValue) * 100);
+  if (pct === 0) return `<span class="stat-delta flat">0%</span>`;
+  const up = value > previousValue;
+  const arrow = up ? "&#9650;" : "&#9660;";
+  const sign = up ? "+" : "&minus;";
+  return `<span class="stat-delta ${up ? "up" : "down"}">${arrow} ${sign}${pct}%</span>`;
 }
 
 function renderTopChart(products, config) {
@@ -474,11 +586,12 @@ function renderTable(products) {
   emptyMsg.style.display = "none";
 
   body.innerHTML = products.map(p => {
-    const optedOut = p.metricsMode === "Opt Out";
+    const thirdPartyNote = THIRD_PARTY_PRODUCTS[p.name];
     const nameCell = `
       ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
+      ${thirdPartyNote ? `<span class="info-badge" data-tooltip="${escapeAttr(thirdPartyNote)}" aria-label="${escapeAttr(thirdPartyNote)}" tabindex="0">ℹ️</span>` : ""}
       <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
-        ${p.category ?? ""} ${optedOut ? '<span class="badge">opted out of analytics</span>' : ""}
+        ${p.category ?? ""}
       </div>
     `;
     const metricCells = CORE_METRICS.map(m => {
@@ -601,7 +714,7 @@ function renderFontsShell() {
 
   const headRow = document.getElementById("font-table-head");
   headRow.innerHTML = [{ key: "name", label: "Font" }, ...FONT_METRICS]
-    .map(col => `<th data-key="${col.key}">${col.label}</th>`)
+    .map(col => `<th data-key="${col.key}">${col.label}<span class="sort-arrow"></span></th>`)
     .join("");
   headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
     const key = th.dataset.key;
@@ -623,15 +736,14 @@ function renderFonts() {
     return fontState.sort.dir === "asc" ? cmp : -cmp;
   });
 
-  document.getElementById("font-export-date").textContent =
-    new Date(fontState.date).toLocaleDateString(undefined, { dateStyle: "long" });
-
   renderFontsStatStrip(fonts);
   renderFontsChart(fonts);
   renderFontsTable(sorted);
 
   document.querySelectorAll("#font-table-head th").forEach(th => {
-    th.classList.toggle("sorted", th.dataset.key === fontState.sort.key);
+    const active = th.dataset.key === fontState.sort.key;
+    th.classList.toggle("sorted", active);
+    th.querySelector(".sort-arrow").textContent = active ? (fontState.sort.dir === "asc" ? " ▲" : " ▼") : "";
   });
 }
 
@@ -700,8 +812,43 @@ function renderFontsTable(fonts) {
   }).join("");
 }
 
+// Custom tooltip for .info-badge elements (e.g. the Paratext 9 "not developed by SIL"
+// note), rather than relying on the native title="" tooltip -- appended directly to
+// body via fixed positioning so it's never clipped by .table-wrap's overflow-x: auto
+// (which implicitly makes overflow-y auto too, per the CSS overflow spec).
+function initInfoBadgeTooltips() {
+  let tooltipEl = null;
+  const show = badge => {
+    tooltipEl = document.createElement("div");
+    tooltipEl.className = "info-tooltip";
+    tooltipEl.textContent = badge.dataset.tooltip;
+    document.body.appendChild(tooltipEl);
+    const rect = badge.getBoundingClientRect();
+    tooltipEl.style.left = `${rect.left + rect.width / 2}px`;
+    tooltipEl.style.top = `${rect.top}px`;
+  };
+  const hide = () => {
+    if (tooltipEl) { tooltipEl.remove(); tooltipEl = null; }
+  };
+  document.body.addEventListener("mouseover", e => {
+    const badge = e.target.closest(".info-badge");
+    if (badge) show(badge);
+  });
+  document.body.addEventListener("mouseout", e => {
+    if (e.target.closest(".info-badge")) hide();
+  });
+  document.body.addEventListener("focusin", e => {
+    const badge = e.target.closest(".info-badge");
+    if (badge) show(badge);
+  });
+  document.body.addEventListener("focusout", e => {
+    if (e.target.closest(".info-badge")) hide();
+  });
+}
+
 init();
 initFonts();
+initInfoBadgeTooltips();
 </script>
 
 </body>

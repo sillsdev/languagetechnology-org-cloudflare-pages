@@ -49,11 +49,3 @@ the static snapshot until you seed it — that's expected.
 If you only need to work on the static page itself (not touching data), step 1 is
 optional — without a local API running, the page just shows its "couldn't load live
 data" state instead of a working table.
-
-## TODO
-
-- [ ] Update styling to match the SIL theme, including a menu/nav that at least links
-  to `/survey-results` (and presumably back to the site root) — currently there's just
-  a bare "&larr; Language Technology" link back to `/`, no shared nav between pages.
-- [ ] Add analytics to the page (no site-wide analytics exist anywhere in this repo
-  yet, so this also means picking an approach/provider).

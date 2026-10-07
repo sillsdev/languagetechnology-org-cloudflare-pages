@@ -76,6 +76,10 @@ tbody tr:hover { background: #f9fafb; }
 </head>
 <body>
 
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #FF6B00; color: #fff; padding: 8px 1rem; text-align: center; font-size: 13px; font-weight: 600;">
+  This dashboard is in review — numbers, layout, and features may still change.
+</div>
+
 <div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
   <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
     <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
@@ -83,6 +87,7 @@ tbody tr:hover { background: #f9fafb; }
     </a>
     <nav style="display: flex; align-items: center; gap: 20px;">
       <a href="#font-usage" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Fonts &darr;</a>
+      <a href="methodology/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Methodology</a>
       <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Survey Results &#8599;</a>
     </nav>
   </div>
@@ -261,10 +266,20 @@ function renderShell() {
     <div id="stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;"></div>
     <div id="stat-strip-note" class="muted" style="font-size: 12px; margin: 6px 0 1.75rem;"></div>
 
+    <div id="whats-changed-card" class="chart-card" style="display: none;">
+      <div class="section-title" style="margin-bottom: 8px;">What changed this quarter</div>
+      <ul id="whats-changed-list" style="margin: 0; padding-left: 1.1rem; font-size: 14px; line-height: 1.6;"></ul>
+    </div>
+
     ${top10Charts.map(chartCardHtml).join("")}
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
       ${totalsCharts.map(chartCardHtml).join("")}
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <div class="eyebrow" style="margin-bottom: 6px;">Search</div>
+      <input type="search" id="search-input" placeholder="Product name&hellip;" style="width: 100%; max-width: 320px;">
     </div>
 
     <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
@@ -279,10 +294,6 @@ function renderShell() {
       <div>
         <div class="eyebrow" style="margin-bottom: 6px;">Status</div>
         <div id="devstatus-pills">${d.devStatuses.filter(s => s != null).map(pillHtml("devstatus")).join("")}</div>
-      </div>
-      <div style="margin-left: auto;">
-        <div class="eyebrow" style="margin-bottom: 6px;">Search</div>
-        <input type="search" id="search-input" placeholder="Product name&hellip;">
       </div>
     </div>
 
@@ -406,6 +417,7 @@ function render() {
   });
 
   renderStatStrip(overviewProducts, state.previousData ? state.previousData.products : null);
+  renderWhatsChanged(overviewProducts);
   TOP_CHARTS.forEach(c => (c.mode === "category-totals" ? renderCategoryTotalsChart : renderTopChart)(overviewProducts, c));
   renderTable(sorted);
   renderFilterSummary(tableProducts.length, overviewProducts.length);
@@ -463,6 +475,21 @@ function renderStatStrip(products, previousProducts) {
   note.textContent = previousProducts
     ? `Change indicators compare against the previous quarter (${state.previousQuarter}).`
     : "";
+}
+
+// Per-product commentary from the quarter sheet's Notes/Comments column (e.g. "we
+// changed how this is measured" or "a real usage trend drove this change") -- see
+// api/_data/products.template.js in langtech-metrics for where this is authored.
+// Hidden entirely when no product has a note for the selected quarter.
+function renderWhatsChanged(products) {
+  const card = document.getElementById("whats-changed-card");
+  const list = document.getElementById("whats-changed-list");
+  const notes = products
+    .map(p => ({ name: p.name, note: p.metrics ? p.metrics.notes : null }))
+    .filter(n => typeof n.note === "string" && n.note.trim() !== "");
+
+  card.style.display = notes.length === 0 ? "none" : "";
+  list.innerHTML = notes.map(n => `<li><strong>${n.name}</strong> — ${n.note}</li>`).join("");
 }
 
 function statDeltaHtml(value, previousValue) {

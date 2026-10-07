@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology | Product Impact Dashboard | SIL Language Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; line-height: 1.6; }
+:root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
+a { color: #00a7e1; }
+.eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
+.section-title { font-family: 'Caveat', cursive; font-weight: 500; font-size: 26px; line-height: 1.2; color: #00a7e1; margin: 2.5rem 0 8px; }
+.card { background: #f9fafb; border: 1px solid #eef1f3; border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; margin-top: 0.5rem; }
+th, td { padding: 10px 14px; text-align: left; vertical-align: top; }
+thead th { background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 2px solid #e4e4e4; }
+tbody tr { border-bottom: 1px solid #eef1f3; }
+.muted { color: #8a8a8a; }
+.secondary { color: #727272; }
+ul.limitations { padding-left: 1.1rem; }
+ul.limitations li { margin-bottom: 0.6rem; }
+</style>
+</head>
+<body>
+
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #FF6B00; color: #fff; padding: 8px 1rem; text-align: center; font-size: 13px; font-weight: 600;">
+  This dashboard is in review — numbers, layout, and features may still change.
+</div>
+
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
+  <div style="max-width: 900px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+    <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
+      <img src="../../images/logo.webp" alt="SIL" style="height: 28px; width: auto;">
+    </a>
+    <nav style="display: flex; align-items: center; gap: 20px;">
+      <a href="../" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">&larr; Dashboard</a>
+    </nav>
+  </div>
+</div>
+
+<div style="max-width: 900px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 2.5rem) 4rem;">
+
+  <div class="eyebrow">Product Impact Dashboard</div>
+  <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 6px 0;">Methodology</h1>
+  <p class="secondary">
+    How the numbers on the <a href="../">Product Impact Dashboard</a> are collected, defined, and
+    what their limitations are.
+  </p>
+
+  <h2 class="section-title">Where the data comes from</h2>
+  <p>
+    Each quarter, the Language Technology team compiles a shared "LangTech Analytics Dashboard"
+    spreadsheet, with one row per product. Numbers are self-reported by each product's own team
+    from whatever analytics or telemetry that product collects &mdash; there is no single, uniform
+    tracking system across every product. That spreadsheet is converted and published to this
+    dashboard; nothing on this site collects usage data directly.
+  </p>
+
+  <h2 class="section-title">What each metric means</h2>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th>Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Active Users</strong></td>
+          <td>
+            Distinct people recorded as using the product in the quarter. The exact definition
+            varies by product &mdash; for an installed desktop or mobile tool this generally means
+            people actively working in it, while for some web-based products it reflects website
+            visitor traffic rather than people actively using a tool. We're working toward
+            distinguishing these two more clearly on the dashboard itself.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Downloads</strong></td>
+          <td>Installer/package downloads recorded in the quarter, where the product tracks this (not applicable to purely web-based products).</td>
+        </tr>
+        <tr>
+          <td><strong>Installs</strong></td>
+          <td>Completed installations recorded in the quarter, where the product tracks this.</td>
+        </tr>
+        <tr>
+          <td><strong>Active Projects</strong></td>
+          <td>Distinct projects (e.g. translation projects, dictionaries) with recorded activity in the quarter.</td>
+        </tr>
+        <tr>
+          <td><strong>Countries</strong></td>
+          <td>
+            Distinct countries the product recorded usage in during the quarter. The dashboard's
+            "Countries Reached" summary tile shows the single highest per-product count, not a
+            combined total across all products &mdash; a true de-duplicated union isn't available
+            since products don't share user-level location data with each other.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Languages Impacted</strong></td>
+          <td>Distinct languages with recorded activity in the product during the quarter.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="muted" style="font-size: 13px;">
+    A dash (&mdash;) in the product table means a metric isn't tracked or wasn't reported for that
+    product that quarter &mdash; it doesn't mean zero.
+  </p>
+
+  <h2 class="section-title">Font Usage</h2>
+  <p>
+    Figures in the Font Usage section only count views served through
+    <a href="https://fonts.google.com/analytics" target="_blank" rel="noopener">Google Fonts</a>.
+    Not every SIL font is distributed there &mdash; see the full catalog at
+    <a href="https://software.sil.org/fonts/" target="_blank" rel="noopener">software.sil.org/fonts</a>.
+  </p>
+
+  <h2 class="section-title">Quarter-over-quarter changes</h2>
+  <p>
+    Where a product's numbers moved notably from the previous quarter, the dashboard's "What
+    changed this quarter" note explains why &mdash; for example, a change in how a product measures
+    a metric, versus a genuine change in usage. These notes come from the same quarterly
+    spreadsheet as the metrics themselves, added by whoever reviews that product's numbers.
+  </p>
+
+  <h2 class="section-title">Known limitations</h2>
+  <ul class="limitations secondary">
+    <li>
+      <strong>Active Users isn't always apples-to-apples.</strong> As noted above, some products
+      report tool usage and others report website traffic under the same metric name.
+    </li>
+    <li>
+      <strong>Countries Reached is a maximum, not a union.</strong> It reflects whichever single
+      product reached the most countries that quarter, not a combined count across all products.
+    </li>
+    <li>
+      <strong>Not every product is developed by SIL Language Technology.</strong> A few, like
+      Paratext, are third-party products this team builds extensions for rather than develops
+      outright &mdash; flagged directly on the product where this applies.
+    </li>
+    <li>
+      <strong>Reporting is self-service and uneven.</strong> Since each product team reports its
+      own numbers from whatever analytics it has, coverage and consistency vary product to
+      product and quarter to quarter.
+    </li>
+  </ul>
+
+  <p class="muted" style="font-size: 13px; margin-top: 2.5rem;">
+    Questions or feedback about these numbers? Reach out to the Language Technology team.
+  </p>
+
+</div>
+
+</body>
+</html>

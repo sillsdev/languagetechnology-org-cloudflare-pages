@@ -15,6 +15,16 @@ everything about how the *data* is sourced, synced, and served lives in the sepa
   API only ever returns one period at a time. The page's `API_ORIGIN` constant
   switches to a local API dev server automatically when the page itself is served
   from localhost — see "Running it locally" below.
+- **`impact/methodology/index.html`** — a static, self-contained page explaining how
+  the metrics are defined/collected and their known limitations (e.g. Active Users
+  mixing tool-usage and website-traffic semantics, Countries Reached being a max not
+  a union). Linked from the dashboard's header nav. No data fetching of its own —
+  update it by hand when the methodology or a known limitation changes.
+- **Per-product "what changed this quarter" notes** — each product's `metrics` object
+  can carry an optional `notes` string (see `api/_data/products.template.js` in
+  `langtech-metrics`), sourced from that quarter's spreadsheet Notes/Comments column.
+  When present, it's shown in the dashboard's "What changed this quarter" card; the
+  card is hidden entirely for a quarter where no product has a note.
 - **Everything else — the API, its KV-backed storage, static-data fallback, and
   whatever eventually syncs real data into it — lives in `langtech-metrics`**, a
   separate repo with its own deploy (a Cloudflare Worker on
@@ -38,7 +48,8 @@ This page's data comes from a separate repo's Worker, so testing `/impact` fully
 locally means running both dev servers side by side:
 
 1. In the `langtech-metrics` repo, run its local dev server (**http://localhost:3000**).
-2. In this repo's root, run `npx wrangler pages dev .` (**http://localhost:8788**).
+2. In this repo's root, run `npx wrangler pages dev .` (**http://localhost:8788**) — the
+   trailing `.` is required, it tells wrangler to serve the current directory.
 
 `impact/index.html` detects it's running on `localhost`/`127.0.0.1` and points
 `API_ORIGIN` at `http://localhost:3000` instead of production, and the API worker's

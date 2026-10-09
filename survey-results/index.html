@@ -9,6 +9,7 @@
 <style>
 body { margin: 0; }
 :root { --radius: 10px; --text-primary: #003049; --text-secondary: #757575; --text-muted: #858585; }
+h2[id] { scroll-margin-top: 16px; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .fade-section { animation: fadeInUp 0.5s ease-out both; }
 @keyframes quoteFade { from { opacity: 0; } to { opacity: 1; } }
@@ -87,7 +88,7 @@ body { margin: 0; }
     </div>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px; text-align: center;">Did you know?</h2>
+  <h2 id="did-you-know" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px; text-align: center;">Did you know?</h2>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 2rem;">
     <div style="background: #F7F7F7; border-top: 3px solid #ff6b00; border-radius: 0 0 12px 12px; padding: 1.25rem; text-align: center;">
       <div class="countup" data-target="813" style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 36px; color: #003049; font-variant-numeric: tabular-nums;">0</div>
@@ -128,7 +129,7 @@ body { margin: 0; }
   <div class="photo-strip-nav next"><button type="button" id="photoStripNext" aria-label="Scroll photos right">&#8250;</button></div>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Reach</h2>
+  <h2 id="reach" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Reach</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">the 28 tools &amp; fonts included in the survey<span style="font-size: 0.75em; vertical-align: 0.3em;">*</span>, share of respondents who marked each as important</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">based on the 765 respondents who completed the survey</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 640px; margin-bottom: 2rem;">
@@ -136,13 +137,13 @@ body { margin: 0; }
   </div>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin: -1.25rem 0 2rem;">* We&rsquo;ve also received feedback on other (non&ndash;Language Technology) SIL products that weren&rsquo;t part of the survey &mdash; see <a href="#beyond-the-list" style="color: #00a7e1;">Beyond the list</a> below.</div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Coverage</h2>
+  <h2 id="coverage" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Coverage</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">use-case areas, share of respondents</p>
   <div class="fade-section" style="position: relative; width: 100%; height: 300px; margin-bottom: 2rem;">
     <canvas id="coverageChart" role="img" aria-label="Horizontal bar chart of use-case areas by share of respondents: Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%">Linguistics and language data 68%, Scripture drafting 68%, Scripture publishing 62%, Keyboarding 60%, Literacy 60%, Scripture audio 33%.</canvas>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Gratitude</h2>
+  <h2 id="gratitude" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Gratitude</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">top 10 products by encouragement comments</p>
   <div class="fade-section" style="font-size: 13px; color: #00a7e1; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;"><span aria-hidden="true">&#128071;</span> tap or click any bar below to read quotes from that product's users</div>
   <div class="fade-section" style="position: relative; width: 100%; height: 480px; margin-bottom: 1rem;">
@@ -161,7 +162,7 @@ body { margin: 0; }
   <div id="beyondChartFallback" class="sr-only" role="group" aria-label="Open quotes for a product outside the surveyed list"></div>
   <div id="beyondQuotePanel" style="display: none; background: #EFEFEF; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 2rem;"></div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Also loved</h2>
+  <h2 id="also-loved" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Also loved</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">quieter tools that got warm feedback too</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">encouragement comments for tools outside the top 10 above</div>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 2rem;">
@@ -191,7 +192,7 @@ body { margin: 0; }
     </div>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 2rem 0 4px;">Insights</h2>
+  <h2 id="insights" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 2rem 0 4px;">Insights</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">what the data adds up to</p>
   <div class="fade-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 2rem;">
     <div style="background: #EFEFEF; border-left: 3px solid #00a7e1; border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; font-size: 13px; color: #757575; line-height: 1.5;">
@@ -208,12 +209,12 @@ body { margin: 0; }
     </div>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Echoes</h2>
+  <h2 id="echoes" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Echoes</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 2px;">words respondents use most, in their own feedback</p>
   <div class="fade-section" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">sized by how often each word appears across the feedback comments</div>
   <div id="wordCloud" class="fade-section" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 12px; padding: 1.25rem 1rem; background: #F7F7F7; border-radius: 12px; margin-bottom: 2rem;"></div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Voices</h2>
+  <h2 id="voices" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Voices</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">feedback, by category</p>
   <div class="fade-section" style="text-align: center; margin-bottom: 1rem;">
     <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; color: #003049;"><span class="countup" data-target="71" style="font-variant-numeric: tabular-nums;">0</span>%</div>
@@ -237,7 +238,7 @@ body { margin: 0; }
     </div>
   </div>
 
-  <h2 class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Momentum</h2>
+  <h2 id="momentum" class="fade-section" style="font-family: 'Caveat', cursive; font-weight: 500; font-size: 28px; line-height: 1.2; color: #00a7e1; margin: 0 0 4px;">Momentum</h2>
   <p class="fade-section" style="font-size: 15px; color: var(--text-secondary); font-weight: 400; margin: 0 0 8px;">responses over time</p>
   <div class="fade-section" style="display: flex; gap: 16px; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
     <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #ff6b00;"></span>daily responses (left)</span>
@@ -253,6 +254,14 @@ body { margin: 0; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+
+// Updates the address bar to a shareable deep link (#section:product) without
+// adding a history entry or firing 'hashchange' (history.replaceState does
+// neither), so product-panel clicks can't spam the back button or re-trigger
+// our own hashchange-driven handleDeepLink() below.
+function setDeepLinkHash(sectionId, product) {
+  history.replaceState(null, '', '#' + sectionId + ':' + encodeURIComponent(product));
+}
 
 const quotes = [
   { text: "Many of the translators have never touched a computer before Bible translation and started with Paratext before exploring other programs. They even learnt to type through Paratext.", attr: "Paratext" },
@@ -495,11 +504,12 @@ function setActiveEncBar(idx) {
   encChartInstance.data.datasets[0].backgroundColor = encLabels.map((_, i) => i === idx ? '#003049' : '#00a7e1');
   encChartInstance.update();
 }
-function showQuotePanel(product, { scroll = true } = {}) {
+function showQuotePanel(product, { scroll = true, updateHash = true } = {}) {
   const info = quoteData[product];
   if (!info) return;
   const idx = encLabels.indexOf(product);
   setActiveEncBar(idx);
+  if (updateHash) setDeepLinkHash('gratitude', product);
   quotePanel.replaceChildren();
 
   const header = document.createElement('div');
@@ -571,7 +581,9 @@ document.getElementById('encChart').addEventListener('click', (evt) => {
 });
 // Demonstrate the click-to-reveal interaction by opening the top bar's quotes by default,
 // instead of relying solely on the hint text above the chart (users weren't discovering it).
-showQuotePanel(encLabels[0], { scroll: false });
+// updateHash: false so this default state doesn't overwrite an incoming deep link, or put a
+// hash in the address bar for visitors who didn't click anything.
+showQuotePanel(encLabels[0], { scroll: false, updateHash: false });
 
 const beyondQuoteData = {"Toolbox": {"total": 11, "sample": ["My work would not be possible without Toolbox.", "I was very pleased to learn that there was already a dictionary and interlinear tool on Toolbox. Even though this is already old technology, we are very grateful for the time it has saved us.", "Retired now but Toolbox and Paratext were indispensable in translating the Bible and compiling dictionaries in 6 languages in West Africa.", "I still find Toolbox a good tool for our lexicon and our English-headword-vernacular-definition dictionary. It offers enough functionality to produce either an abbreviated word-list with-gloss or a full-blown dictionary.", "I started using Toolbox when it was first released (as Shoebox), and have several lexicon files in it — a system that still works well.", "Toolbox is not listed above, I use it a lot.", "I still use Toolbox, as FLEx is just too heavy and clunky."]}, "PrimerPrep": {"total": 9, "sample": ["PrimerPrep has shortened the time that I used to do a frequency count by 95%. Primers are now produced easily and quickly!", "I'm very grateful for PrimerPrep", "PrimerPrep is very useful as we help several languages develop basic literacy primers.", "PrimerPrep is seeing a big uptick in interest and usage among literacy workers and consultants.", "This software is really helpful when a language is ready to develop a basic primer. It helps with frequency count, lesson order etc.", "PrimerPrep has helped us find the best teaching order in primers.", "PrimerPrep — very useful for extracting word list from texts. It has helped me in building a lexical model or predictive text for the Obolo Keyman keyboard."]}, "XLingPaper": {"total": 7, "sample": ["XLingPaper — an absolute essential for my linguistic publication work and for what I do with literacy. I continue to use it constantly and have taught it to professionals outside of SIL.", "I did my dissertation using XLingPaper and continue to use it for linguistic writing.", "X-Ling Paper — wonderful tool for writing linguistic papers, though it is a bit technical.", "LingTree and XLingPaper are important tools for my work.", "I use XLingPaper extensively in my writing.", "XLingPaper is important, and I develop Ukelele, so that is important, along with the user community.", "I use XLingPaper extensively."]}, "LingTree": {"total": 3, "sample": ["The SIL LingTree tool has been the best linguistic tree builder tool I've found. […] Support has also been great, and the documentation is clear — getting up to speed was simple. Thanks!", "LingTree and XLingPaper are important tools for my work.", "I use LingTree and Sapin-Sapin fairly frequently."]}, "WeSay": {"total": 2, "sample": ["I've taught four dictionary workshops in PNG, using WeSay. It was great to be able to get speakers going within an hour or so, and produce small dictionaries with pictures even after two weeks. Very rewarding for teachers and participants.", "I have enjoyed using WeSay to organize survey recordings for intelligibility testing. It was a great help to then be able to upload the recordings to REAP and have all the meta data organized and in one place."]}};
 
@@ -617,11 +629,12 @@ function setActiveBeyondBar(idx) {
   beyondChartInstance.data.datasets[0].backgroundColor = beyondLabels.map((_, i) => i === idx ? '#A6121F' : '#D52227');
   beyondChartInstance.update();
 }
-function showBeyondQuotePanel(product, { scroll = true } = {}) {
+function showBeyondQuotePanel(product, { scroll = true, updateHash = true } = {}) {
   const info = beyondQuoteData[product];
   if (!info) return;
   const idx = beyondLabels.indexOf(product);
   setActiveBeyondBar(idx);
+  if (updateHash) setDeepLinkHash('beyond-the-list', product);
   beyondQuotePanel.replaceChildren();
 
   const header = document.createElement('div');
@@ -684,7 +697,7 @@ document.getElementById('beyondChart').addEventListener('click', (evt) => {
     showBeyondQuotePanel(beyondLabels[points[0].index]);
   }
 });
-showBeyondQuotePanel(beyondLabels[0], { scroll: false });
+showBeyondQuotePanel(beyondLabels[0], { scroll: false, updateHash: false });
 
 const growthLabels =["May 4","May 5","May 6","May 7","May 8","May 9","May 10","May 11","May 12","May 13","May 14","May 15","May 16","May 17","May 18","May 19","May 20","May 21","May 22","May 23","May 24","May 25","May 26","May 27","May 28","May 29","May 30","May 31","Jun 1","Jun 2","Jun 3","Jun 4","Jun 5","Jun 6","Jun 7","Jun 8","Jun 9","Jun 10","Jun 11","Jun 12","Jun 13","Jun 14","Jun 15","Jun 16","Jun 17","Jun 18","Jun 19","Jun 20","Jun 21","Jun 22","Jun 23","Jun 24","Jun 25","Jun 26","Jun 27","Jun 28","Jun 29","Jun 30","Jul 1","Jul 2","Jul 3","Jul 4","Jul 5","Jul 6","Jul 7","Jul 8","Jul 9","Jul 10","Jul 11","Jul 12","Jul 13","Jul 14","Jul 15","Jul 16","Jul 17","Jul 18","Jul 19","Jul 20","Jul 21","Jul 22","Jul 23","Jul 24","Jul 25","Jul 26","Jul 27","Jul 28","Jul 29"];
 const growthDaily = [2,1,0,0,5,12,1,59,47,79,39,39,10,10,23,47,26,25,14,2,4,8,14,5,15,5,3,2,6,6,4,10,3,3,1,2,3,4,8,4,1,0,2,5,9,5,7,1,1,18,22,8,5,3,1,6,5,3,4,3,3,4,2,4,5,6,5,2,7,0,2,6,3,13,3,2,3,7,8,3,1,0,3,1,8,3,1];
@@ -732,6 +745,39 @@ new Chart(document.getElementById('growthChart'), {
     }
   }
 });
+
+// Deep-linking: #<section-id> scrolls to that section; #<section-id>:<product>
+// also opens that product's quote panel, matching the product name against the
+// chart's labels case- and whitespace-insensitively. Supported product sections
+// are "gratitude" (encLabels) and "beyond-the-list" (beyondLabels) — e.g.
+// #gratitude:FieldWorks or #beyond-the-list:Toolbox.
+const deepLinkSections = {
+  'gratitude': { labels: encLabels, show: showQuotePanel },
+  'beyond-the-list': { labels: beyondLabels, show: showBeyondQuotePanel }
+};
+function normalizeProductKey(s) {
+  return s.toLowerCase().replace(/\s+/g, '');
+}
+function handleDeepLink() {
+  const raw = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if (!raw) return;
+  const sepIdx = raw.indexOf(':');
+  const sectionId = sepIdx === -1 ? raw : raw.slice(0, sepIdx);
+  const productParam = sepIdx === -1 ? '' : raw.slice(sepIdx + 1);
+  const sectionEl = document.getElementById(sectionId);
+  if (!sectionEl) return;
+  const section = deepLinkSections[sectionId];
+  if (productParam && section) {
+    const match = section.labels.find((label) => normalizeProductKey(label) === normalizeProductKey(productParam));
+    if (match) {
+      section.show(match, { scroll: true });
+      return;
+    }
+  }
+  sectionEl.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}
+window.addEventListener('hashchange', handleDeepLink);
+handleDeepLink();
 </script>
 </body>
 </html>

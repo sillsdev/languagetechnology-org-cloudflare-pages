@@ -25,6 +25,18 @@ everything about how the *data* is sourced, synced, and served lives in the sepa
   `langtech-metrics`), sourced from that quarter's spreadsheet Notes/Comments column.
   When present, it's shown in the dashboard's "What changed this quarter" card; the
   card is hidden entirely for a quarter where no product has a note.
+- **Products with no data yet** — a product with no metric reported for the selected
+  quarter gets a "No data yet" badge next to its name, a highlighted (pale yellow) table
+  row, and "Stats not in yet" in place of its metric cells; it's also excluded from the
+  "Products Reporting" stat tile. Driven by `metrics.pending` from the API (set by
+  `langtech-metrics`' converter); `index.html`'s `isPending()` falls back to checking the
+  metrics themselves for quarters pushed before that flag existed.
+- **Provisional change indicators** — while the selected quarter still has pending
+  products, the API's top-level `complete: false` (set at push time, see
+  `langtech-metrics/scripts/push-products.mjs`) makes the stat-tile deltas render grey
+  with a trailing `*` instead of a colored up/down arrow, since a dropout product can
+  make a still-filling-in total look like a real decline. The note under the stat strip
+  explains why.
 - **Everything else — the API, its KV-backed storage, static-data fallback, and
   whatever eventually syncs real data into it — lives in `langtech-metrics`**, a
   separate repo with its own deploy (a Cloudflare Worker on

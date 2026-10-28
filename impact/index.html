@@ -35,7 +35,14 @@ thead th.sorted { color: #003049; }
 .link-button { background: none; border: none; padding: 0; font: inherit; color: #00a7e1; text-decoration: underline; cursor: pointer; }
 tbody tr { border-bottom: 1px solid #eef1f3; }
 tbody tr:hover { background: #f9fafb; }
+tbody tr.row-pending { background: #FFFBEB; }
+tbody tr.row-pending:hover { background: #FFF3C4; }
 .muted { color: #8a8a8a; }
+.pending-badge {
+  display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.03em; color: #92400E; background: #FDE68A; border-radius: 999px; padding: 2px 8px;
+  vertical-align: middle;
+}
 .info-badge { display: inline-block; margin-left: 6px; font-size: 13px; cursor: help; }
 .info-tooltip {
   position: fixed; transform: translate(-50%, -100%); margin-top: -8px;
@@ -404,6 +411,17 @@ function metricValue(product, key) {
   return typeof v === "number" && Number.isFinite(v) ? v : null;
 }
 
+// True when a product has no usage data at all for the selected quarter (e.g. a new
+// product, or one whose numbers just haven't been reported yet this quarter). Trusts
+// the API's `metrics.pending` flag (set by langtech-metrics' converter) when present,
+// and falls back to checking the metrics themselves for quarters pushed before that
+// flag existed.
+function isPending(product) {
+  if (!product.metrics) return true;
+  if (typeof product.metrics.pending === "boolean") return product.metrics.pending;
+  return CORE_METRICS.every(m => metricValue(product, m.key) === null);
+}
+
 function render() {
   // Category/platform/status/search only narrow the table below — the overview section
   // (stat strip + charts) always reflects every product for the selected quarter, since
@@ -413,11 +431,13 @@ function render() {
   const sorted = [...tableProducts].sort((a, b) => {
     const av = state.sort.key === "name" ? a.name : metricValue(a, state.sort.key);
     const bv = state.sort.key === "name" ? b.name : metricValue(b, state.sort.key);
-    let cmp;
-    if (av == null && bv == null) cmp = 0;
-    else if (av == null) cmp = 1;
-    else if (bv == null) cmp = -1;
-    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
+    // "No data" rows always sort last, in both directions -- checked before the
+    // direction flip below, since negating a null placeholder along with the real
+    // comparison would otherwise push "no data" rows to the top on a descending sort.
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    const cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
     return state.sort.dir === "asc" ? cmp : -cmp;
   });
 
@@ -456,19 +476,26 @@ const STAT_TILES = [
   { label: "Downloads", compute: products => sumMetric(products, "downloads") },
   // No delta: "reporting" reflects which products happened to submit data this quarter,
   // not a quantity trending up or down in a way a percentage change would mean anything for.
-  { label: "Products Reporting", compute: products => products.filter(p => p.metrics && Object.keys(p.metrics).length > 0).length, showDelta: false },
+  { label: "Products Reporting", compute: products => products.filter(p => !isPending(p)).length, showDelta: false },
   { label: "Countries Reached", compute: products => Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
 ];
 
 // previousProducts is null when there's no earlier quarter (or its fetch failed) --
 // the delta badges and the note below the strip just don't render in that case.
+//
+// `complete` (from the API, set at push time -- see api/products.js in langtech-metrics)
+// is false while some products for the SELECTED quarter haven't reported yet. A delta
+// comparing a still-filling-in total against a finished previous quarter can look like a
+// real drop that's really just missing data, so deltas render as provisional (grey, with
+// an asterisk) rather than a possibly-false red/green arrow until the quarter completes.
 function renderStatStrip(products, previousProducts) {
   const strip = document.getElementById("stat-strip");
   const note = document.getElementById("stat-strip-note");
+  const reliable = state.data.complete !== false;
 
   strip.innerHTML = STAT_TILES.map(tile => {
     const value = tile.compute(products);
-    const deltaHtml = (tile.showDelta !== false && previousProducts) ? statDeltaHtml(value, tile.compute(previousProducts)) : "";
+    const deltaHtml = (tile.showDelta !== false && previousProducts) ? statDeltaHtml(value, tile.compute(previousProducts), reliable) : "";
     return `
       <div class="stat-tile">
         <div class="stat-value">${value.toLocaleString()}${deltaHtml}</div>
@@ -477,9 +504,10 @@ function renderStatStrip(products, previousProducts) {
     `;
   }).join("");
 
-  note.textContent = previousProducts
-    ? `Change indicators compare against the previous quarter (${state.previousQuarter}).`
-    : "";
+  const notes = [];
+  if (previousProducts) notes.push(`Change indicators compare against the previous quarter (${state.previousQuarter}).`);
+  if (!reliable) notes.push(`${state.quarter} is still being reported — indicators marked * may change.`);
+  note.textContent = notes.join(" ");
 }
 
 // Per-product commentary from the quarter sheet's Notes/Comments column (e.g. "we
@@ -497,7 +525,7 @@ function renderWhatsChanged(products) {
   list.innerHTML = notes.map(n => `<li><strong>${n.name}</strong> — ${n.note}</li>`).join("");
 }
 
-function statDeltaHtml(value, previousValue) {
+function statDeltaHtml(value, previousValue, reliable) {
   if (value === previousValue) return `<span class="stat-delta flat">No change</span>`;
   if (previousValue === 0) return `<span class="stat-delta up">New</span>`;
   // A nonzero change can still round to 0% (e.g. 0.4%) -- shown as a neutral "0%", not
@@ -508,7 +536,11 @@ function statDeltaHtml(value, previousValue) {
   const up = value > previousValue;
   const arrow = up ? "&#9650;" : "&#9660;";
   const sign = up ? "+" : "&minus;";
-  return `<span class="stat-delta ${up ? "up" : "down"}">${arrow} ${sign}${pct}%</span>`;
+  // Provisional (quarter still reporting): grey, not colored up/down -- a dropout, not a
+  // real decline, could be the whole reason this reads as "down" right now.
+  const cls = reliable ? (up ? "up" : "down") : "flat";
+  const suffix = reliable ? "" : "*";
+  return `<span class="stat-delta ${cls}">${arrow} ${sign}${pct}%${suffix}</span>`;
 }
 
 function renderTopChart(products, config) {
@@ -619,13 +651,18 @@ function renderTable(products) {
 
   body.innerHTML = products.map(p => {
     const thirdPartyNote = THIRD_PARTY_PRODUCTS[p.name];
+    const pending = isPending(p);
     const nameCell = `
       ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
+      ${pending ? `<span class="pending-badge">No data yet</span>` : ""}
       ${thirdPartyNote ? `<span class="info-badge" data-tooltip="${escapeAttr(thirdPartyNote)}" aria-label="${escapeAttr(thirdPartyNote)}" tabindex="0">ℹ️</span>` : ""}
       <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
         ${p.category ?? ""}
       </div>
     `;
+    if (pending) {
+      return `<tr class="row-pending"><td>${nameCell}</td><td colspan="${CORE_METRICS.length}" class="muted" style="text-align: center;">Stats not in yet</td></tr>`;
+    }
     const metricCells = CORE_METRICS.map(m => {
       const v = metricValue(p, m.key);
       return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
@@ -760,11 +797,12 @@ function renderFonts() {
   const sorted = [...fonts].sort((a, b) => {
     const av = fontState.sort.key === "name" ? a.name : fontMetricValue(a, fontState.sort.key);
     const bv = fontState.sort.key === "name" ? b.name : fontMetricValue(b, fontState.sort.key);
-    let cmp;
-    if (av == null && bv == null) cmp = 0;
-    else if (av == null) cmp = 1;
-    else if (bv == null) cmp = -1;
-    else cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
+    // "No data" rows always sort last, in both directions -- see the matching comment
+    // in render()'s table sort above.
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    const cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
     return fontState.sort.dir === "asc" ? cmp : -cmp;
   });
 

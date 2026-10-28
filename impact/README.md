@@ -33,6 +33,31 @@ everything about how the *data* is sourced, synced, and served lives in the sepa
   of data sourcing (as of this writing, nothing syncs live data — the API falls back
   to a hand-maintained static snapshot).
 
+## Shared snippets
+
+Per this repo's no-shared-CSS/JS convention (see root `CLAUDE.md`), there's no import
+for this — just copy the block below into a page's own `<style>`/`<body>` verbatim so
+both pages stay in sync.
+
+- **In-review banner** — shown at the top of both `impact/index.html` and
+  `impact/methodology/index.html` while the dashboard is still being finalized.
+  Remove the `.review-banner` CSS rule, media query, and `<div class="review-banner">`
+  from both pages once the dashboard is out of review.
+
+  ```css
+  .review-banner {
+    box-sizing: border-box; width: 100vw; margin-left: calc(50% - 50vw); background: #FF6B00; color: #fff;
+    padding: 8px 1rem; text-align: center; font-size: 13px; font-weight: 600; line-height: 1.4;
+  }
+  @media (max-width: 480px) { .review-banner { font-size: 12px; } }
+  ```
+
+  ```html
+  <div class="review-banner">
+    This dashboard is in review — layout and features may still change.
+  </div>
+  ```
+
 ## Cross-origin note
 
 `metrics.languagetechnology.org` is a different origin from this site, so the API

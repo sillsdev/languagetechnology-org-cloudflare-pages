@@ -262,8 +262,6 @@ const state = {
   quarterCache: new Map(), // quarter -> already-fetched API response, so switching back doesn't refetch
   quarterRequestToken: 0, // bumped on every quarter switch; a response only applies if it's still current
   categories: new Set(),
-  platforms: new Set(),
-  devStatuses: new Set(),
   search: "",
   sort: { key: "name", dir: "asc" },
   visibleCount: 10, // table rows shown before "Show all" -- reset to 10 on quarter/sort/filter change
@@ -426,19 +424,9 @@ function renderShell() {
       <input type="search" id="search-input" placeholder="Product name&hellip;" style="width: 100%; max-width: 320px;">
     </div>
 
-    <div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Category</div>
-        <div id="category-pills">${d.categories.map(pillHtml("category")).join("")}</div>
-      </div>
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Platform</div>
-        <div id="platform-pills">${d.platforms.map(pillHtml("platform")).join("")}</div>
-      </div>
-      <div>
-        <div class="eyebrow" style="margin-bottom: 6px;">Status</div>
-        <div id="devstatus-pills">${d.devStatuses.filter(s => s != null).map(pillHtml("devstatus")).join("")}</div>
-      </div>
+    <div style="margin-bottom: 1.25rem; padding: 1rem; background: #f9fafb; border-radius: var(--radius);">
+      <div class="eyebrow" style="margin-bottom: 6px;">Category</div>
+      <div id="category-pills">${d.categories.map(pillHtml("category")).join("")}</div>
     </div>
 
     <div id="filter-summary" class="muted" style="font-size: 13px; margin-bottom: 0.75rem;"></div>
@@ -469,8 +457,6 @@ function renderShell() {
     render();
   });
   attachPillHandlers("category-pills", state.categories);
-  attachPillHandlers("platform-pills", state.platforms);
-  attachPillHandlers("devstatus-pills", state.devStatuses);
 
   const headRow = document.getElementById("table-head");
   headRow.innerHTML = [{ key: "name", label: "Product" }, ...CORE_METRICS]
@@ -486,12 +472,10 @@ function renderShell() {
 
 function clearProductFilters() {
   state.categories.clear();
-  state.platforms.clear();
-  state.devStatuses.clear();
   state.search = "";
   state.visibleCount = 10;
   document.getElementById("search-input").value = "";
-  document.querySelectorAll("#category-pills .pill, #platform-pills .pill, #devstatus-pills .pill").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll("#category-pills .pill").forEach(p => p.classList.remove("active"));
   render();
 }
 
@@ -551,8 +535,6 @@ function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
 function filteredProducts() {
   return state.data.products.filter(p => {
     if (state.categories.size && !state.categories.has(p.category)) return false;
-    if (state.platforms.size && !p.platforms.some(pl => state.platforms.has(pl))) return false;
-    if (state.devStatuses.size && !state.devStatuses.has(p.devStatus)) return false;
     if (state.search && !p.name.toLowerCase().includes(state.search)) return false;
     return true;
   });
@@ -608,7 +590,7 @@ function render() {
 
 function renderFilterSummary(shown, total) {
   const summary = document.getElementById("filter-summary");
-  const hasActiveFilters = state.categories.size > 0 || state.platforms.size > 0 || state.devStatuses.size > 0 || state.search !== "";
+  const hasActiveFilters = state.categories.size > 0 || state.search !== "";
   summary.innerHTML = hasActiveFilters
     ? `${shown.toLocaleString()} of ${total.toLocaleString()} products shown — <button type="button" id="clear-filters-btn" class="link-button">Clear filters</button>`
     : `${total.toLocaleString()} products`;

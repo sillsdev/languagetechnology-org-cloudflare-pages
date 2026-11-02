@@ -598,7 +598,10 @@ function renderFilterSummary(shown, total) {
 function renderTableSummary(total, shown) {
   const summary = document.getElementById("table-summary");
   summary.innerHTML = shown < total
-    ? `${shown.toLocaleString()} of ${total.toLocaleString()} products shown — <button type="button" id="show-all-products-btn" class="link-button">Show all ${total.toLocaleString()} products</button>`
+    ? `<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span>${shown.toLocaleString()} of ${total.toLocaleString()} products shown</span>
+        <button type="button" id="show-all-products-btn" class="pill">Show all ${total.toLocaleString()} products</button>
+      </div>`
     : "";
   const showAllBtn = document.getElementById("show-all-products-btn");
   if (showAllBtn) showAllBtn.addEventListener("click", () => {
@@ -1063,7 +1066,10 @@ function renderFontsTable(fonts) {
 function renderFontTableSummary(total, shown) {
   const summary = document.getElementById("font-table-summary");
   summary.innerHTML = shown < total
-    ? `${shown.toLocaleString()} of ${total.toLocaleString()} fonts shown — <button type="button" id="font-load-more-btn" class="link-button">Show all ${total.toLocaleString()} fonts</button>`
+    ? `<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <span>${shown.toLocaleString()} of ${total.toLocaleString()} fonts shown</span>
+        <button type="button" id="font-load-more-btn" class="pill">Show all ${total.toLocaleString()} fonts</button>
+      </div>`
     : `${total.toLocaleString()} fonts`;
   const loadMoreBtn = document.getElementById("font-load-more-btn");
   if (loadMoreBtn) loadMoreBtn.addEventListener("click", () => {

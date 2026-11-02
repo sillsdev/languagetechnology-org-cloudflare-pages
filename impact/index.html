@@ -1124,10 +1124,16 @@ const APPS_TYPE_ORDER = ["Scripture", "Dictionary", "Reading", "Keyboard"];
 const APPS_TYPE_COLOR = { Scripture: "#FFB71B", Reading: "#00A7E1", Dictionary: "#509E2F", Keyboard: "#005CB9" };
 const APPS_TYPE_NOUN = { Scripture: "Scripture apps", Dictionary: "dictionary apps", Reading: "reading apps", Keyboard: "keyboard apps" };
 
-// Hand-authored once a reason is confirmed for an unusual month-over-month jump (see
-// impact/README.md's TODO) -- empty until then, and the "Notes on this chart" block
-// hides entirely rather than show an empty header, same as #whats-changed-card above.
-const APPS_TREND_NOTES = [];
+// Hand-authored once a reason is confirmed for an unusual month-over-month jump --
+// empty hides the "Notes on this chart" block entirely rather than show an empty
+// header, same as #whats-changed-card above.
+const APPS_TREND_NOTES = [
+  {
+    when: "March to April 2026",
+    fact: "Installs rose by 20.8 million in one month, against 1–4 million in a typical month.",
+    reason: "Starting March 2026, app download numbers are obtained by scraping all Google Play store pages, rather than relying on individual publishers to report updated data.",
+  },
+];
 
 const TREND_X0 = 104, TREND_X1 = 960, TREND_Y0 = 276, TREND_Y1 = 16;
 
@@ -1536,7 +1542,7 @@ function renderAppsFootnote() {
   const trend = appsState.data.trend;
   const latestDate = trend.length ? trend[trend.length - 1].date : null;
   const asOf = latestDate ? new Date(latestDate).toLocaleDateString(undefined, { dateStyle: "long" }) : monthLabel(appsState.month);
-  el.textContent = `Source: SIL App Catalogue, figures as of ${asOf}. Language, country and developer totals count each one once. Google Play reports installs in ranges, so install counts use the lower bound and include every download, not only apps still installed.`;
+  el.textContent = `Figures as of ${asOf}, compiled by SIL Language Technology from Google Play, the Apple App Store and Faith Comes By Hearing. The install trend uses snapshots that are not taken every month. Language, country and developer totals count each one once. Google Play reports installs in ranges, so install counts use the lower bound and include every download, not only apps still installed.`;
 }
 
 init();

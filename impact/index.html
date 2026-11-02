@@ -10,6 +10,9 @@
 body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+/* Offsets anchor jumps (nav links, "Methodology" etc.) so a section's own
+   banner doesn't land hidden under the sticky header bar. */
+#products, #apps, #fonts { scroll-margin-top: 64px; }
 :root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
 a { color: #00a7e1; }
 .eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
@@ -28,7 +31,9 @@ select, input[type="search"] {
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; white-space: normal; }
-thead th { position: sticky; top: 0; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
+/* top: 64px (not 0) so a table's own sticky header tucks in just below the
+   page's sticky nav bar instead of overlapping it while scrolling. */
+thead th { position: sticky; top: 64px; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
 thead th:hover { color: #00a7e1; }
 thead th.sorted { color: #003049; }
 .sort-arrow { font-size: 9px; }
@@ -129,7 +134,7 @@ tbody tr.suite-row:hover { background: #eef1f3; }
   This dashboard is in review — layout and features may still change.
 </div>
 
-<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 14px 0;">
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 14px 0; position: sticky; top: 0; z-index: 100;">
   <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
     <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
       <img src="../images/logo.webp" alt="SIL" style="height: 28px; width: auto;">

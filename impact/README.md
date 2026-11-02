@@ -72,3 +72,55 @@ the static snapshot until you seed it — that's expected.
 If you only need to work on the static page itself (not touching data), step 1 is
 optional — without a local API running, the page just shows its "couldn't load live
 data" state instead of a working table.
+
+## TODO
+
+Recommendations from the App Usage design work (Oct 2026). Design canvas, private
+until shared from its Share menu: https://claude.ai/artifact/DsBTBXrKpXDqgeCLxtZm5c
+
+### App Usage section (new)
+
+- [ ] **Clear the data for publication first.** The App Catalogue is marked "SIL and
+      partners internal use only", and the sharing guidelines rule it out for
+      donors and the public. Get the product owner's approval for these figures
+      before this section goes live.
+- [ ] Add an "App Usage" section in the same pattern as Font Usage: stat strip
+      (Android apps, installs, languages, countries, developers), a bar chart and a
+      table by app type (Scripture / Dictionary / Reading / Keyboard), cards for iOS
+      and offline (FCBH) apps, and a dated source line.
+- [ ] Serve the data from `langtech-metrics`, like products and fonts — for example
+      `GET /api/apps?month=YYYY-MM` — fed from the monthly App Catalogue snapshots.
+- [ ] Add a **Month** dropdown, matching the existing Quarter and Date dropdowns
+      (re-fetch on change).
+- [ ] Add the "Scripture app installs, past 3 years" line chart, from the
+      catalogue's Trends tab: monthly points, a label every six months on the
+      x-axis, axis titles, and a hover tooltip.
+- [ ] Find out what caused the Mar → Apr 2026 jump in Scripture installs
+      (69.3M → 90.1M, +20.8M in one month; other months add 1–4M). If it is a
+      counting change, explain it in a "What changed" note before publishing.
+
+### Monthly data process
+
+- [ ] Save a snapshot of `app catalogue.xlsx` every month, e.g.
+      `App Catalogue snapshots/app catalogue YYYY-MM.xlsx`. Month-over-month change
+      indicators need the previous month's file.
+- [ ] Ask the catalogue maintainer to log all-app totals (apps, installs,
+      languages, countries, developers) in the Trends tab next to the Scripture
+      columns, so indicators and the growth chart can cover all app types.
+
+### Change indicators (whole dashboard)
+
+- [ ] Show the absolute change as well as the percentage, e.g. "▲ +759,720 (+0.8%)".
+      Most metrics are running totals, so monthly or quarterly percentages are
+      tiny and almost always positive on their own.
+- [ ] Show changes under about 0.1%, and known data corrections, in grey (●)
+      rather than red: a −1 language after catalogue clean-up is not a loss.
+- [ ] Use the darker brand shades for indicators: green `#38751C` and red `#A6121F`.
+      The current `#509E2F` and `#D52227` fall below 4.5:1 contrast for 13px text
+      on the grey `#F9FAFB` tiles.
+- [ ] Add screen-reader text to each indicator (e.g. "Up 8% compared with
+      FY26Q2"); "▲" is read aloud as "up-pointing triangle".
+- [ ] Label the comparison period in every section: the product strip compares
+      quarters, App Usage compares months.
+- [ ] Put the indicator on its own line under long values (e.g. 97,265,218)
+      instead of inline, so it doesn't wrap.

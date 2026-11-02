@@ -677,8 +677,8 @@ function renderTable(products) {
 // degrades this section, never the products section, and vice versa.
 
 const FONT_METRICS = [
-  { key: "weeklyViews", label: "Weekly Views" },
   { key: "lifetimeViews", label: "Lifetime Views" },
+  { key: "weeklyViews", label: "Weekly Views" },
 ];
 
 const fontState = {
@@ -686,7 +686,8 @@ const fontState = {
   date: null,
   dateCache: new Map(), // date -> already-fetched API response, so switching back doesn't refetch
   dateRequestToken: 0, // bumped on every date switch; a response only applies if it's still current
-  sort: { key: "weeklyViews", dir: "desc" },
+  sort: { key: "lifetimeViews", dir: "desc" },
+  visibleCount: 10, // table rows shown before "Load more" -- reset to 10 on sort/date change
 };
 
 async function fetchFontDate(date) {
@@ -723,6 +724,7 @@ async function onFontDateChange(e) {
   if (fontState.dateCache.has(requested)) {
     fontState.data = fontState.dateCache.get(requested);
     fontState.date = fontState.data.date;
+    fontState.visibleCount = 10;
     renderFonts();
     return;
   }
@@ -734,6 +736,7 @@ async function onFontDateChange(e) {
     if (token !== fontState.dateRequestToken) return; // a newer selection has since won
     fontState.data = data;
     fontState.date = data.date;
+    fontState.visibleCount = 10;
     select.value = fontState.date; // in case the API fell back to a different date
     status.textContent = "";
     renderFonts();
@@ -777,6 +780,7 @@ function renderFontsShell() {
         <tbody id="font-table-body"></tbody>
       </table>
     </div>
+    <div id="font-table-summary" class="muted" style="font-size: 13px; margin-top: 0.75rem;"></div>
   `;
 
   document.getElementById("font-date-select").addEventListener("change", onFontDateChange);
@@ -788,6 +792,7 @@ function renderFontsShell() {
   headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
     const key = th.dataset.key;
     fontState.sort = { key, dir: fontState.sort.key === key && fontState.sort.dir === "desc" ? "asc" : "desc" };
+    fontState.visibleCount = 10;
     renderFonts();
   }));
 }
@@ -873,13 +878,28 @@ function renderFontsChart(fonts) {
 
 function renderFontsTable(fonts) {
   const body = document.getElementById("font-table-body");
-  body.innerHTML = fonts.map(f => {
+  const visible = fonts.slice(0, fontState.visibleCount);
+  body.innerHTML = visible.map(f => {
     const metricCells = FONT_METRICS.map(m => {
       const v = fontMetricValue(f, m.key);
       return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
     }).join("");
     return `<tr><td style="font-weight: 600;">${f.name}</td>${metricCells}</tr>`;
   }).join("");
+
+  renderFontTableSummary(fonts.length, visible.length);
+}
+
+function renderFontTableSummary(total, shown) {
+  const summary = document.getElementById("font-table-summary");
+  summary.innerHTML = shown < total
+    ? `${shown.toLocaleString()} of ${total.toLocaleString()} fonts shown — <button type="button" id="font-load-more-btn" class="link-button">Load more</button>`
+    : `${total.toLocaleString()} fonts`;
+  const loadMoreBtn = document.getElementById("font-load-more-btn");
+  if (loadMoreBtn) loadMoreBtn.addEventListener("click", () => {
+    fontState.visibleCount += 10;
+    renderFonts();
+  });
 }
 
 // Custom tooltip for .info-badge elements (e.g. the Paratext 9 "not developed by SIL"

@@ -25,6 +25,12 @@ Reuse these exact hex values in any new page rather than picking new ones.
 | Border (hairline) | `#eef1f3` | table/card borders |
 | Surface (off-white) | `#f9fafb` | filter bars, table headers, quote panels |
 | Chart categorical (8, in order) | `#005CB9` `#FF6B00` `#93358D` `#509E2F` `#00A7E1` `#D52227` `#666666` `#FFB71B` | SIL brand swatch colors, from `impact/index.html`'s product-category chart; keep the order (CVD-safe), don't add a 9th hue — fold extra categories into gray |
+| Section accent — Products | `#005CB9` | `impact/index.html`'s numbered section banner (icon, border, eyebrow) |
+| Section accent — Apps | `#00A7E1` / eyebrow `#034D8A` | Apps section banner; `#F2F7FB` tints that section's background |
+| Section accent — Fonts | `#042C54` | Fonts section banner |
+| Change indicator — up / down | `#38751C` / `#A6121F` | darker than the base SIL green/red (`#509E2F`/`#D52227`), which fall below 4.5:1 contrast at 13px on `#f9fafb` tiles |
+| Trend line / card accents | `#008AAF` | Apps trend chart's line + tooltip accents |
+| Tint ramps used for section bands/borders | `#CCDEF1` `#E5EEF8` | light section borders and card backgrounds between the full-strength section colors and white |
 
 Fonts: `Playfair Display` (headings, stat/hero values), `Source Sans 3` (body,
 UI), `Caveat` (section-title accents, handwritten-style eyebrow headings).

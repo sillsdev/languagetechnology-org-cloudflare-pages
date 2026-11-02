@@ -53,10 +53,14 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
 .stat-tile { background: #f9fafb; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; }
 .stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 30px; color: #003049; font-variant-numeric: tabular-nums; }
 .stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
-.stat-delta { display: inline-block; font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-left: 8px; vertical-align: middle; font-variant-numeric: tabular-nums; }
-.stat-delta.up { color: #509E2F; }
-.stat-delta.down { color: #D52227; }
-.stat-delta.flat { color: #8a8a8a; }
+.stat-delta { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
+.stat-delta-spacer { font-size: 13px; margin-top: 2px; }
+/* Darker than the SIL brand green/red (#509E2F/#D52227) -- those fall below 4.5:1
+   contrast for 13px text on the #f9fafb tiles. */
+.stat-delta.up { color: #38751C; }
+.stat-delta.down { color: #A6121F; }
+.stat-delta.flat { color: #727272; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
 #state-message { text-align: center; padding: 3rem 1rem; color: #727272; }
 .chart-card { background: #fff; border: 1px solid #eef1f3; border-radius: var(--radius); padding: 1.25rem 1.5rem 0.5rem; margin-bottom: 1.75rem; }
@@ -84,6 +88,32 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
   padding: 8px 1rem; text-align: center; font-size: 13px; font-weight: 600; line-height: 1.4;
 }
 @media (max-width: 480px) { .review-banner { font-size: 12px; } }
+.section-banner {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px;
+  padding-bottom: 20px; margin-bottom: 1.75rem; border-bottom: 3px solid currentColor;
+}
+.section-icon { flex: none; width: 56px; height: 56px; background: currentColor; display: flex; align-items: center; justify-content: center; }
+.section-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.section-heading { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 32px; line-height: 1.15; margin: 2px 0 0; color: #003049; }
+.hero-card {
+  display: flex; gap: 16px; align-items: flex-start; text-decoration: none; color: #003049;
+  border: 1px solid #E0E0E0; border-top: 3px solid currentColor; border-radius: 10px; padding: 18px 20px;
+}
+.hero-card-icon { flex: none; width: 44px; height: 44px; background: currentColor; display: flex; align-items: center; justify-content: center; }
+.hero-card-title { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 20px; color: #003049; }
+.hero-card-stat { font-size: 14px; color: #595959; }
+.hero-card-cadence { font-size: 12px; color: #727272; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px; }
+.type-card { background: #FFFFFF; border: 1px solid #E0E0E0; border-top: 4px solid currentColor; border-radius: 10px; padding: 16px 18px; }
+.type-card-label { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #034D8A; }
+.type-card-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; line-height: 1; }
+.type-card-noun { font-size: 15px; color: #595959; }
+.mini-stat-card { background: #F9FAFB; border-radius: 10px; padding: 12px 14px; text-align: center; }
+.mini-stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 24px; }
+.mini-stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
+.trend-tooltip {
+  position: absolute; top: 8px; background: #FFFFFF; border: 1px solid #E4E4E4; border-radius: 8px;
+  padding: 8px 12px; box-shadow: 0 4px 12px rgba(3, 77, 138, 0.10); pointer-events: none; white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -92,15 +122,17 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
   This dashboard is in review — layout and features may still change.
 </div>
 
-<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 20px 0;">
+<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 14px 0;">
   <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
     <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
       <img src="../images/logo.webp" alt="SIL" style="height: 28px; width: auto;">
     </a>
-    <nav style="display: flex; align-items: center; gap: 20px;">
-      <a href="#font-usage" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Fonts &darr;</a>
-      <a href="methodology/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Methodology</a>
-      <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;">Survey Results &#8599;</a>
+    <nav aria-label="Dashboard sections" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px;">
+      <a href="#products" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Products</a>
+      <a href="#apps" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Apps</a>
+      <a href="#fonts" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Fonts</a>
+      <a href="methodology/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Methodology</a>
+      <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Survey Results &#8599;</a>
     </nav>
   </div>
 </div>
@@ -109,7 +141,51 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
 
   <h1 style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 34px; margin: 0 0 6px;">Product Impact Dashboard</h1>
   <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 2rem;">
-    Usage statistics for SIL Language Technology products, updated quarterly.
+    Usage statistics for SIL Language Technology products, apps built with our App Builders, and SIL fonts.
+  </p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+    <a href="#products" class="hero-card" style="color: #005CB9;">
+      <span class="hero-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></span>
+      <span style="display: flex; flex-direction: column; gap: 2px;">
+        <span class="hero-card-title">Products</span>
+        <span class="hero-card-stat" id="hero-products-stat">Loading&hellip;</span>
+        <span class="hero-card-cadence" id="hero-products-cadence"></span>
+      </span>
+    </a>
+    <a href="#apps" class="hero-card" style="color: #00A7E1;">
+      <span class="hero-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg></span>
+      <span style="display: flex; flex-direction: column; gap: 2px;">
+        <span class="hero-card-title">Apps</span>
+        <span class="hero-card-stat" id="hero-apps-stat">Loading&hellip;</span>
+        <span class="hero-card-cadence" id="hero-apps-cadence"></span>
+      </span>
+    </a>
+    <a href="#fonts" class="hero-card" style="color: #042C54;">
+      <span class="hero-card-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></span>
+      <span style="display: flex; flex-direction: column; gap: 2px;">
+        <span class="hero-card-title">Fonts</span>
+        <span class="hero-card-stat" id="hero-fonts-stat">Loading&hellip;</span>
+        <span class="hero-card-cadence" id="hero-fonts-cadence"></span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<section id="products" aria-labelledby="products-title" style="border-top: 1px solid #E0E0E0; background: #FFFFFF;">
+<div style="max-width: 1120px; margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 2.5rem) 3.5rem; box-sizing: border-box;">
+
+  <div class="section-banner" style="color: #005CB9;">
+    <div style="display: flex; gap: 18px; align-items: center;">
+      <span class="section-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg></span>
+      <div>
+        <div class="section-eyebrow">Section 1 of 3</div>
+        <h2 id="products-title" class="section-heading">Product usage</h2>
+      </div>
+    </div>
+  </div>
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: -0.5rem 0 1.5rem; max-width: 760px;">
+    Active users, downloads, projects and reach for each SIL Language Technology product, updated quarterly.
   </p>
 
   <div id="app">
@@ -117,9 +193,46 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
   </div>
 
   <div id="footer-note" style="margin-top: 1.5rem; font-size: 12px; color: #8a8a8a;"></div>
+</div>
+</section>
 
-  <h2 id="font-usage" class="section-title" style="font-size: 28px; margin-top: 3rem; scroll-margin-top: 1rem;">Font Usage</h2>
-  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: 0 0 1.5rem;">
+<section id="apps" aria-labelledby="apps-title" style="border-top: 1px solid #CCDEF1; background: #F2F7FB;">
+<div style="max-width: 1120px; margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 2.5rem) 3.5rem; box-sizing: border-box;">
+
+  <div class="section-banner" style="color: #00A7E1;">
+    <div style="display: flex; gap: 18px; align-items: center;">
+      <span class="section-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2"></rect><line x1="11" y1="18" x2="13" y2="18"></line></svg></span>
+      <div>
+        <div class="section-eyebrow" style="color: #034D8A;">Section 2 of 3</div>
+        <h2 id="apps-title" class="section-heading">App usage</h2>
+      </div>
+    </div>
+  </div>
+  <p style="color: #595959; font-size: 15px; line-height: 1.6; margin: -0.5rem 0 1.5rem; max-width: 760px;">
+    Apps that language communities and their partners have built with Scripture App Builder, Dictionary App
+    Builder, Reading App Builder and Keyboard App Builder, from the SIL App Catalogue. Install counts cover
+    Android apps on Google Play only.
+  </p>
+
+  <div id="apps-app">
+    <div id="apps-state-message">Loading app data&hellip;</div>
+  </div>
+</div>
+</section>
+
+<section id="fonts" aria-labelledby="fonts-title" style="border-top: 1px solid #CCDEF1; background: #FFFFFF;">
+<div style="max-width: 1120px; margin: 0 auto; padding: 3rem clamp(1rem, 4vw, 2.5rem) 3.5rem; box-sizing: border-box;">
+
+  <div class="section-banner" style="color: #042C54;">
+    <div style="display: flex; gap: 18px; align-items: center;">
+      <span class="section-icon" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg></span>
+      <div>
+        <div class="section-eyebrow">Section 3 of 3</div>
+        <h2 id="fonts-title" class="section-heading">Font usage</h2>
+      </div>
+    </div>
+  </div>
+  <p style="color: #727272; font-size: 15px; line-height: 1.6; margin: -0.5rem 0 1.5rem; max-width: 760px;">
     Views for Google Fonts developed by SIL (Writing Systems Technology), sourced from
     <a href="https://fonts.google.com/analytics" target="_blank" rel="noopener">fonts.google.com/analytics</a>.
     These figures only count views served through Google Fonts — not all SIL fonts are
@@ -131,6 +244,7 @@ tbody tr.row-pending:hover { background: #FFF3C4; }
     <div id="fonts-state-message">Loading font data&hellip;</div>
   </div>
 </div>
+</section>
 
 <script>
 const state = {
@@ -145,6 +259,7 @@ const state = {
   devStatuses: new Set(),
   search: "",
   sort: { key: "name", dir: "asc" },
+  visibleCount: 10, // table rows shown before "Show all" -- reset to 10 on quarter/sort/filter change
 };
 
 // Official SIL brand primary colors (SIL Blue/Orange/Violet/Green/Light Blue/Red/Gray/
@@ -250,6 +365,10 @@ async function init() {
       ? `Static snapshot from ${d.toLocaleDateString(undefined, { dateStyle: "medium" })} — live sync not yet configured.`
       : `Data last refreshed ${d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`;
   }
+
+  const reporting = state.data.products.filter(p => !isPending(p)).length;
+  document.getElementById("hero-products-stat").textContent = `${reporting.toLocaleString()} products reporting`;
+  document.getElementById("hero-products-cadence").textContent = `Quarterly · ${state.quarter}`;
 }
 
 function renderShell() {
@@ -318,10 +437,15 @@ function renderShell() {
       </table>
     </div>
     <div id="empty-message" class="muted" style="text-align: center; padding: 2rem; display: none;">No products match these filters.</div>
+    <div id="table-summary" class="muted" style="font-size: 13px; margin-top: 0.75rem; text-align: center;"></div>
   `;
 
   document.getElementById("quarter-select").addEventListener("change", onQuarterChange);
-  document.getElementById("search-input").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); render(); });
+  document.getElementById("search-input").addEventListener("input", e => {
+    state.search = e.target.value.trim().toLowerCase();
+    state.visibleCount = 10;
+    render();
+  });
   attachPillHandlers("category-pills", state.categories);
   attachPillHandlers("platform-pills", state.platforms);
   attachPillHandlers("devstatus-pills", state.devStatuses);
@@ -333,6 +457,7 @@ function renderShell() {
   headRow.querySelectorAll("th").forEach(th => th.addEventListener("click", () => {
     const key = th.dataset.key;
     state.sort = { key, dir: state.sort.key === key && state.sort.dir === "desc" ? "asc" : "desc" };
+    state.visibleCount = 10;
     render();
   }));
 }
@@ -342,6 +467,7 @@ function clearProductFilters() {
   state.platforms.clear();
   state.devStatuses.clear();
   state.search = "";
+  state.visibleCount = 10;
   document.getElementById("search-input").value = "";
   document.querySelectorAll("#category-pills .pill, #platform-pills .pill, #devstatus-pills .pill").forEach(p => p.classList.remove("active"));
   render();
@@ -367,6 +493,7 @@ async function onQuarterChange(e) {
     state.quarter = data.quarter;
     select.value = state.quarter; // in case the API fell back to a different quarter
     state.previousData = null; // clear the prior quarter's stale comparison until the new one loads
+    state.visibleCount = 10;
     status.textContent = "";
     render();
     refreshComparisonData(token);
@@ -389,6 +516,7 @@ function attachPillHandlers(containerId, selectedSet) {
       const value = btn.dataset.value;
       if (selectedSet.has(value)) selectedSet.delete(value); else selectedSet.add(value);
       btn.classList.toggle("active");
+      state.visibleCount = 10;
       render();
     });
   });
@@ -464,6 +592,20 @@ function renderFilterSummary(shown, total) {
   if (clearBtn) clearBtn.addEventListener("click", clearProductFilters);
 }
 
+// Unlike the Fonts table's "Load more" (10 at a time), this reveals every
+// matching product at once -- matching the design's "Show all N products" button.
+function renderTableSummary(total, shown) {
+  const summary = document.getElementById("table-summary");
+  summary.innerHTML = shown < total
+    ? `${shown.toLocaleString()} of ${total.toLocaleString()} products shown — <button type="button" id="show-all-products-btn" class="link-button">Show all ${total.toLocaleString()} products</button>`
+    : "";
+  const showAllBtn = document.getElementById("show-all-products-btn");
+  if (showAllBtn) showAllBtn.addEventListener("click", () => {
+    state.visibleCount = Infinity;
+    render();
+  });
+}
+
 function sumMetric(products, key) {
   return products.reduce((total, p) => {
     const v = metricValue(p, key);
@@ -495,10 +637,13 @@ function renderStatStrip(products, previousProducts) {
 
   strip.innerHTML = STAT_TILES.map(tile => {
     const value = tile.compute(products);
-    const deltaHtml = (tile.showDelta !== false && previousProducts) ? statDeltaHtml(value, tile.compute(previousProducts), reliable) : "";
+    const deltaHtml = (tile.showDelta !== false && previousProducts)
+      ? statDeltaHtml(value, tile.compute(previousProducts), reliable, state.previousQuarter)
+      : `<div class="stat-delta-spacer">&nbsp;</div>`;
     return `
       <div class="stat-tile">
-        <div class="stat-value">${value.toLocaleString()}${deltaHtml}</div>
+        <div class="stat-value">${value.toLocaleString()}</div>
+        ${deltaHtml}
         <div class="stat-label">${tile.label}</div>
       </div>
     `;
@@ -525,22 +670,35 @@ function renderWhatsChanged(products) {
   list.innerHTML = notes.map(n => `<li><strong>${n.name}</strong> — ${n.note}</li>`).join("");
 }
 
-function statDeltaHtml(value, previousValue, reliable) {
-  if (value === previousValue) return `<span class="stat-delta flat">No change</span>`;
-  if (previousValue === 0) return `<span class="stat-delta up">New</span>`;
-  // A nonzero change can still round to 0% (e.g. 0.4%) -- shown as a neutral "0%", not
-  // "No change" (that would misrepresent that a real, if tiny, change happened) and not
-  // colored/signed as up or down (that would overstate a rounded-away difference).
-  const pct = Math.round(Math.abs((value - previousValue) / previousValue) * 100);
-  if (pct === 0) return `<span class="stat-delta flat">0%</span>`;
-  const up = value > previousValue;
-  const arrow = up ? "&#9650;" : "&#9660;";
+// Shared by Products and Apps. Shows both the absolute change and the percentage --
+// most of these metrics are running totals, so a quarterly/monthly percentage alone
+// is often tiny and uninformative on its own (e.g. "+0.8%" reads very differently
+// from "+759,720 installs"). `periodLabel` (a quarter or month name) feeds the
+// screen-reader-only text, since "▲" alone just reads as "up-pointing triangle".
+function statDeltaHtml(value, previousValue, reliable, periodLabel) {
+  const period = periodLabel ? ` compared with ${periodLabel}` : "";
+  if (value === previousValue) {
+    return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; No change</span><span class="sr-only">No change${period}</span></div>`;
+  }
+  if (previousValue === 0) {
+    return `<div class="stat-delta up"><span aria-hidden="true">&#9650; New</span><span class="sr-only">New${period}</span></div>`;
+  }
+  const diff = value - previousValue;
+  const pct = Math.abs(diff / previousValue) * 100;
+  const up = diff > 0;
+  // Sub-0.1% changes (and, eventually, flagged data corrections) read as neutral grey
+  // rather than a colored up/down arrow -- a rounding-level wobble isn't a real trend,
+  // and a correction (e.g. a -1 language after catalogue clean-up) isn't a loss.
+  const tiny = pct < 0.1;
+  const arrow = tiny ? "&#9679;" : up ? "&#9650;" : "&#9660;";
   const sign = up ? "+" : "&minus;";
-  // Provisional (quarter still reporting): grey, not colored up/down -- a dropout, not a
-  // real decline, could be the whole reason this reads as "down" right now.
-  const cls = reliable ? (up ? "up" : "down") : "flat";
+  const pctText = pct < 1 ? pct.toFixed(1) : Math.round(pct).toString();
+  // Provisional (quarter/month still reporting): grey, not colored up/down -- a dropout,
+  // not a real decline, could be the whole reason this reads as "down" right now.
+  const cls = !reliable || tiny ? "flat" : (up ? "up" : "down");
   const suffix = reliable ? "" : "*";
-  return `<span class="stat-delta ${cls}">${arrow} ${sign}${pct}%${suffix}</span>`;
+  const word = up ? "Up" : "Down";
+  return `<div class="stat-delta ${cls}"><span aria-hidden="true">${arrow} ${sign}${Math.abs(diff).toLocaleString()} (${sign}${pctText}%)${suffix}</span><span class="sr-only">${word} ${Math.abs(diff).toLocaleString()}, ${pctText}%${period}</span></div>`;
 }
 
 function renderTopChart(products, config) {
@@ -645,11 +803,13 @@ function renderTable(products) {
   if (products.length === 0) {
     body.innerHTML = "";
     emptyMsg.style.display = "block";
+    renderTableSummary(0, 0);
     return;
   }
   emptyMsg.style.display = "none";
 
-  body.innerHTML = products.map(p => {
+  const visible = products.slice(0, state.visibleCount);
+  body.innerHTML = visible.map(p => {
     const thirdPartyNote = THIRD_PARTY_PRODUCTS[p.name];
     const pending = isPending(p);
     const nameCell = `
@@ -669,6 +829,8 @@ function renderTable(products) {
     }).join("");
     return `<tr><td>${nameCell}</td>${metricCells}</tr>`;
   }).join("");
+
+  renderTableSummary(products.length, visible.length);
 }
 
 // ---- Font Usage section ----
@@ -711,6 +873,13 @@ async function initFonts() {
   fontState.date = fontState.data.date;
   renderFontsShell();
   renderFonts();
+
+  const weeklyTotal = fontState.data.fonts.reduce((total, f) => {
+    const v = fontMetricValue(f, "weeklyViews");
+    return typeof v === "number" ? total + v : total;
+  }, 0);
+  document.getElementById("hero-fonts-stat").textContent = `${weeklyTotal.toLocaleString()} weekly views on Google Fonts`;
+  document.getElementById("hero-fonts-cadence").textContent = `Monthly · ${new Date(fontState.date).toLocaleDateString(undefined, { dateStyle: "medium" })}`;
 }
 
 // Switching dates is a real network fetch now (only the latest date is preloaded),
@@ -936,8 +1105,443 @@ function initInfoBadgeTooltips() {
   });
 }
 
+// ---- App Usage section ----
+// Independent data source/fetch from the Products and Fonts sections above (see the
+// langtech-metrics repo's api/apps.js) -- a fetch failure here only degrades this
+// section. Data comes from the SIL App Catalogue's Summary and Trends sheets only
+// (see that repo's scripts/convert-app-catalogue.py) -- the only sheets cleared for
+// publication.
+
+const APPS_STAT_TILES = [
+  { key: "apps", label: "Android Apps" },
+  { key: "installs", label: "Installs (at least)" },
+  { key: "languages", label: "Languages" },
+  { key: "countries", label: "Countries" },
+  { key: "developers", label: "Developers" },
+];
+
+const APPS_TYPE_ORDER = ["Scripture", "Dictionary", "Reading", "Keyboard"];
+const APPS_TYPE_COLOR = { Scripture: "#FFB71B", Reading: "#00A7E1", Dictionary: "#509E2F", Keyboard: "#005CB9" };
+const APPS_TYPE_NOUN = { Scripture: "Scripture apps", Dictionary: "dictionary apps", Reading: "reading apps", Keyboard: "keyboard apps" };
+
+// Hand-authored once a reason is confirmed for an unusual month-over-month jump (see
+// impact/README.md's TODO) -- empty until then, and the "Notes on this chart" block
+// hides entirely rather than show an empty header, same as #whats-changed-card above.
+const APPS_TREND_NOTES = [];
+
+const TREND_X0 = 104, TREND_X1 = 960, TREND_Y0 = 276, TREND_Y1 = 16;
+
+const appsState = {
+  data: null,
+  month: null,
+  previousMonth: null,
+  previousData: null,
+  monthCache: new Map(), // month -> already-fetched API response, so switching back doesn't refetch
+  monthRequestToken: 0, // bumped on every month switch; a response only applies if it's still current
+};
+
+function monthLabel(ym) {
+  if (!ym) return "";
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const [y, m] = ym.slice(0, 7).split("-").map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
+}
+
+function monthIndexOf(ymd) {
+  const [y, m] = ymd.slice(0, 7).split("-").map(Number);
+  return y * 12 + (m - 1);
+}
+
+function formatCompact(n) {
+  if (n >= 1e6) return (Math.round((n / 1e6) * 10) / 10) + "M";
+  if (n >= 1e3) return (Math.round((n / 1e3) * 10) / 10) + "k";
+  return n.toLocaleString();
+}
+
+async function fetchAppsMonth(month) {
+  const url = month ? `${API_ORIGIN}/api/apps?month=${encodeURIComponent(month)}` : `${API_ORIGIN}/api/apps`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`API returned ${res.status}`);
+  const data = await res.json();
+  appsState.monthCache.set(data.month, data);
+  return data;
+}
+
+// Mirrors loadComparisonData/refreshComparisonData above: runs after the current
+// month is already rendered, so the page never waits on the comparison month -- the
+// stat-tile deltas just pop in a moment later.
+async function loadAppsComparisonData() {
+  const months = appsState.data.months;
+  const idx = months.indexOf(appsState.month);
+  const prevMonth = idx > 0 ? months[idx - 1] : null;
+  appsState.previousMonth = prevMonth;
+  if (!prevMonth) {
+    appsState.previousData = null;
+    return;
+  }
+  try {
+    appsState.previousData = appsState.monthCache.has(prevMonth) ? appsState.monthCache.get(prevMonth) : await fetchAppsMonth(prevMonth);
+  } catch (err) {
+    appsState.previousData = null;
+  }
+}
+
+async function refreshAppsComparisonData(token) {
+  await loadAppsComparisonData();
+  if (token !== appsState.monthRequestToken) return;
+  renderAppsStatStrip();
+}
+
+async function initApps() {
+  const app = document.getElementById("apps-app");
+  try {
+    appsState.data = await fetchAppsMonth();
+  } catch (err) {
+    app.innerHTML = `<div id="apps-state-message">Couldn't load app data right now. Please try again shortly.</div>`;
+    return;
+  }
+
+  appsState.month = appsState.data.month;
+  renderAppsShell();
+  renderApps();
+  refreshAppsComparisonData(appsState.monthRequestToken);
+
+  document.getElementById("hero-apps-stat").textContent =
+    `${appsState.data.totals.apps.toLocaleString()} Android apps, ${formatCompact(appsState.data.totals.installs)}+ installs`;
+  document.getElementById("hero-apps-cadence").textContent = `Monthly · ${monthLabel(appsState.month)}`;
+}
+
+async function onAppsMonthChange(e) {
+  const select = e.target;
+  const requested = select.value;
+  const status = document.getElementById("month-status");
+  const token = ++appsState.monthRequestToken;
+
+  select.disabled = true;
+  status.textContent = "Loading…";
+  try {
+    const data = appsState.monthCache.has(requested) ? appsState.monthCache.get(requested) : await fetchAppsMonth(requested);
+    if (token !== appsState.monthRequestToken) return; // a newer selection has since won
+    appsState.data = data;
+    appsState.month = data.month;
+    select.value = appsState.month; // in case the API fell back to a different month
+    appsState.previousData = null; // clear the prior month's stale comparison until the new one loads
+    status.textContent = "";
+    renderApps();
+    refreshAppsComparisonData(token);
+  } catch (err) {
+    if (token !== appsState.monthRequestToken) return;
+    select.value = appsState.month; // revert to the last month that loaded successfully
+    status.textContent = "Couldn't load that month. Please try again.";
+  } finally {
+    if (token === appsState.monthRequestToken) select.disabled = false;
+  }
+}
+
+function renderAppsShell() {
+  const app = document.getElementById("apps-app");
+  const d = appsState.data;
+
+  app.innerHTML = `
+    <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
+      <div class="eyebrow" style="margin-bottom: 0;">Month</div>
+      <select id="month-select">
+        ${d.months.map(m => `<option value="${m}" ${m === appsState.month ? "selected" : ""}>${monthLabel(m)}</option>`).join("")}
+      </select>
+      <span id="month-status" class="muted" style="font-size: 13px;"></span>
+    </div>
+
+    <div id="apps-stat-strip" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px;"></div>
+    <div id="apps-stat-strip-note" class="muted" style="font-size: 12px; margin: 6px 0 1.75rem;"></div>
+
+    <div class="chart-card" id="apps-trend-card">
+      <div class="section-title" style="margin-bottom: 4px;">Scripture app installs, past 3 years</div>
+      <p id="apps-trend-summary" style="color: #727272; font-size: 14px; line-height: 1.6; margin: 0 0 16px;"></p>
+      <div id="apps-trend-delta-row" style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0 0 16px; font-size: 14px;"></div>
+      <div style="position: relative;">
+        <svg id="apps-trend-svg" viewBox="0 0 1000 344" style="display: block; width: 100%; height: auto; font-family: 'Source Sans 3', sans-serif;" role="img"></svg>
+        <div id="apps-trend-tooltip" class="trend-tooltip" style="display: none;"></div>
+      </div>
+      <div id="apps-trend-notes" style="border-top: 1px solid #EEF1F3; margin-top: 8px; padding-top: 14px; display: none;">
+        <div class="section-eyebrow" style="color: #034D8A; margin-bottom: 8px;">Notes on this chart</div>
+        <ul id="apps-trend-notes-list" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px;"></ul>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="section-title" style="margin-bottom: 16px;">Android apps by type</div>
+      <div id="apps-type-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;"></div>
+      <p style="margin: 14px 0 0; font-size: 12px; line-height: 1.5; color: #727272;">Many languages, countries and developers have more than one type of app, so these figures can't be added up. The totals above count each one once.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+      <div class="chart-card" id="apps-ios-card" style="margin-bottom: 0;"></div>
+      <div class="chart-card" id="apps-offline-card" style="margin-bottom: 0;"></div>
+    </div>
+
+    <div id="apps-footnote" class="muted" style="font-size: 12px; line-height: 1.6;"></div>
+  `;
+
+  document.getElementById("month-select").addEventListener("change", onAppsMonthChange);
+}
+
+function renderApps() {
+  renderAppsStatStrip();
+  renderAppsTrendChart();
+  renderAppsTypeCards();
+  renderAppsIosOfflineCards();
+  renderAppsFootnote();
+}
+
+function renderAppsStatStrip() {
+  const strip = document.getElementById("apps-stat-strip");
+  const note = document.getElementById("apps-stat-strip-note");
+  const totals = appsState.data.totals;
+  const prevTotals = appsState.previousData ? appsState.previousData.totals : null;
+
+  strip.innerHTML = APPS_STAT_TILES.map(tile => {
+    const value = totals[tile.key];
+    const deltaHtml = prevTotals
+      ? statDeltaHtml(value, prevTotals[tile.key], true, monthLabel(appsState.previousMonth))
+      : `<div class="stat-delta-spacer">&nbsp;</div>`;
+    return `
+      <div class="stat-tile">
+        <div class="stat-value">${value.toLocaleString()}</div>
+        ${deltaHtml}
+        <div class="stat-label">${tile.label}</div>
+      </div>
+    `;
+  }).join("");
+
+  note.textContent = prevTotals ? `Change indicators compare against the previous month (${monthLabel(appsState.previousMonth)}).` : "";
+}
+
+function niceCeil(value) {
+  if (value <= 0) return 1;
+  const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+  const n = value / magnitude;
+  const nice = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+  return nice * magnitude;
+}
+
+function formatAxisValue(v) {
+  if (v === 0) return "0";
+  if (v >= 1e6) { const m = v / 1e6; return (Number.isInteger(m) ? m : m.toFixed(1)) + "M"; }
+  if (v >= 1e3) { const k = v / 1e3; return (Number.isInteger(k) ? k : k.toFixed(1)) + "k"; }
+  return v.toLocaleString();
+}
+
+function renderAppsTrendChart() {
+  const card = document.getElementById("apps-trend-card");
+  const trend = appsState.data.trend;
+  if (!trend || trend.length === 0) {
+    card.style.display = "none";
+    return;
+  }
+  card.style.display = "";
+
+  const endIdx = monthIndexOf(trend[trend.length - 1].date);
+  const startIdx = endIdx - 36;
+  let windowPoints = trend.filter(p => monthIndexOf(p.date) >= startIdx);
+  if (windowPoints.length < 2) windowPoints = trend.slice(-Math.min(trend.length, 2));
+
+  const idxs = windowPoints.map(p => monthIndexOf(p.date));
+  const t0 = idxs[0], t1 = idxs[idxs.length - 1];
+  const ymax = niceCeil(Math.max(...windowPoints.map(p => p.installs)));
+  const sx = m => (t1 === t0 ? (TREND_X0 + TREND_X1) / 2 : TREND_X0 + ((m - t0) / (t1 - t0)) * (TREND_X1 - TREND_X0));
+  const sy = v => TREND_Y0 - (v / ymax) * (TREND_Y0 - TREND_Y1);
+
+  const pts = windowPoints.map((p, i) => ({ x: sx(idxs[i]), y: sy(p.installs), date: p.date, installs: p.installs, apps: p.apps }));
+  const first = pts[0], last = pts[pts.length - 1];
+
+  const gridlines = [0, 1, 2, 3, 4].map(i => {
+    const y = TREND_Y0 - (i / 4) * (TREND_Y0 - TREND_Y1);
+    const value = (ymax * i) / 4;
+    return `<line x1="${TREND_X0}" x2="${TREND_X1}" y1="${y}" y2="${y}" stroke="${i === 0 ? "#C2C2C2" : "#EEF1F3"}" stroke-width="1"></line>
+      <text x="${TREND_X0 - 8}" y="${y + 4}" text-anchor="end" font-size="13" fill="#727272">${formatAxisValue(value)}</text>`;
+  }).join("");
+
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const ticks = [];
+  for (let m = t1; m > t0; m -= 6) ticks.push(m);
+  ticks.push(t0);
+  ticks.reverse();
+  const tickHtml = ticks.map(m => {
+    const x = sx(m);
+    const yy = Math.floor(m / 12), mm = m - yy * 12;
+    return `<line x1="${x}" x2="${x}" y1="${TREND_Y0}" y2="${TREND_Y0 + 6}" stroke="#C2C2C2" stroke-width="1"></line>
+      <text x="${x}" y="${TREND_Y0 + 26}" text-anchor="middle" font-size="13" fill="#727272">${MONTHS[mm]} ${yy}</text>`;
+  }).join("");
+
+  const line = pts.map((p, i) => (i ? "L" : "M") + p.x.toFixed(1) + " " + p.y.toFixed(1)).join(" ");
+  const area = line + " L" + last.x.toFixed(1) + " " + TREND_Y0 + " L" + first.x.toFixed(1) + " " + TREND_Y0 + " Z";
+
+  const svg = document.getElementById("apps-trend-svg");
+  svg.setAttribute("aria-label", `Line chart of cumulative Scripture app installs from ${monthLabel(first.date)} to ${monthLabel(last.date)}, from ${formatCompact(first.installs)} to ${formatCompact(last.installs)}.`);
+  svg.innerHTML = `
+    ${gridlines}
+    <text x="0" y="0" transform="translate(20 ${(TREND_Y0 + TREND_Y1) / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#003049">Total installs</text>
+    ${tickHtml}
+    <text x="${(TREND_X0 + TREND_X1) / 2}" y="336" text-anchor="middle" font-size="13" font-weight="600" fill="#003049">Month</text>
+    <path d="${area}" fill="#00A7E1" fill-opacity="0.10"></path>
+    <path d="${line}" fill="none" stroke="#008AAF" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+    <circle cx="${last.x}" cy="${last.y}" r="5" fill="#008AAF" stroke="#FFFFFF" stroke-width="2"></circle>
+    <text x="${last.x}" y="${last.y - 14}" text-anchor="end" font-size="14" font-weight="600" fill="#003049">${formatCompact(last.installs)}</text>
+    <circle cx="${first.x}" cy="${first.y}" r="5" fill="#008AAF" stroke="#FFFFFF" stroke-width="2"></circle>
+    <text x="${first.x + 10}" y="${first.y - 12}" text-anchor="start" font-size="14" font-weight="600" fill="#003049">${formatCompact(first.installs)}</text>
+    <g id="apps-trend-hover" style="display: none;">
+      <line x1="0" x2="0" y1="${TREND_Y1}" y2="${TREND_Y0}" stroke="#003049" stroke-opacity="0.25" stroke-width="1"></line>
+      <circle r="6" fill="#008AAF" stroke="#FFFFFF" stroke-width="2"></circle>
+    </g>
+    <rect x="${TREND_X0}" y="${TREND_Y1}" width="${TREND_X1 - TREND_X0}" height="${TREND_Y0 - TREND_Y1}" fill="transparent"></rect>
+  `;
+
+  const overlay = svg.querySelector("rect");
+  const hoverGroup = document.getElementById("apps-trend-hover");
+  const hoverLine = hoverGroup.querySelector("line");
+  const hoverCircle = hoverGroup.querySelector("circle");
+  const tooltip = document.getElementById("apps-trend-tooltip");
+
+  overlay.addEventListener("mousemove", e => {
+    const rect = svg.getBoundingClientRect();
+    const vx = ((e.clientX - rect.left) / rect.width) * 1000;
+    let best = 0;
+    for (let i = 1; i < pts.length; i++) {
+      if (Math.abs(pts[i].x - vx) < Math.abs(pts[best].x - vx)) best = i;
+    }
+    const p = pts[best];
+    hoverGroup.style.display = "";
+    hoverLine.setAttribute("x1", p.x);
+    hoverLine.setAttribute("x2", p.x);
+    hoverCircle.setAttribute("cx", p.x);
+    hoverCircle.setAttribute("cy", p.y);
+    const pctX = (p.x / 1000) * 100;
+    tooltip.style.display = "";
+    tooltip.style.left = pctX > 70 ? "" : `${(pctX + 1.5).toFixed(1)}%`;
+    tooltip.style.right = pctX > 70 ? `${(100 - pctX + 1.5).toFixed(1)}%` : "";
+    tooltip.innerHTML = `
+      <div style="font-size: 12px; color: #727272;">${monthLabel(p.date)}</div>
+      <div style="font-family: 'Playfair Display', serif; font-weight: 600; font-size: 18px; color: #003049;">${p.installs.toLocaleString()}</div>
+      <div style="font-size: 12px; color: #727272;">${p.apps.toLocaleString()} apps</div>
+    `;
+  });
+  overlay.addEventListener("mouseleave", () => {
+    hoverGroup.style.display = "none";
+    tooltip.style.display = "none";
+  });
+
+  renderAppsTrendSummary(first, last);
+  renderAppsTrendDeltaRow(trend);
+  renderAppsTrendNotes();
+}
+
+function renderAppsTrendSummary(first, last) {
+  const el = document.getElementById("apps-trend-summary");
+  const ratio = last.installs / first.installs;
+  const change = ratio >= 2 ? "more than doubled"
+    : ratio >= 1.5 ? "grew by more than half"
+    : last.installs > first.installs ? `rose ${Math.round((ratio - 1) * 100)}%`
+    : last.installs < first.installs ? `fell ${Math.round((1 - ratio) * 100)}%`
+    : "held steady";
+  el.textContent = `Total installs of Scripture apps on Google Play ${change}, from ${formatCompact(first.installs)} in ${monthLabel(first.date)} to ${formatCompact(last.installs)} in ${monthLabel(last.date)}.`;
+}
+
+// Compares the two most recent Trends points (which may be closer together than a
+// full month/quarter apart, since the catalogue's snapshots are irregular) rather
+// than the current/previous *displayed* month, so this always reflects the latest
+// real update even between monthly App Catalogue imports.
+function renderAppsTrendDeltaRow(trend) {
+  const row = document.getElementById("apps-trend-delta-row");
+  if (trend.length < 2) {
+    row.innerHTML = "";
+    return;
+  }
+  const prev = trend[trend.length - 2], cur = trend[trend.length - 1];
+  const installsDelta = statDeltaHtml(cur.installs, prev.installs, true, null);
+  const appsDelta = statDeltaHtml(cur.apps, prev.apps, true, null);
+  const langsDelta = cur.langs != null && prev.langs != null ? statDeltaHtml(cur.langs, prev.langs, true, null) : "";
+  row.innerHTML = `
+    <span style="display: inline-flex; align-items: baseline; gap: 4px;">${installsDelta} installs</span>
+    <span style="display: inline-flex; align-items: baseline; gap: 4px;">${appsDelta} apps</span>
+    ${langsDelta ? `<span style="display: inline-flex; align-items: baseline; gap: 4px;">${langsDelta} language${Math.abs(cur.langs - prev.langs) === 1 ? "" : "s"}</span>` : ""}
+    <span style="color: #8A8A8A; font-size: 13px;">${monthLabel(cur.date)} vs ${monthLabel(prev.date)}</span>
+  `;
+}
+
+function renderAppsTrendNotes() {
+  const wrap = document.getElementById("apps-trend-notes");
+  const list = document.getElementById("apps-trend-notes-list");
+  wrap.style.display = APPS_TREND_NOTES.length === 0 ? "none" : "";
+  list.innerHTML = APPS_TREND_NOTES.map(n => `<li style="font-size: 14px; line-height: 1.55;"><strong>${n.when}:</strong> ${n.fact} <span style="color: #727272;">${n.reason}</span></li>`).join("");
+}
+
+function renderAppsTypeCards() {
+  const grid = document.getElementById("apps-type-grid");
+  const byType = new Map(appsState.data.types.map(t => [t.type, t]));
+  grid.innerHTML = APPS_TYPE_ORDER.filter(type => byType.has(type)).map(type => {
+    const t = byType.get(type);
+    return `
+      <div class="type-card" style="color: ${APPS_TYPE_COLOR[type] ?? "#666666"};">
+        <div class="type-card-label">${type} App Builder</div>
+        <div style="display: flex; align-items: baseline; gap: 8px; margin: 6px 0 12px;">
+          <span class="type-card-value" style="color: #003049;">${t.apps.toLocaleString()}</span>
+          <span class="type-card-noun">${APPS_TYPE_NOUN[type] ?? `${type.toLowerCase()} apps`}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 14px; border-top: 1px solid #EEF1F3; padding-top: 10px;">
+          <span style="color: #595959;">Languages</span><span style="font-weight: 600; text-align: right; font-variant-numeric: tabular-nums;">${t.languages.toLocaleString()}</span>
+          <span style="color: #595959;">Countries</span><span style="font-weight: 600; text-align: right; font-variant-numeric: tabular-nums;">${t.countries.toLocaleString()}</span>
+          <span style="color: #595959;">Developers</span><span style="font-weight: 600; text-align: right; font-variant-numeric: tabular-nums;">${t.developers.toLocaleString()}</span>
+          <span style="color: #595959;">Installs</span><span style="font-weight: 600; text-align: right; font-variant-numeric: tabular-nums;">${t.installs.toLocaleString()}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function joinWithAnd(parts) {
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return parts[0];
+  return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+}
+
+function renderAppsIosOfflineCards() {
+  const ios = appsState.data.ios;
+  const offline = appsState.data.offline;
+
+  const iosParts = ios.types.map(t => `${t.apps.toLocaleString()} ${t.type.toLowerCase()}`);
+  const iosDevs = ios.totals.developers;
+  document.getElementById("apps-ios-card").innerHTML = `
+    <div class="section-title" style="margin-bottom: 12px;">iOS apps on the App Store</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px;">
+      <div class="mini-stat-card"><div class="mini-stat-value">${ios.totals.apps.toLocaleString()}</div><div class="mini-stat-label">Apps</div></div>
+      <div class="mini-stat-card"><div class="mini-stat-value">${ios.totals.languages.toLocaleString()}</div><div class="mini-stat-label">Languages</div></div>
+      <div class="mini-stat-card"><div class="mini-stat-value">${ios.totals.countries.toLocaleString()}</div><div class="mini-stat-label">Countries</div></div>
+    </div>
+    <p style="font-size: 14px; line-height: 1.6; margin: 12px 0 0;">${joinWithAnd(iosParts)} apps, from ${iosDevs.toLocaleString()} developer${iosDevs === 1 ? "" : "s"}.</p>
+  `;
+
+  document.getElementById("apps-offline-card").innerHTML = `
+    <div class="section-title" style="margin-bottom: 12px;">Offline Android apps</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px;">
+      <div class="mini-stat-card"><div class="mini-stat-value">${offline.apps.toLocaleString()}</div><div class="mini-stat-label">Apps</div></div>
+      <div class="mini-stat-card"><div class="mini-stat-value">${offline.languages.toLocaleString()}</div><div class="mini-stat-label">Languages</div></div>
+      <div class="mini-stat-card"><div class="mini-stat-value">${offline.countries.toLocaleString()}</div><div class="mini-stat-label">Countries</div></div>
+    </div>
+    <p style="font-size: 14px; line-height: 1.6; margin: 12px 0 0;">Faith Comes By Hearing Global Bible apps, shared as APK files for installing without internet access.</p>
+  `;
+}
+
+function renderAppsFootnote() {
+  const el = document.getElementById("apps-footnote");
+  const trend = appsState.data.trend;
+  const latestDate = trend.length ? trend[trend.length - 1].date : null;
+  const asOf = latestDate ? new Date(latestDate).toLocaleDateString(undefined, { dateStyle: "long" }) : monthLabel(appsState.month);
+  el.textContent = `Source: SIL App Catalogue, figures as of ${asOf}. Language, country and developer totals count each one once. Google Play reports installs in ranges, so install counts use the lower bound and include every download, not only apps still installed.`;
+}
+
 init();
 initFonts();
+initApps();
 initInfoBadgeTooltips();
 </script>
 

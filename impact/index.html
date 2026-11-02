@@ -592,8 +592,9 @@ function renderFilterSummary(shown, total) {
   if (clearBtn) clearBtn.addEventListener("click", clearProductFilters);
 }
 
-// Unlike the Fonts table's "Load more" (10 at a time), this reveals every
-// matching product at once -- matching the design's "Show all N products" button.
+// Reveals every matching product at once rather than paging in by 10s -- with only
+// a few dozen rows at most, one click to see everything beats several. The Fonts
+// table (renderFontTableSummary below) uses the same "Show all" approach.
 function renderTableSummary(total, shown) {
   const summary = document.getElementById("table-summary");
   summary.innerHTML = shown < total
@@ -849,7 +850,7 @@ const fontState = {
   dateCache: new Map(), // date -> already-fetched API response, so switching back doesn't refetch
   dateRequestToken: 0, // bumped on every date switch; a response only applies if it's still current
   sort: { key: "lifetimeViews", dir: "desc" },
-  visibleCount: 10, // table rows shown before "Load more" -- reset to 10 on sort/date change
+  visibleCount: 10, // table rows shown before "Show all" -- reset to 10 on sort/date change
 };
 
 async function fetchFontDate(date) {
@@ -1062,11 +1063,11 @@ function renderFontsTable(fonts) {
 function renderFontTableSummary(total, shown) {
   const summary = document.getElementById("font-table-summary");
   summary.innerHTML = shown < total
-    ? `${shown.toLocaleString()} of ${total.toLocaleString()} fonts shown — <button type="button" id="font-load-more-btn" class="link-button">Load more</button>`
+    ? `${shown.toLocaleString()} of ${total.toLocaleString()} fonts shown — <button type="button" id="font-load-more-btn" class="link-button">Show all ${total.toLocaleString()} fonts</button>`
     : `${total.toLocaleString()} fonts`;
   const loadMoreBtn = document.getElementById("font-load-more-btn");
   if (loadMoreBtn) loadMoreBtn.addEventListener("click", () => {
-    fontState.visibleCount += 10;
+    fontState.visibleCount = Infinity;
     renderFonts();
   });
 }

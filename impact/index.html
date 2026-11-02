@@ -10,9 +10,13 @@
 body { margin: 0; font-family: 'Source Sans 3', sans-serif; color: #003049; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-/* Offsets anchor jumps (nav links, "Methodology" etc.) so a section's own
-   banner doesn't land hidden under the sticky header bar. */
-#products, #apps, #fonts { scroll-margin-top: 64px; }
+/* --header-height is kept in sync with #site-header's real rendered height by
+   a small script at the bottom of the page -- the header's nav links wrap to
+   a second line below a certain width, so a fixed px guess is wrong at some
+   viewport widths. Offsets the Products/Apps/Fonts nav anchor jumps so a
+   section's own banner doesn't land hidden under the sticky header bar. */
+:root { --header-height: 64px; }
+#products, #apps, #fonts { scroll-margin-top: var(--header-height); }
 :root { --radius: 10px; --text-primary: #003049; --text-secondary: #727272; --text-muted: #8a8a8a; }
 a { color: #00a7e1; }
 .eyebrow { font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #00a7e1; }
@@ -31,9 +35,13 @@ select, input[type="search"] {
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; white-space: normal; }
-/* top: 64px (not 0) so a table's own sticky header tucks in just below the
-   page's sticky nav bar instead of overlapping it while scrolling. */
-thead th { position: sticky; top: 64px; background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
+/* Not position: sticky -- stacking a table's own sticky column header below
+   the page's sticky nav bar got fragile: when the nav wraps to two lines
+   (its real height varies with viewport width and link count), the header
+   grows tall enough to overlap down into the table's own sticky row, which
+   then visually overlaps the data rows underneath it. Not worth the risk for
+   tables of this length. */
+thead th { background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
 thead th:hover { color: #00a7e1; }
 thead th.sorted { color: #003049; }
 .sort-arrow { font-size: 9px; }
@@ -134,7 +142,7 @@ tbody tr.suite-row:hover { background: #eef1f3; }
   This dashboard is in review — layout and features may still change.
 </div>
 
-<div style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 14px 0; position: sticky; top: 0; z-index: 100;">
+<div id="site-header" style="width: 100vw; margin-left: calc(50% - 50vw); background: #003049; padding: 14px 0; position: sticky; top: 0; z-index: 100;">
   <div style="max-width: 1120px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
     <a href="https://software.sil.org" target="_blank" rel="noopener" style="display: flex; align-items: center;">
       <img src="../images/logo.webp" alt="SIL" style="height: 28px; width: auto;">
@@ -143,7 +151,6 @@ tbody tr.suite-row:hover { background: #eef1f3; }
       <a href="#products" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Products</a>
       <a href="#apps" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Apps</a>
       <a href="#fonts" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Fonts</a>
-      <a href="methodology/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Methodology</a>
       <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Survey Results &#8599;</a>
     </nav>
   </div>
@@ -1659,6 +1666,16 @@ function renderAppsFootnote() {
   const asOf = latestDate ? new Date(latestDate).toLocaleDateString(undefined, { dateStyle: "long" }) : monthLabel(appsState.month);
   el.textContent = `Figures as of ${asOf}, compiled by SIL Language Technology from Google Play, the Apple App Store and Faith Comes By Hearing. The install trend uses snapshots that are not taken every month. Language, country and developer totals count each one once. Google Play reports installs in ranges, so install counts use the lower bound and include every download, not only apps still installed.`;
 }
+
+// Keeps --header-height matched to #site-header's real rendered height -- its
+// nav wraps to a second line below a certain viewport width, so a fixed guess
+// would leave table sticky-headers and anchor-jump offsets wrong at that width.
+function syncHeaderHeight() {
+  const header = document.getElementById("site-header");
+  if (header) document.documentElement.style.setProperty("--header-height", `${header.offsetHeight}px`);
+}
+syncHeaderHeight();
+window.addEventListener("resize", syncHeaderHeight);
 
 init();
 initFonts();

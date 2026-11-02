@@ -37,6 +37,14 @@ tbody tr { border-bottom: 1px solid #eef1f3; }
 tbody tr:hover { background: #f9fafb; }
 tbody tr.row-pending { background: #FFFBEB; }
 tbody tr.row-pending:hover { background: #FFF3C4; }
+tbody tr.suite-row { background: #f9fafb; }
+tbody tr.suite-row:hover { background: #eef1f3; }
+.suite-toggle {
+  display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+  background: none; border: none; padding: 0; font: inherit; font-weight: 600; color: #003049; cursor: pointer;
+}
+.suite-toggle:hover { color: #00a7e1; }
+.suite-toggle-chevron { flex: none; font-size: 11px; color: #727272; width: 1em; }
 .muted { color: #8a8a8a; }
 .pending-badge {
   display: inline-block; font-size: 11px; font-weight: 600; text-transform: uppercase;
@@ -259,6 +267,7 @@ const state = {
   search: "",
   sort: { key: "name", dir: "asc" },
   visibleCount: 10, // table rows shown before "Show all" -- reset to 10 on quarter/sort/filter change
+  expandedSuites: new Set(), // suite names expanded to show their member products -- persists through sort/filter, reset on quarter change
 };
 
 // Official SIL brand primary colors (SIL Blue/Orange/Violet/Green/Light Blue/Red/Gray/
@@ -498,6 +507,7 @@ async function onQuarterChange(e) {
     select.value = state.quarter; // in case the API fell back to a different quarter
     state.previousData = null; // clear the prior quarter's stale comparison until the new one loads
     state.visibleCount = 10;
+    state.expandedSuites.clear();
     status.textContent = "";
     render();
     refreshComparisonData(token);
@@ -599,12 +609,15 @@ function renderFilterSummary(shown, total) {
 // Reveals every matching product at once rather than paging in by 10s -- with only
 // a few dozen rows at most, one click to see everything beats several. The Fonts
 // table (renderFontTableSummary below) uses the same "Show all" approach.
+// total/shown count table ROWS, not raw products -- a collapsed suite is one
+// row standing in for several products, so "N products shown" would overstate
+// how many are actually visible.
 function renderTableSummary(total, shown) {
   const summary = document.getElementById("table-summary");
   summary.innerHTML = shown < total
     ? `<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <span>${shown.toLocaleString()} of ${total.toLocaleString()} products shown</span>
-        <button type="button" id="show-all-products-btn" class="pill">Show all ${total.toLocaleString()} products</button>
+        <span>${shown.toLocaleString()} of ${total.toLocaleString()} rows shown</span>
+        <button type="button" id="show-all-products-btn" class="pill">Show all ${total.toLocaleString()} rows</button>
       </div>`
     : "";
   const showAllBtn = document.getElementById("show-all-products-btn");
@@ -804,6 +817,76 @@ function renderCategoryTotalsChart(products, config) {
   }).join("");
 }
 
+// Walks the already-sorted/filtered list and collapses a product family (e.g.
+// Bloom Editor/Library/Reader/BloomPUB Viewer, via each product's `suite` field
+// -- see langtech-metrics' scripts/set-product-suites.mjs) into one group entry,
+// positioned at its best-ranked (first-encountered, under the current sort)
+// member. A suite with only one member left after filtering just renders as a
+// normal standalone product -- grouping a single row has no point.
+function groupBySuite(products) {
+  const bySuite = new Map();
+  products.forEach(p => {
+    if (!p.suite) return;
+    if (!bySuite.has(p.suite)) bySuite.set(p.suite, []);
+    bySuite.get(p.suite).push(p);
+  });
+
+  const entries = [];
+  const emitted = new Set();
+  products.forEach(p => {
+    const members = p.suite ? bySuite.get(p.suite) : null;
+    if (members && members.length >= 2) {
+      if (emitted.has(p.suite)) return;
+      emitted.add(p.suite);
+      entries.push({ type: "suite", suite: p.suite, members });
+    } else {
+      entries.push({ type: "product", product: p });
+    }
+  });
+  return entries;
+}
+
+function productRowHtml(p, { nested } = {}) {
+  const thirdPartyNote = THIRD_PARTY_PRODUCTS[p.name];
+  const pending = isPending(p);
+  const nameCell = `
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;">
+      ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
+      ${pending ? `<span class="pending-badge">No data yet</span>` : ""}
+      ${thirdPartyNote ? `<span class="info-badge" data-tooltip="${escapeAttr(thirdPartyNote)}" aria-label="${escapeAttr(thirdPartyNote)}" tabindex="0">ℹ️</span>` : ""}
+    </div>
+    <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
+      ${p.category ?? ""}
+    </div>
+  `;
+  const nameTd = `<td${nested ? ` style="padding-left: 32px;"` : ""}>${nameCell}</td>`;
+  if (pending) {
+    return `<tr class="row-pending">${nameTd}<td colspan="${CORE_METRICS.length}" class="muted" style="text-align: center;">Stats not in yet</td></tr>`;
+  }
+  const metricCells = CORE_METRICS.map(m => {
+    const v = metricValue(p, m.key);
+    return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
+  }).join("");
+  return `<tr>${nameTd}${metricCells}</tr>`;
+}
+
+function suiteRowHtml(suite, members) {
+  const expanded = state.expandedSuites.has(suite);
+  const header = `
+    <tr class="suite-row">
+      <td colspan="${CORE_METRICS.length + 1}">
+        <button type="button" class="suite-toggle" data-suite="${escapeAttr(suite)}" aria-expanded="${expanded}">
+          <span class="suite-toggle-chevron" aria-hidden="true">${expanded ? "▾" : "▸"}</span>
+          <span>${suite}</span>
+          <span class="muted" style="font-weight: 400;">(${members.length} products)</span>
+        </button>
+      </td>
+    </tr>
+  `;
+  const memberRows = expanded ? members.map(p => productRowHtml(p, { nested: true })).join("") : "";
+  return header + memberRows;
+}
+
 function renderTable(products) {
   const body = document.getElementById("table-body");
   const emptyMsg = document.getElementById("empty-message");
@@ -816,31 +899,19 @@ function renderTable(products) {
   }
   emptyMsg.style.display = "none";
 
-  const visible = products.slice(0, state.visibleCount);
-  body.innerHTML = visible.map(p => {
-    const thirdPartyNote = THIRD_PARTY_PRODUCTS[p.name];
-    const pending = isPending(p);
-    const nameCell = `
-      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px;">
-        ${p.productUrl ? `<a href="${escapeAttr(p.productUrl)}" target="_blank" rel="noopener" style="color: #003049; font-weight: 600; text-decoration: none;">${p.name}</a>` : `<span style="font-weight: 600;">${p.name}</span>`}
-        ${pending ? `<span class="pending-badge">No data yet</span>` : ""}
-        ${thirdPartyNote ? `<span class="info-badge" data-tooltip="${escapeAttr(thirdPartyNote)}" aria-label="${escapeAttr(thirdPartyNote)}" tabindex="0">ℹ️</span>` : ""}
-      </div>
-      <div style="font-size: 12px; color: #8a8a8a; margin-top: 2px;">
-        ${p.category ?? ""}
-      </div>
-    `;
-    if (pending) {
-      return `<tr class="row-pending"><td>${nameCell}</td><td colspan="${CORE_METRICS.length}" class="muted" style="text-align: center;">Stats not in yet</td></tr>`;
-    }
-    const metricCells = CORE_METRICS.map(m => {
-      const v = metricValue(p, m.key);
-      return `<td>${typeof v === "number" ? v.toLocaleString() : '<span class="muted">&mdash;</span>'}</td>`;
-    }).join("");
-    return `<tr><td>${nameCell}</td>${metricCells}</tr>`;
-  }).join("");
+  const entries = groupBySuite(products);
+  const visibleEntries = entries.slice(0, state.visibleCount);
+  body.innerHTML = visibleEntries.map(entry =>
+    entry.type === "suite" ? suiteRowHtml(entry.suite, entry.members) : productRowHtml(entry.product)
+  ).join("");
 
-  renderTableSummary(products.length, visible.length);
+  body.querySelectorAll(".suite-toggle").forEach(btn => btn.addEventListener("click", () => {
+    const suite = btn.dataset.suite;
+    if (state.expandedSuites.has(suite)) state.expandedSuites.delete(suite); else state.expandedSuites.add(suite);
+    render();
+  }));
+
+  renderTableSummary(entries.length, visibleEntries.length);
 }
 
 // ---- Font Usage section ----

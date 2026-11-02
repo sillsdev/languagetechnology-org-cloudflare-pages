@@ -13,7 +13,7 @@ html { scroll-behavior: smooth; }
 /* --header-height is kept in sync with #site-header's real rendered height by
    a small script at the bottom of the page -- the header's nav links wrap to
    a second line below a certain width, so a fixed px guess is wrong at some
-   viewport widths. Offsets anchor jumps (nav links, "Methodology" etc.) so a
+   viewport widths. Offsets the Products/Apps/Fonts nav anchor jumps so a
    section's own banner doesn't land hidden under the sticky header bar. */
 :root { --header-height: 64px; }
 #products, #apps, #fonts { scroll-margin-top: var(--header-height); }
@@ -151,7 +151,6 @@ tbody tr.suite-row:hover { background: #eef1f3; }
       <a href="#products" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Products</a>
       <a href="#apps" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Apps</a>
       <a href="#fonts" style="color: #99DCF3; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Fonts</a>
-      <a href="methodology/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Methodology</a>
       <a href="/survey-results/" style="color: #4FC3E8; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; padding: 10px 0;">Survey Results &#8599;</a>
     </nav>
   </div>

@@ -35,9 +35,13 @@ select, input[type="search"] {
 table { border-collapse: collapse; width: 100%; font-size: 14px; }
 th, td { padding: 10px 14px; text-align: right; white-space: nowrap; }
 th:first-child, td:first-child { text-align: left; white-space: normal; }
-/* top: var(--header-height), not 0, so a table's own sticky header tucks in
-   just below the page's sticky nav bar instead of overlapping it on scroll. */
-thead th { position: sticky; top: var(--header-height); background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
+/* Not position: sticky -- stacking a table's own sticky column header below
+   the page's sticky nav bar got fragile: when the nav wraps to two lines
+   (its real height varies with viewport width and link count), the header
+   grows tall enough to overlap down into the table's own sticky row, which
+   then visually overlaps the data rows underneath it. Not worth the risk for
+   tables of this length. */
+thead th { background: #f9fafb; color: #727272; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; cursor: pointer; border-bottom: 2px solid #e4e4e4; }
 thead th:hover { color: #00a7e1; }
 thead th.sorted { color: #003049; }
 .sort-arrow { font-size: 9px; }

@@ -72,6 +72,7 @@ tbody tr.suite-row:hover { background: #eef1f3; }
 }
 .stat-tile { background: #f9fafb; border-radius: var(--radius); padding: 1rem 1.25rem; text-align: center; }
 .stat-value { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 30px; color: #003049; font-variant-numeric: tabular-nums; }
+.stat-subvalue { font-size: 12px; color: #727272; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
 .stat-delta { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .stat-delta-spacer { font-size: 13px; margin-top: 2px; }
@@ -642,7 +643,18 @@ const STAT_TILES = [
   { label: "Downloads", compute: products => sumMetric(products, "downloads") },
   // No delta: "reporting" reflects which products happened to submit data this quarter,
   // not a quantity trending up or down in a way a percentage change would mean anything for.
-  { label: "Products Reporting", compute: products => products.filter(p => !isPending(p)).length, showDelta: false },
+  // Headline is the share reported (the thing worth noticing at a glance); the raw "X of Y"
+  // count is still there as a subvalue for anyone who wants the exact numbers, and a badge
+  // (icon + label, not color alone -- see renderReportingBadge) says whether that's everyone
+  // tracked this quarter or some are still coming in.
+  {
+    label: "Tracked Products Reporting",
+    compute: products => products.filter(p => !isPending(p)).length,
+    format: (value, products) => `${products.length ? Math.round((value / products.length) * 100) : 0}%`,
+    subformat: (value, products) => `${value.toLocaleString()} of ${products.length.toLocaleString()}`,
+    renderBadge: renderReportingBadge,
+    showDelta: false,
+  },
   { label: "Countries Reached", compute: products => Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
 ];
 
@@ -654,6 +666,20 @@ const STAT_TILES = [
 // comparing a still-filling-in total against a finished previous quarter can look like a
 // real drop that's really just missing data, so deltas render as provisional (grey, with
 // an asterisk) rather than a possibly-false red/green arrow until the quarter completes.
+// Complete (green, reuses the same "up" good-news color as a positive delta) vs. still
+// coming in (grey, same neutral the provisional-delta "*" case already uses) -- never color
+// alone, per the dashboard's existing delta-badge pattern: an icon plus a real word, with an
+// aria-hidden/sr-only split for screen readers.
+function renderReportingBadge(products) {
+  const total = products.length;
+  const reporting = products.filter(p => !isPending(p)).length;
+  if (total > 0 && reporting === total) {
+    return `<div class="stat-delta up"><span aria-hidden="true">&#10003; Complete</span><span class="sr-only">All tracked products have reported</span></div>`;
+  }
+  const missing = total - reporting;
+  return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Still reporting</span><span class="sr-only">${missing} tracked product(s) haven't reported yet</span></div>`;
+}
+
 function renderStatStrip(products, previousProducts) {
   const strip = document.getElementById("stat-strip");
   const note = document.getElementById("stat-strip-note");
@@ -661,12 +687,17 @@ function renderStatStrip(products, previousProducts) {
 
   strip.innerHTML = STAT_TILES.map(tile => {
     const value = tile.compute(products);
-    const deltaHtml = (tile.showDelta !== false && previousProducts)
-      ? statDeltaHtml(value, tile.compute(previousProducts), reliable, state.previousQuarter)
-      : `<div class="stat-delta-spacer">&nbsp;</div>`;
+    const display = tile.format ? tile.format(value, products) : value.toLocaleString();
+    const subHtml = tile.subformat ? `<div class="stat-subvalue">${tile.subformat(value, products)}</div>` : "";
+    const deltaHtml = tile.renderBadge
+      ? tile.renderBadge(products)
+      : (tile.showDelta !== false && previousProducts)
+        ? statDeltaHtml(value, tile.compute(previousProducts), reliable, state.previousQuarter)
+        : `<div class="stat-delta-spacer">&nbsp;</div>`;
     return `
       <div class="stat-tile">
-        <div class="stat-value">${value.toLocaleString()}</div>
+        <div class="stat-value">${display}</div>
+        ${subHtml}
         ${deltaHtml}
         <div class="stat-label">${tile.label}</div>
       </div>
@@ -751,9 +782,12 @@ function statDeltaHtml(value, previousValue, reliable, periodLabel) {
   const arrow = tiny ? "&#9679;" : up ? "&#9650;" : "&#9660;";
   const sign = up ? "+" : "&minus;";
   const pctText = pct < 1 ? pct.toFixed(1) : Math.round(pct).toString();
-  // Provisional (quarter/month still reporting): grey, not colored up/down -- a dropout,
-  // not a real decline, could be the whole reason this reads as "down" right now.
-  const cls = !reliable || tiny ? "flat" : (up ? "up" : "down");
+  // Provisional (quarter/month still reporting): still colored for the real direction --
+  // a dropout, not a real decline, could be the whole reason this reads as "down" right
+  // now, but the "Tracked Products Reporting" tile already surfaces that gap on its own.
+  // The trailing "*" (and the note below the strip) stays as the visible caveat that this
+  // number can still move once everyone's reported.
+  const cls = tiny ? "flat" : (up ? "up" : "down");
   const suffix = reliable ? "" : "*";
   const word = up ? "Up" : "Down";
   return `<div class="stat-delta ${cls}"><span aria-hidden="true">${arrow} ${sign}${Math.abs(diff).toLocaleString()} (${sign}${pctText}%)${suffix}</span><span class="sr-only">${word} ${Math.abs(diff).toLocaleString()}, ${pctText}%${period}</span></div>`;

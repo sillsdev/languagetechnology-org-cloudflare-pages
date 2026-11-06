@@ -666,10 +666,20 @@ const STAT_TILES = [
 // comparing a still-filling-in total against a finished previous quarter can look like a
 // real drop that's really just missing data, so deltas render as provisional (grey, with
 // an asterisk) rather than a possibly-false red/green arrow until the quarter completes.
-// Complete (green, reuses the same "up" good-news color as a positive delta) vs. still
-// coming in (grey, same neutral the provisional-delta "*" case already uses) -- never color
-// alone, per the dashboard's existing delta-badge pattern: an icon plus a real word, with an
-// aria-hidden/sr-only split for screen readers.
+// Only the most recent quarter is still actively collecting data -- an older quarter that
+// never reached 100% reporting is done for good, so "still reporting" would wrongly imply
+// more numbers are coming when none ever will.
+function isLatestQuarter(quarter) {
+  const quarters = state.data.quarters;
+  return quarters.length > 0 && quarters[quarters.length - 1] === quarter;
+}
+
+// Complete (green, reuses the same "up" good-news color as a positive delta) vs. not (grey,
+// same neutral the provisional-delta "*" case already uses) -- never color alone, per the
+// dashboard's existing delta-badge pattern: an icon plus a real word, with an aria-hidden/
+// sr-only split for screen readers. Wording differs for a past quarter (see isLatestQuarter
+// above): those products aren't going to report late, so it reads as "incomplete", not
+// "still reporting".
 function renderReportingBadge(products) {
   const total = products.length;
   const reporting = products.filter(p => !isPending(p)).length;
@@ -677,7 +687,10 @@ function renderReportingBadge(products) {
     return `<div class="stat-delta up"><span aria-hidden="true">&#10003; Complete</span><span class="sr-only">All tracked products have reported</span></div>`;
   }
   const missing = total - reporting;
-  return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Still reporting</span><span class="sr-only">${missing} tracked product(s) haven't reported yet</span></div>`;
+  if (isLatestQuarter(state.quarter)) {
+    return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Still reporting</span><span class="sr-only">${missing} tracked product(s) haven't reported yet</span></div>`;
+  }
+  return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Incomplete</span><span class="sr-only">${missing} tracked product(s) never reported for ${state.quarter}</span></div>`;
 }
 
 function renderStatStrip(products, previousProducts) {
@@ -706,7 +719,13 @@ function renderStatStrip(products, previousProducts) {
 
   const notes = [];
   if (previousProducts) notes.push(`Change indicators compare against the previous quarter (${state.previousQuarter}).`);
-  if (!reliable) notes.push(`${state.quarter} is still being reported — indicators marked * may change.`);
+  if (!reliable) {
+    notes.push(
+      isLatestQuarter(state.quarter)
+        ? `${state.quarter} is still being reported — indicators marked * may change.`
+        : `Not every tracked product reported data in ${state.quarter} — indicators marked * reflect only the ones that did.`,
+    );
+  }
   note.textContent = notes.join(" ");
 }
 

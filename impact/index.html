@@ -76,10 +76,14 @@ tbody tr.suite-row:hover { background: #eef1f3; }
 .stat-label { font-size: 13px; color: #727272; margin-top: 2px; }
 .stat-delta { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .stat-delta-spacer { font-size: 13px; margin-top: 2px; }
-/* Darker than the SIL brand green/red (#509E2F/#D52227) -- those fall below 4.5:1
-   contrast for 13px text on the #f9fafb tiles. */
+/* Darker than the SIL brand green (#509E2F) -- that falls below 4.5:1 contrast
+   for 13px text on the #f9fafb tiles. A decrease is shown with the same
+   neutral grey as "flat"/provisional, not red -- a drop (e.g. a dropout
+   product, a data correction) isn't necessarily bad news, so it isn't
+   flagged as an alarm color; the down arrow and sign still carry the
+   direction. */
 .stat-delta.up { color: #38751C; }
-.stat-delta.down { color: #A6121F; }
+.stat-delta.down { color: #727272; }
 .stat-delta.flat { color: #727272; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }

@@ -77,13 +77,10 @@ tbody tr.suite-row:hover { background: #eef1f3; }
 .stat-delta { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; margin-top: 2px; font-variant-numeric: tabular-nums; }
 .stat-delta-spacer { font-size: 13px; margin-top: 2px; }
 /* Darker than the SIL brand green (#509E2F) -- that falls below 4.5:1 contrast
-   for 13px text on the #f9fafb tiles. A decrease is shown with the same
-   neutral grey as "flat"/provisional, not red -- a drop (e.g. a dropout
-   product, a data correction) isn't necessarily bad news, so it isn't
-   flagged as an alarm color; the down arrow and sign still carry the
-   direction. */
+   for 13px text on the #f9fafb tiles. Declines render as the no-delta spacer
+   instead of a colored indicator, so only "up" and the neutral "flat" need a
+   color here. */
 .stat-delta.up { color: #38751C; }
-.stat-delta.down { color: #727272; }
 .stat-delta.flat { color: #727272; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid #eef1f3; }
@@ -796,24 +793,22 @@ function statDeltaHtml(value, previousValue, reliable, periodLabel) {
     return `<div class="stat-delta up"><span aria-hidden="true">&#9650; New</span><span class="sr-only">New${period}</span></div>`;
   }
   const diff = value - previousValue;
-  const pct = Math.abs(diff / previousValue) * 100;
-  const up = diff > 0;
+  if (diff < 0) {
+    // A decline isn't shown as a change at all -- just the total above, with no
+    // down arrow, figure or percentage calling attention to the drop.
+    return `<div class="stat-delta-spacer">&nbsp;</div>`;
+  }
+  const pct = (diff / previousValue) * 100;
   // Sub-0.1% changes (and, eventually, flagged data corrections) read as neutral grey
-  // rather than a colored up/down arrow -- a rounding-level wobble isn't a real trend,
-  // and a correction (e.g. a -1 language after catalogue clean-up) isn't a loss.
+  // rather than a colored up arrow -- a rounding-level wobble isn't a real trend.
   const tiny = pct < 0.1;
-  const arrow = tiny ? "&#9679;" : up ? "&#9650;" : "&#9660;";
-  const sign = up ? "+" : "&minus;";
+  const arrow = tiny ? "&#9679;" : "&#9650;";
   const pctText = pct < 1 ? pct.toFixed(1) : Math.round(pct).toString();
-  // Provisional (quarter/month still reporting): still colored for the real direction --
-  // a dropout, not a real decline, could be the whole reason this reads as "down" right
-  // now, but the "Tracked Products Reporting" tile already surfaces that gap on its own.
-  // The trailing "*" (and the note below the strip) stays as the visible caveat that this
-  // number can still move once everyone's reported.
-  const cls = tiny ? "flat" : (up ? "up" : "down");
+  const cls = tiny ? "flat" : "up";
   const suffix = reliable ? "" : "*";
-  const word = up ? "Up" : "Down";
-  return `<div class="stat-delta ${cls}"><span aria-hidden="true">${arrow} ${sign}${Math.abs(diff).toLocaleString()} (${sign}${pctText}%)${suffix}</span><span class="sr-only">${word} ${Math.abs(diff).toLocaleString()}, ${pctText}%${period}</span></div>`;
+  const pctPart = tiny ? "" : ` (+${pctText}%)`;
+  const pctSr = tiny ? "" : `, ${pctText}%`;
+  return `<div class="stat-delta ${cls}"><span aria-hidden="true">${arrow} +${diff.toLocaleString()}${pctPart}${suffix}</span><span class="sr-only">Up ${diff.toLocaleString()}${pctSr}${period}</span></div>`;
 }
 
 function renderTopChart(products, config) {

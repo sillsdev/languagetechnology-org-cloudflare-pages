@@ -388,7 +388,7 @@ async function init() {
 
   const reporting = state.data.products.filter(p => !isPending(p)).length;
   document.getElementById("hero-products-stat").textContent = `${reporting.toLocaleString()} products reporting`;
-  document.getElementById("hero-products-cadence").textContent = `Quarterly · ${state.quarter}`;
+  document.getElementById("hero-products-cadence").textContent = `Quarterly · ${quarterLabel(state.quarter)}`;
 }
 
 function renderShell() {
@@ -409,7 +409,7 @@ function renderShell() {
     <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 1.75rem;">
       <div class="eyebrow" style="margin-bottom: 0;">Quarter</div>
       <select id="quarter-select">
-        ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${q}</option>`).join("")}
+        ${d.quarters.map(q => `<option value="${q}" ${q === state.quarter ? "selected" : ""}>${quarterLabel(q)}</option>`).join("")}
       </select>
       <span id="quarter-status" class="muted" style="font-size: 13px;"></span>
     </div>
@@ -659,6 +659,25 @@ const STAT_TILES = [
   { label: "Countries Reached", compute: products => Math.max(0, ...products.map(p => metricValue(p, "countries") ?? 0)) },
 ];
 
+// SIL's fiscal year starts in October, so a bare "FY26Q4" code doesn't map to the
+// calendar quarter a reader would guess -- appends the actual months/year so the
+// page doesn't require knowing SIL's fiscal calendar. Falls back to the raw code
+// for anything that doesn't match (shouldn't happen, but better than a blank label).
+function quarterLabel(q) {
+  if (!q) return "";
+  const match = /^FY(\d{2})Q([1-4])$/.exec(q);
+  if (!match) return q;
+  const fiscalYear = 2000 + Number(match[1]);
+  const RANGES = {
+    1: ["Oct", "Dec", fiscalYear - 1],
+    2: ["Jan", "Mar", fiscalYear],
+    3: ["Apr", "Jun", fiscalYear],
+    4: ["Jul", "Sep", fiscalYear],
+  };
+  const [startMonth, endMonth, calendarYear] = RANGES[match[2]];
+  return `${startMonth}–${endMonth} ${calendarYear} (${q})`;
+}
+
 // previousProducts is null when there's no earlier quarter (or its fetch failed) --
 // the delta badges and the note below the strip just don't render in that case.
 //
@@ -691,7 +710,7 @@ function renderReportingBadge(products) {
   if (isLatestQuarter(state.quarter)) {
     return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Still reporting</span><span class="sr-only">${missing} tracked product(s) haven't reported yet</span></div>`;
   }
-  return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Incomplete</span><span class="sr-only">${missing} tracked product(s) never reported for ${state.quarter}</span></div>`;
+  return `<div class="stat-delta flat"><span aria-hidden="true">&#9679; Incomplete</span><span class="sr-only">${missing} tracked product(s) never reported for ${quarterLabel(state.quarter)}</span></div>`;
 }
 
 function renderStatStrip(products, previousProducts) {
@@ -706,7 +725,7 @@ function renderStatStrip(products, previousProducts) {
     const deltaHtml = tile.renderBadge
       ? tile.renderBadge(products)
       : (tile.showDelta !== false && previousProducts)
-        ? statDeltaHtml(value, tile.compute(previousProducts), reliable, state.previousQuarter)
+        ? statDeltaHtml(value, tile.compute(previousProducts), reliable, quarterLabel(state.previousQuarter))
         : `<div class="stat-delta-spacer">&nbsp;</div>`;
     return `
       <div class="stat-tile">
@@ -719,12 +738,12 @@ function renderStatStrip(products, previousProducts) {
   }).join("");
 
   const notes = [];
-  if (previousProducts) notes.push(`Change indicators compare against the previous quarter (${state.previousQuarter}).`);
+  if (previousProducts) notes.push(`Change indicators compare against the previous quarter (${quarterLabel(state.previousQuarter)}).`);
   if (!reliable) {
     notes.push(
       isLatestQuarter(state.quarter)
-        ? `${state.quarter} is still being reported — indicators marked * may change.`
-        : `Not every tracked product reported data in ${state.quarter} — indicators marked * reflect only the ones that did.`,
+        ? `${quarterLabel(state.quarter)} is still being reported — indicators marked * may change.`
+        : `Not every tracked product reported data in ${quarterLabel(state.quarter)} — indicators marked * reflect only the ones that did.`,
     );
   }
   note.textContent = notes.join(" ");
